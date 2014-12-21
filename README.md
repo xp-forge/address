@@ -25,14 +25,6 @@ class Book extends \lang\Object { use \util\objects\CreateWith;
   public function name() { return $this->name; }
 
   public function author() { return $this->author; }
-
-  public function equals($value) {
-    return
-      $value instanceof self &&
-      $this->name === $value->name &&
-      $this->author->equals($value->author)
-    ;
-  }
 }
 
 class Author extends \lang\Object { use \util\objects\CreateWith;
@@ -46,9 +38,9 @@ class Author extends \lang\Object { use \util\objects\CreateWith;
 }
 
 $address= new XmlString($xml);
-$book= $address->next(new CreationOf('com.example.model.Book', [
+$book= $address->next(new CreationOf(Book::with(), [
   'name'   => function($val) { $this->name= $val->next(); },
-  'author' => function($val) { $this->author= $val->next(new CreationOf('com.example.model.Author', [
+  'author' => function($val) { $this->author= $val->next(new CreationOf(Author::with(), [
     'name'   => function($val) { $this->name= $val->next() ?: '(unknown author)'; }
   ])); }
 ]);
