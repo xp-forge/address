@@ -23,13 +23,14 @@ class CreationOf extends \lang\Object implements Definition {
   /**
    * Address a given path. If nothing is defined, discard value silently.
    *
+   * @param  util.objects.InstanceCreation $creation
    * @param  string $path
    * @param  util.address.Iteration $iteration
    * @return void
    */
-  protected function next($path, $iteration) {
+  protected function next($creation, $path, $iteration) {
     if (isset($this->addresses[$path])) {
-      $this->addresses[$path]->bindTo($this->creation)->__invoke($iteration);
+      $this->addresses[$path]->bindTo($creation)->__invoke($iteration);
     } else {
       $iteration->next();
     }
@@ -42,14 +43,16 @@ class CreationOf extends \lang\Object implements Definition {
    * @return var
    */
   public function create($iteration) {
+    $return= clone $this->creation;
+
     $base= $iteration->path().'/';
     $length= strlen($base);
 
-    $this->next('.', $iteration);
+    $this->next($return, '.', $iteration);
     while (0 === strncmp($iteration->path(), $base, $length)) {
-      $this->next(substr($iteration->path(), $length), $iteration);
+      $this->next($return, substr($iteration->path(), $length), $iteration);
     }
 
-    return $this->creation->create();
+    return $return->create();
   }
 }

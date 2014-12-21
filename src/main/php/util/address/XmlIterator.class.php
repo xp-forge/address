@@ -5,6 +5,7 @@ use io\streams\InputStream;
 use io\streams\Seekable;
 use util\collections\Pair;
 use text\StreamTokenizer;
+use text\StringTokenizer;
 use lang\FunctionType;
 
 /**
@@ -15,7 +16,7 @@ use lang\FunctionType;
 class XmlIterator extends \lang\Object implements \Iterator {
   const SEPARATOR= '/';
 
-  private $input, $path, $valid, $encoding= 'utf-8', $pairs= [];
+  private $input, $path, $valid, $node, $encoding= 'utf-8', $pairs= [];
 
   /**
    * Creates a new XML iterator on a given stream
@@ -36,8 +37,9 @@ class XmlIterator extends \lang\Object implements \Iterator {
    */
   protected function pi($name, $attr) {
     if ('xml' === $name) {
-      if (preg_match('/encoding\s*=\s*["\']([^"\']+)["\']/i', $attr, $matches)) {
-        $this->encoding= strtolower($matches[1]);
+      $attr= $this->attributesIn($attr);
+      if (isset($attr['encoding'])) {
+        $this->encoding= strtolower($attr['encoding']);
       }
     }
   }
@@ -56,7 +58,13 @@ class XmlIterator extends \lang\Object implements \Iterator {
       $this->path.= self::SEPARATOR.$name;
     }
 
-    array_unshift($this->pairs, new Pair($this->path, null));
+    $this->node= sizeof($this->pairs);
+    $this->pairs[]= new Pair($this->path, null);
+    if ('' !== trim($attr)) {
+      foreach ($this->attributesIn($attr) as $name => $value) {
+        $this->pairs[]= new Pair($this->path.'/@'.$name, $value);
+      }
+    }
     $this->valid= true;
   }
 
@@ -68,7 +76,7 @@ class XmlIterator extends \lang\Object implements \Iterator {
    */
   protected function cdata($content) {
     if ($this->pairs) {
-      $this->pairs[0]->value.= $content;
+      $this->pairs[$this->node]->value.= $content;
     }
   }
 
@@ -80,7 +88,7 @@ class XmlIterator extends \lang\Object implements \Iterator {
    */
   protected function pcdata($content) {
     if ($this->pairs && '' !== ($t= trim($content))) {
-      $this->pairs[0]->value.= $t;
+      $this->pairs[$this->node]->value.= $t;
     }
   }
 
@@ -117,6 +125,30 @@ class XmlIterator extends \lang\Object implements \Iterator {
       $token.= $this->input->nextToken('>');
     }
     return iconv($this->encoding, \xp::ENCODING, substr($token, 0, $l));
+  }
+
+  /**
+   * Parse attributes
+   *
+   * @param  string $string
+   * @return [:string]
+   */
+  protected function attributesIn($string) {
+    $st= new StringTokenizer($string, '="\'', true);
+    $attributes= [];
+    while ($st->hasMoreTokens()) {
+      $token= $st->nextToken();
+      if ('=' === $token) {
+        $name= trim($last);
+      } else if ('"' === $token || "'" === $token) {
+        $value= $st->nextToken($token);
+        $st->nextToken($token);
+        $attributes[$name]= html_entity_decode(iconv($this->encoding, \xp::ENCODING, $value), ENT_XML1 | ENT_QUOTES, \xp::ENCODING);
+      } else {
+        $last= $token;
+      }
+    }
+    return $attributes;
   }
 
   /** @return util.collections.Pair */
@@ -159,7 +191,7 @@ class XmlIterator extends \lang\Object implements \Iterator {
       }
     }
 
-    $pair= array_pop($this->pairs);
+    $pair= array_shift($this->pairs);
     // echo "<<< ", $pair ? $pair->toString() : "(null)", "\n";
     return $pair;
   }
