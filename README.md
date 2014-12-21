@@ -55,7 +55,7 @@ class Author extends \lang\Object { use \util\objects\CreateWith;
 ```php
 <?php namespace com\example\input;
 
-use util\address\XmlString;
+use util\address\XmlStream;
 use util\address\CreationOf;
 use com\example\model\Book;
 use com\example\model\Author;
