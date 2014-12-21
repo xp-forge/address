@@ -47,9 +47,9 @@ class Author extends \lang\Object { use \util\objects\CreateWith;
 
 $address= new XmlString($xml);
 $book= $address->next(new CreationOf('com.example.model.Book', [
-  'name'   => function($iteration) { $this->name= $iteration->next(); },
-  'author' => function($iteration) { $this->author= $iteration->next(new CreationOf('com.example.model.Author', [
-    'name'   => function($iteration) { $this->name= $iteration->next() ?: '(unknown author)'; }
+  'name'   => function($val) { $this->name= $val->next(); },
+  'author' => function($val) { $this->author= $val->next(new CreationOf('com.example.model.Author', [
+    'name'   => function($val) { $this->name= $val->next() ?: '(unknown author)'; }
   ])); }
 ]);
 ```
