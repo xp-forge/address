@@ -77,6 +77,21 @@ class XmlIteratorTest extends \unittest\TestCase {
   }
 
   #[@test, @values([
+  #  '<doc a="1" b="2" c="&gt;" d="&quot;" e="\'">',
+  #  "<doc a='1' b='2' c='&gt;' d='\"' e='&apos;'>",
+  #  '<doc a= "1" b= "2" c= "&gt;" d= "&quot;" e= "\'">',
+  #  "<doc a= '1' b= '2' c= '&gt;' d= '\"' e= '&apos;'>",
+  #  '<doc  a = "1"  b = "2"  c = "&gt;"  d = "&quot;"  e = "\'" >',
+  #  "<doc  a = '1'  b = '2'  c = '&gt;'  d = '\"' e = '&apos;'>"
+  #])]
+  public function attributes($xml) {
+    $this->assertIterated(
+      [['/' => null], ['//@a' => '1'], ['//@b' => '2'], ['//@c' => '>'], ['//@d' => '"'], ['//@e' => "'"]],
+      new XmlIterator(new MemoryInputStream($xml))
+    );
+  }
+
+  #[@test, @values([
   #  '<test><!-- Empty --></test>',
   #  '<test><!----></test>',
   #  '<test><!-- --></test>',
@@ -169,7 +184,7 @@ class XmlIteratorTest extends \unittest\TestCase {
   #[@test]
   public function international_use() {
     $this->assertIterated(
-      [['/' => null], ['//俄语' => 'данные']],
+      [['/' => null], ['//俄语' => 'данные'], ['//俄语/@լեզու' => 'ռուսերեն']],
       new XmlIterator(new MemoryInputStream('<doc><俄语 լեզու="ռուսերեն">данные</俄语></doc>'))
     );
   }
