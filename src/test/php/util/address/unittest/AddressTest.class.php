@@ -140,4 +140,16 @@ class AddressTest extends \unittest\TestCase {
       ])))
     );
   }
+
+  #[@test]
+  public function array_of_books_definition_using_compact_form_and_attributes() {
+    $address= new XmlString('<books><book author="Test">Book #1</book><book>Book #2</book></books>');
+    $this->assertEquals(
+      [new Book('Book #1', new Author('Test')), new Book('Book #2')],
+      $address->next(new Enclosing('/'))->next(new ArrayOf(new CreationOf('util.address.unittest.Book', [
+        '.'       => function($iteration) { $this->name= $iteration->next(); },
+        '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
+      ])))
+    );
+  }
 }
