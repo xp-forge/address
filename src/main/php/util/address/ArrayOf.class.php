@@ -1,5 +1,10 @@
 <?php namespace util\address;
 
+/**
+ * Creates an array of elements based on a given component definition
+ *
+ * @test  xp://util.address.unittest.ArrayOfTest
+ */
 class ArrayOf extends \lang\Object implements Definition {
   private $component, $match;
 
