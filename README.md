@@ -72,8 +72,8 @@ $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
 $stream= new XmlStream($conn->get()->getInputStream());
 
 Sequence::of($stream)
-  ->filter(function($v, $path) { return '//channel/item' === $path; })
-  ->map(function($v, $path) use($stream) { return $stream->next(new CreationOf(Item::with(), [
+  ->filter(function($value, $path) { return '//channel/item' === $path; })
+  ->map(function() use($stream) { return $stream->next(new CreationOf(Item::with(), [
     'title'       => function($it) { $this->title= $it->next(); },
     'description' => function($it) { $this->description= $it->next(); },
     'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
