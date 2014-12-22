@@ -65,7 +65,7 @@ $book= $address->next(new CreationOf(Book::with(), [
 
 Iteration
 ---------
-Using the [data sequences library](https://github.com/xp-forge/sequence), the input can be iterated. This can be combined with calling the `next()` method to create objects.
+Any `Address` instance can be iterated using the `foreach` statement. Using the [data sequences library](https://github.com/xp-forge/sequence) in combination with calling the `next()` method here's a way to parse an RSS feed's items:
 
 ```php
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
