@@ -2,37 +2,47 @@
 
 use util\address\XmlString;
 use util\address\CreationOf;
+use lang\XPClass;
 
 class CreationOfTest extends \unittest\TestCase {
 
-  #[@test]
-  public function compact_form() {
+  /** @return var[][] */
+  protected function bookTypes() {
+    return [
+      ['util.address.unittest.Book'],
+      [XPClass::forName('util.address.unittest.Book')],
+      [Book::with()]
+    ];
+  }
+
+  #[@test, @values('bookTypes')]
+  public function compact_form($type) {
     $address= new XmlString('<book>Name</book>');
     $this->assertEquals(
       new Book('Name'),
-      $address->next(new CreationOf('util.address.unittest.Book', [
+      $address->next(new CreationOf($type, [
         '.' => function($iteration) { $this->name= $iteration->next(); }
       ]))
     );
   }
 
-  #[@test]
-  public function child_node() {
+  #[@test, @values('bookTypes')]
+  public function child_node($type) {
     $address= new XmlString('<book><name>Name</name></book>');
     $this->assertEquals(
       new Book('Name'),
-      $address->next(new CreationOf('util.address.unittest.Book', [
+      $address->next(new CreationOf($type, [
         'name'    => function($iteration) { $this->name= $iteration->next(); }
       ]))
     );
   }
 
-  #[@test]
-  public function child_node_and_attributes() {
+  #[@test, @values('bookTypes')]
+  public function child_node_and_attributes($type) {
     $address= new XmlString('<book author="Test"><name>Name</name></book>');
     $this->assertEquals(
       new Book('Name', new Author('Test')),
-      $address->next(new CreationOf('util.address.unittest.Book', [
+      $address->next(new CreationOf($type, [
         'name'    => function($iteration) { $this->name= $iteration->next(); },
         '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
       ]))
