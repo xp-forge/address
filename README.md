@@ -69,7 +69,7 @@ Any `Address` instance can be iterated using the `foreach` statement. Using the 
 
 ```php
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
-$stream= new XmlStream($conn->get()->getInputStream());
+$stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
   ->filter(function($value, $path) { return '//channel/item' === $path; })
