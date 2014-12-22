@@ -11,9 +11,8 @@ Creates objects from XML input streams while parsing them.
 Example
 -------
 Given the following two value objects:
-```php
-<?php namespace com\example\model;
 
+```php
 class Book extends \lang\Object { use \util\objects\CreateWith;
   private $name, $author;
 
@@ -53,13 +52,6 @@ class Author extends \lang\Object { use \util\objects\CreateWith;
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
-<?php namespace com\example\input;
-
-use util\address\XmlStream;
-use util\address\CreationOf;
-use com\example\model\Book;
-use com\example\model\Author;
-
 $socket= /* ... */
 
 $address= new XmlStream($socket->in());
@@ -69,4 +61,29 @@ $book= $address->next(new CreationOf(Book::with(), [
     'name'   => function($val) { $this->name= $val->next() ?: '(unknown author)'; }
   ])); }
 ]);
+```
+
+Iteration
+---------
+Using the [data sequences library](https://github.com/xp-forge/sequence), the input can be iterated. This can be combined with calling the `next()` method to create objects.
+
+```php
+$conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
+$stream= new XmlStream($conn->get()->getInputStream());
+
+Sequence::of($stream)
+  ->filter(function($value, $path) { return '//channel/item' === $path; })
+  ->map(function($value, $path) use($stream) { return $stream->next(new CreationOf('com.example.rss2.Item', [
+    'title'       => function($it) { $this->title= $it->next(); },
+    'description' => function($it) { $this->description= $it->next(); },
+    'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
+    'generator'   => function($it) { $this->generator= $it->next(); },
+    'link'        => function($it) { $this->link= $it->next(); },
+    'guid'        => function($it) { $this->guid= $it->next(); }
+  ])); })
+  ->each(function($item) {
+    Console::writeLine('- ', $item->title());
+    Console::writeLine('  ', $item->link());
+  })
+;
 ```
