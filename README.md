@@ -74,12 +74,12 @@ $stream= new XmlStream($conn->get()->getInputStream());
 Sequence::of($stream)
   ->filter(function($value, $path) { return '//channel/item' === $path; })
   ->map(function() use($stream) { return $stream->next(new CreationOf(Item::with(), [
-    'title'       => function($it) { $this->title= $it->next(); },
-    'description' => function($it) { $this->description= $it->next(); },
-    'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
-    'generator'   => function($it) { $this->generator= $it->next(); },
-    'link'        => function($it) { $this->link= $it->next(); },
-    'guid'        => function($it) { $this->guid= $it->next(); }
+    'title'       => function($val) { $this->title= $val->next(); },
+    'description' => function($val) { $this->description= $val->next(); },
+    'pubDate'     => function($val) { $this->pubDate= new Date($val->next()); },
+    'generator'   => function($val) { $this->generator= $val->next(); },
+    'link'        => function($val) { $this->link= $val->next(); },
+    'guid'        => function($val) { $this->guid= $val->next(); }
   ])); })
   ->each(function($item) {
     Console::writeLine('- ', $item->title());
