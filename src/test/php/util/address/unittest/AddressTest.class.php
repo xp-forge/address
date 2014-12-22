@@ -101,17 +101,6 @@ class AddressTest extends \unittest\TestCase {
     $this->assertEquals(['//nested' => 'Test'], $value);
   }
 
-  #[@test, @values([
-  #  '<book><name>Name</name><author><name/></author></book>',
-  #  '<book><author><name/></author><name>Name</name></book>',
-  #  '<book><name>Name</name><author><name>Test</name></author></book>',
-  #  '<book><author><name>Test</name></author><name>Name</name></book>'
-  #])]
-  public function book_definition($xml) {
-    $address= new XmlString($xml);
-    $this->assertEquals(new Book('Name', new Author('Test')), $address->next(new BookDefinition()));
-  }
-
   #[@test]
   public function iteration_support() {
     $address= new XmlString('<doc><a>A</a><b>B</b></doc>');

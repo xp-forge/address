@@ -2,6 +2,11 @@
 
 use util\objects\InstanceCreation;
 
+/**
+ * Creates an object based on a given instance creation
+ *
+ * @test  xp://util.address.unittest.CreationOfTest
+ */
 class CreationOf extends \lang\Object implements Definition {
   private $creation, $addresses;
 
