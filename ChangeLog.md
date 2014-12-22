@@ -3,6 +3,7 @@ XML streams to objects
 
 ## 0.2.0 / ????-??-??
 
+* Added iteration support to `util.address.Address` - @thekid
 * Merge PR #1: Support for XML attributes - @thekid
 
 ## 0.1.0 / 2014-12-21

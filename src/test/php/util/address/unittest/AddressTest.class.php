@@ -152,4 +152,16 @@ class AddressTest extends \unittest\TestCase {
       ])))
     );
   }
+
+  #[@test]
+  public function iteration_support() {
+    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $this->assertEquals(['/' => null, '//a' => 'A', '//b' => 'B'], iterator_to_array($address));
+  }
+
+  #[@test]
+  public function iteration_support_for_empty_document() {
+    $address= new XmlString('<doc/>');
+    $this->assertEquals(['/' => null], iterator_to_array($address));
+  }
 }

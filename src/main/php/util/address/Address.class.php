@@ -7,7 +7,7 @@ use util\NoSuchElementException;
  *
  * @test  xp://util.address.unittest.AddressTest
  */
-abstract class Address extends \lang\Object {
+abstract class Address extends \lang\Object implements \IteratorAggregate {
   private $iterator;
 
   /**
