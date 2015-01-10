@@ -1,0 +1,16 @@
+{
+  "name" : "xp-forge/address",
+  "type" : "library",
+  "homepage" : "http://xp-framework.net/",
+  "license" : "BSD-3-Clause",
+  "description" : "Creates objects from XML input streams while parsing them.",
+  "keywords": ["module", "xp"],
+  "require" : {
+    "xp-framework/core": "dev-master",
+    "xp-forge/creation" : "~0.2",
+    "php" : ">=5.4.0"
+  },
+  "autoload" : {
+    "files" : ["src/main/php/autoload.php"]
+  }
+}
