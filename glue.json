@@ -1,8 +1,0 @@
-{
-  "name"    : "xp-forge/address",
-  "version" : "0.1.1-dev",
-  "require" : {
-    "xp-framework/core" : "~6.0",
-    "xp-forge/creation" : "~0.1"
-  }
-}
