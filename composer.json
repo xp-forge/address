@@ -6,7 +6,7 @@
   "description" : "Creates objects from XML input streams while parsing them.",
   "keywords": ["module", "xp"],
   "require" : {
-    "xp-framework/core": "dev-master",
+    "xp-framework/core": "~6.0",
     "xp-forge/creation" : "~0.2",
     "php" : ">=5.4.0"
   },
