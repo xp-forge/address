@@ -1,5 +1,5 @@
-Creation
-========
+Address
+=======
 
 [![Build Status on TravisCI](https://secure.travis-ci.org/xp-forge/address.svg)](http://travis-ci.org/xp-forge/address)
 [![XP Framework Module](https://raw.githubusercontent.com/xp-framework/web/master/static/xp-framework-badge.png)](https://github.com/xp-framework/core)
@@ -16,7 +16,11 @@ Example
 Given the following two value objects:
 
 ```php
-class Book extends \lang\Object { use \util\objects\CreateWith;
+use util\objects\CreateWith;
+
+class Book extends \lang\Object {
+  use CreateWith;
+
   private $name, $author;
 
   public function __construct($name, Author $author) {
@@ -29,7 +33,9 @@ class Book extends \lang\Object { use \util\objects\CreateWith;
   public function author() { return $this->author; }
 }
 
-class Author extends \lang\Object { use \util\objects\CreateWith;
+class Author extends \lang\Object {
+  use CreateWith;
+
   private $name;
 
   public function __construct($name) {
@@ -55,6 +61,9 @@ class Author extends \lang\Object { use \util\objects\CreateWith;
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
+use util\address\XmlStream;
+use util\address\CreationOf;
+
 $socket= /* ... */
 
 $address= new XmlStream($socket->in());
@@ -71,6 +80,10 @@ Iteration
 Any `Address` instance can be iterated using the `foreach` statement. Using the [data sequences library](https://github.com/xp-forge/sequence) in combination with calling the `next()` method here's a way to parse an RSS feed's items:
 
 ```php
+use peer\http\HttpConnection;
+use util\address\XmlStream;
+use util\address\CreationOf;
+
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
 $stream= new XmlStream($conn->get()->in());
 
