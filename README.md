@@ -1,5 +1,5 @@
-Creation
-========
+Address
+=======
 
 [![Build Status on TravisCI](https://secure.travis-ci.org/xp-forge/address.svg)](http://travis-ci.org/xp-forge/address)
 [![XP Framework Module](https://raw.githubusercontent.com/xp-framework/web/master/static/xp-framework-badge.png)](https://github.com/xp-framework/core)
@@ -58,6 +58,9 @@ class Author extends \lang\Object {
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
+use util\address\XmlStream;
+use util\address\CreationOf;
+
 $socket= /* ... */
 
 $address= new XmlStream($socket->in());
@@ -74,6 +77,10 @@ Iteration
 Any `Address` instance can be iterated using the `foreach` statement. Using the [data sequences library](https://github.com/xp-forge/sequence) in combination with calling the `next()` method here's a way to parse an RSS feed's items:
 
 ```php
+use peer\http\HttpConnection;
+use util\address\XmlStream;
+use util\address\CreationOf;
+
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
 $stream= new XmlStream($conn->get()->in());
 
