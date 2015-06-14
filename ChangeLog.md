@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 0.3.0 / 2015-06-14
+
 * Added HHVM support by fixing xp-forge/address#3 - @thekid
 * Added forward compatibility with PHP7 - @thekid
 
