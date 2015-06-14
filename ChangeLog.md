@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Added HHVM support by fixing xp-forge/address#3 - @thekid
+
 ## 0.2.0 / 2015-02-12
 
 * Changed dependency to use XP ~6.0 (instead of dev-master) - @thekid

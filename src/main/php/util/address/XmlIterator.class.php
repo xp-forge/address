@@ -15,8 +15,16 @@ use lang\FunctionType;
  */
 class XmlIterator extends \lang\Object implements \Iterator {
   const SEPARATOR= '/';
-
+  private static $decode;
   private $input, $path, $valid, $node, $encoding= 'utf-8', $pairs= [];
+
+  static function __static() {
+    if (defined('HHVM_VERSION')) {
+      self::$decode= function($in) { return html_entity_decode(strtr($in, ['&apos;' => "'"]), ENT_XML1 | ENT_QUOTES, \xp::ENCODING); };
+    } else {
+      self::$decode= function($in) { return html_entity_decode($in, ENT_XML1 | ENT_QUOTES, \xp::ENCODING); };
+    }
+  }
 
   /**
    * Creates a new XML iterator on a given stream
@@ -143,7 +151,7 @@ class XmlIterator extends \lang\Object implements \Iterator {
       } else if ('"' === $token || "'" === $token) {
         $value= $st->nextToken($token);
         $st->nextToken($token);
-        $attributes[$name]= html_entity_decode(iconv($this->encoding, \xp::ENCODING, $value), ENT_XML1 | ENT_QUOTES, \xp::ENCODING);
+        $attributes[$name]= self::$decode->__invoke(iconv($this->encoding, \xp::ENCODING, $value));
       } else {
         $last= $token;
       }
@@ -186,7 +194,7 @@ class XmlIterator extends \lang\Object implements \Iterator {
             }
           }
         } else {
-          $this->pcdata(html_entity_decode(iconv($this->encoding, \xp::ENCODING, $token), ENT_XML1 | ENT_QUOTES, \xp::ENCODING));
+          $this->pcdata(self::$decode->__invoke(iconv($this->encoding, \xp::ENCODING, $token)));
         }
       }
     }
