@@ -16,10 +16,12 @@ Example
 Given the following two value objects:
 
 ```php
-use util\objects\CreateWith;
+use lang\partial\ValueObject;
+use lang\partial\WithCreation;
 
 class Book extends \lang\Object {
-  use CreateWith;
+  use Book\including\ValueObject;
+  use Book\including\WithCreation;
 
   private $name, $author;
 
@@ -27,22 +29,17 @@ class Book extends \lang\Object {
     $this->name= $name;
     $this->author= $author;
   }
-
-  public function name() { return $this->name; }
-
-  public function author() { return $this->author; }
 }
 
 class Author extends \lang\Object {
-  use CreateWith;
+  use Author\including\ValueObject;
+  use Author\including\WithCreation;
 
   private $name;
 
   public function __construct($name) {
     $this->name= $name;
   }
-
-  public function name() { return $this->name; }
 }
 ```
 
