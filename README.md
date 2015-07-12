@@ -17,9 +17,11 @@ Given the following two value objects:
 
 ```php
 use lang\partial\WithCreation;
+use lang\partial\ValueObject;
 
 class Book extends \lang\Object {
   use Book\including\WithCreation;
+  use Book\including\ValueObject;
 
   private $name, $author;
 
@@ -27,22 +29,17 @@ class Book extends \lang\Object {
     $this->name= $name;
     $this->author= $author;
   }
-
-  public function name() { return $this->name; }
-
-  public function author() { return $this->author; }
 }
 
 class Author extends \lang\Object {
   use Author\including\WithCreation;
+  use Author\including\ValueObject;
 
   private $name;
 
   public function __construct($name) {
     $this->name= $name;
   }
-
-  public function name() { return $this->name; }
 }
 ```
 
