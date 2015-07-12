@@ -7,6 +7,8 @@ XML streams to objects
 
 * **Heads up: Changed to depend on xp-forge/partial** (instead of on
   xp-forge/creation, which is deprecated)
+  - Bumped minimum PHP version to PHP 5.6 - @thekid
+  - Rewrote codebase to make use of ValueObject trait - @thekid
   (@thekid)
 
 ## 0.3.0 / 2015-06-14
