@@ -3,6 +3,12 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 0.4.0 / 2015-07-12
+
+* **Heads up: Changed to depend on xp-forge/partial** (instead of on
+  xp-forge/creation, which is deprecated)
+  (@thekid)
+
 ## 0.3.0 / 2015-06-14
 
 * Added HHVM support by fixing xp-forge/address#3 - @thekid
