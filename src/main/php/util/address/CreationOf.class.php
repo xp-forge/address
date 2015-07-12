@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-use util\objects\InstanceCreation;
+use lang\partial\InstanceCreation;
 
 /**
  * Creates an object based on a given instance creation

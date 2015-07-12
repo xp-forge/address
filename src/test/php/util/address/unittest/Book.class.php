@@ -1,8 +1,11 @@
 <?php namespace util\address\unittest;
 
 use util\Objects;
+use lang\partial\WithCreation;
 
-class Book extends \lang\Object { use \util\objects\CreateWith;
+class Book extends \lang\Object {
+  use Book\including\WithCreation;
+
   private $name, $author;
 
   /**

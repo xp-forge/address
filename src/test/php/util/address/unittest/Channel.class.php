@@ -2,8 +2,11 @@
 
 use util\Date;
 use util\Objects;
+use lang\partial\WithCreation;
 
-class Channel extends \lang\Object { use \util\objects\CreateWith;
+class Channel extends \lang\Object {
+  use Channel\including\WithCreation;
+
   private $title, $description, $pubDate, $generator, $link, $items;
 
   /**

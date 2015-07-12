@@ -2,8 +2,10 @@
 
 use util\Date;
 use util\Objects;
+use lang\partial\WithCreation;
 
-class Item extends \lang\Object { use \util\objects\CreateWith;
+class Item extends \lang\Object {
+  use Item\including\WithCreation;
   private $title, $description, $pubDate, $link, $guid;
 
   /**
