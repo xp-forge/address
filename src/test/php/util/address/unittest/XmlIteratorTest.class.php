@@ -1,5 +1,6 @@
 <?php namespace util\address\unittest;
 
+use io\streams\InputStream;
 use util\address\XmlIterator;
 use io\streams\MemoryInputStream;
 use lang\IllegalStateException;
@@ -212,7 +213,7 @@ class XmlIteratorTest extends \unittest\TestCase {
 
   #[@test]
   public function cannot_rewind_non_seekable() {
-    $it= new XmlIterator(newinstance('io.streams.InputStream', [], [
+    $it= new XmlIterator(newinstance(InputStream::class, [], [
       'available' => function() { return false; },
       'read'      => function($bytes= 8192) { return null; },
       'close'     => function() { }

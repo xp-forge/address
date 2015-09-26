@@ -1,5 +1,6 @@
 <?php namespace util\address\unittest;
 
+use util\address\Definition;
 use util\address\XmlString;
 use util\address\ArrayOf;
 use util\address\CreationOf;
@@ -95,7 +96,7 @@ class AddressTest extends \unittest\TestCase {
   #[@test]
   public function next_with_definition() {
     $address= new XmlString('<doc><nested>Test</nested></doc>');
-    $value= $address->next(new Enclosing('/'))->next(newinstance('util.address.Definition', [], [
+    $value= $address->next(new Enclosing('/'))->next(newinstance(Definition::class, [], [
       'create' => function($iteration) { return [$iteration->path() => $iteration->next()]; }
     ]));
     $this->assertEquals(['//nested' => 'Test'], $value);
