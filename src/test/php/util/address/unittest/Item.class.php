@@ -1,13 +1,12 @@
 <?php namespace util\address\unittest;
 
 use util\Date;
-use util\Objects;
-use lang\partial\WithCreation;
-use lang\partial\ValueObject;
+use lang\partial\Builder;
+use lang\partial\Value;
 
-class Item extends \lang\Object {
-  use Item\including\WithCreation;
-  use Item\including\ValueObject;
+class Item implements \lang\Value {
+  use Item\including\Builder;
+  use Item\including\Value;
 
   private $title, $description, $pubDate, $link, $guid;
 

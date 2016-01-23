@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 0.5.0 / 2016-01-23
+
+* Adapted to changes in xp-forge/partial 0.6.0 - @thekid
+
 ## 0.4.0 / 2015-07-12
 
 * **Heads up: Changed to depend on xp-forge/partial** (instead of on

@@ -1,12 +1,11 @@
 <?php namespace util\address\unittest;
 
-use util\Objects;
-use lang\partial\WithCreation;
-use lang\partial\ValueObject;
+use lang\partial\Builder;
+use lang\partial\Value;
 
-class Author extends \lang\Object {
-  use Author\including\WithCreation;
-  use Author\including\ValueObject;
+class Author implements \lang\Value {
+  use Author\including\Builder;
+  use Author\including\Value;
 
   private $name;
 

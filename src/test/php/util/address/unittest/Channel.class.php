@@ -1,13 +1,12 @@
 <?php namespace util\address\unittest;
 
 use util\Date;
-use util\Objects;
-use lang\partial\WithCreation;
-use lang\partial\ValueObject;
+use lang\partial\Builder;
+use lang\partial\Value;
 
-class Channel extends \lang\Object {
-  use Channel\including\WithCreation;
-  use Channel\including\ValueObject;
+class Channel implements \lang\Value {
+  use Channel\including\Builder;
+  use Channel\including\Value;
 
   private $title, $description, $pubDate, $generator, $link, $items;
 
