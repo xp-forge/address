@@ -30,10 +30,11 @@ class Iteration extends \lang\Object {
    * Returns the next value according to the given definition
    *
    * @param  util.address.Definition $definition
+   * @param  string $base If omitted, will use current path for recursion
    * @return var
    * @throws util.NoSuchElementException if there are no more eements
    */
-  public function next(Definition $definition= null) {
-    return $this->input->next($definition, $this->path());
+  public function next(Definition $definition= null, $base= null) {
+    return $this->input->next($definition, $base ?: $this->path());
   }
 }
