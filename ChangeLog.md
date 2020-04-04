@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 1.0.0 / 2020-04-04
+
+* Made compatible with XP 10, PHP 7+ - @thekid
+
 ## 0.5.0 / 2016-01-23
 
 * Adapted to changes in xp-forge/partial 0.6.0 - @thekid
