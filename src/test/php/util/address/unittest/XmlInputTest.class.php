@@ -1,21 +1,22 @@
 <?php namespace util\address\unittest;
 
 use util\Date;
-use util\address\XmlString;
-use util\address\XmlStream;
+use util\address\CreationOf;
 use util\address\XmlFile;
 use util\address\XmlResource;
-use util\address\CreationOf;
+use util\address\XmlStream;
+use util\address\XmlString;
 
 class XmlInputTest extends \unittest\TestCase {
 
   /** @return var[][] */
   protected function inputs() {
+    $t= typeof($this);
     return [
-      [new XmlString($this->getClass()->getPackage()->getResource('releases.xml'))],
-      [new XmlStream($this->getClass()->getPackage()->getResourceAsStream('releases.xml')->in())],
-      [new XmlFile($this->getClass()->getPackage()->getResourceAsStream('releases.xml'))],
-      [new XmlResource($this->getClass(), 'releases.xml')]
+      [new XmlString($t->getPackage()->getResource('releases.xml'))],
+      [new XmlStream($t->getPackage()->getResourceAsStream('releases.xml')->in())],
+      [new XmlFile($t->getPackage()->getResourceAsStream('releases.xml'))],
+      [new XmlResource($t, 'releases.xml')]
     ];
   }
 
