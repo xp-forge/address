@@ -5,7 +5,7 @@
  *
  * @test  xp://util.address.unittest.ArrayOfTest
  */
-class ArrayOf extends \lang\Object implements Definition {
+class ArrayOf implements Definition {
   private $component, $match;
 
   /**

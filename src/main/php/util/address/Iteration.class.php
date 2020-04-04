@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-class Iteration extends \lang\Object {
+class Iteration {
   private $input, $base;
 
   /**

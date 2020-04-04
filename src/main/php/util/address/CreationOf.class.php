@@ -7,7 +7,7 @@ use lang\partial\InstanceCreation;
  *
  * @test  xp://util.address.unittest.CreationOfTest
  */
-class CreationOf extends \lang\Object implements Definition {
+class CreationOf implements Definition {
   private $creation, $addresses;
 
   /**

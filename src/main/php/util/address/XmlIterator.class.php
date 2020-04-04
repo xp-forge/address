@@ -1,19 +1,19 @@
 <?php namespace util\address;
 
-use lang\IllegalStateException;
 use io\streams\InputStream;
 use io\streams\Seekable;
-use util\collections\Pair;
+use lang\FunctionType;
+use lang\IllegalStateException;
 use text\StreamTokenizer;
 use text\StringTokenizer;
-use lang\FunctionType;
+use util\collections\Pair;
 
 /**
  * XML stream iterator
  *
  * @test  xp://util.address.unittest.XmlIteratorTest
  */
-class XmlIterator extends \lang\Object implements \Iterator {
+class XmlIterator implements \Iterator {
   const SEPARATOR= '/';
   private static $decode;
   private $input, $path, $valid, $node, $encoding= 'utf-8', $pairs= [];

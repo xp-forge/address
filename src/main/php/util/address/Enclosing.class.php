@@ -2,7 +2,7 @@
 
 use lang\IllegalStateException;
 
-class Enclosing extends \lang\Object implements Definition {
+class Enclosing implements Definition {
   private $path;
 
   /**
