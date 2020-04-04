@@ -171,10 +171,10 @@ class XmlIterator implements \Iterator {
           $tag= $this->input->nextToken('>');
           $this->input->nextToken('>');
 
-          if ('?' === $tag{0}) {
+          if ('?' === $tag[0]) {
             $p= strcspn($tag, ' ?', 1);
             $this->pi(substr($tag, 1, $p), substr($tag, $p + 1, - 1));
-          } else if ('!' === $tag{0}) {
+          } else if ('!' === $tag[0]) {
             if (0 === strncmp('![CDATA[', $tag, 8)) {
               $this->cdata($this->tokenUntil(substr($tag, 8), ']]>'));
             } else if (0 === strncmp('!--', $tag, 3)) {
@@ -182,13 +182,13 @@ class XmlIterator implements \Iterator {
             } else {
               throw new IllegalStateException('Cannot handle '.$tag);
             }
-          } else if ('/' === $tag{0}) {
+          } else if ('/' === $tag[0]) {
             $this->close();
             if ($this->valid) break;
           } else {
             $p= strcspn($tag, ' /');
             $this->open(substr($tag, 0, $p), substr($tag, $p + 1));
-            if ('/' === $tag{strlen($tag) - 1}) {
+            if ('/' === $tag[strlen($tag) - 1]) {
               $this->close();
               break;
             }
