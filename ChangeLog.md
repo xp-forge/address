@@ -26,7 +26,7 @@ XML streams to objects
 
 ## 0.2.0 / 2015-02-12
 
-* Changed dependency to use XP ~6.0 (instead of dev-master) - @thekid
+* Changed dependency to use XP 6.0 (instead of dev-master) - @thekid
 * Added iteration support to `util.address.Address` - @thekid
 * Merge PR #1: Support for XML attributes - @thekid
 

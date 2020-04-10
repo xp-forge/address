@@ -4,8 +4,7 @@ Address
 [![Build Status on TravisCI](https://secure.travis-ci.org/xp-forge/address.svg)](http://travis-ci.org/xp-forge/address)
 [![XP Framework Module](https://raw.githubusercontent.com/xp-framework/web/master/static/xp-framework-badge.png)](https://github.com/xp-framework/core)
 [![BSD Licence](https://raw.githubusercontent.com/xp-framework/web/master/static/licence-bsd.png)](https://github.com/xp-framework/core/blob/master/LICENCE.md)
-[![Required PHP 5.6+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-5_6plus.png)](http://php.net/)
-[![Supports PHP 7.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-7_0plus.png)](http://php.net/)
+[![Requires PHP 7.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-7_0plus.png)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/address/version.png)](https://packagist.org/packages/xp-forge/address)
 
 Creates objects from XML input streams while parsing them.
@@ -15,8 +14,7 @@ Example
 Given the following two value objects:
 
 ```php
-use lang\partial\WithCreation;
-use lang\partial\ValueObject;
+use lang\partial\{WithCreation, ValueObject};
 
 class Book {
   use Book\including\WithCreation;
@@ -57,8 +55,7 @@ class Author {
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
-use util\address\XmlStream;
-use util\address\CreationOf;
+use util\address\{XmlStream, CreationOf};
 
 $socket= /* ... */
 
@@ -77,8 +74,7 @@ Any `Address` instance can be iterated using the `foreach` statement. Using the 
 
 ```php
 use peer\http\HttpConnection;
-use util\address\XmlStream;
-use util\address\CreationOf;
+use util\address\{XmlStream, CreationOf};
 
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
 $stream= new XmlStream($conn->get()->in());
