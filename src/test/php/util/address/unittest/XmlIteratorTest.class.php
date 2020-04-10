@@ -212,11 +212,11 @@ class XmlIteratorTest extends \unittest\TestCase {
 
   #[@test]
   public function cannot_rewind_non_seekable() {
-    $it= new XmlIterator(newinstance(InputStream::class, [], [
-      'available' => function() { return false; },
-      'read'      => function($bytes= 8192) { return null; },
-      'close'     => function() { }
-    ]));
+    $it= new XmlIterator(new class() implements InputStream {
+      public function available() { return false; }
+      public function read($bytes= 8192) { return null; }
+      public function close() { }
+    });
     $this->assertIterated([], $it);
 
     try {

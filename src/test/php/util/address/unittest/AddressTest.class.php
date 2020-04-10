@@ -92,9 +92,9 @@ class AddressTest extends \unittest\TestCase {
   #[@test]
   public function next_with_definition() {
     $address= new XmlString('<doc><nested>Test</nested></doc>');
-    $value= $address->next(new Enclosing('/'))->next(newinstance(Definition::class, [], [
-      'create' => function($iteration) { return [$iteration->path() => $iteration->next()]; }
-    ]));
+    $value= $address->next(new Enclosing('/'))->next(new class() implements Definition {
+      public function create($iteration) { return [$iteration->path() => $iteration->next()]; }
+    });
     $this->assertEquals(['//nested' => 'Test'], $value);
   }
 
