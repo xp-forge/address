@@ -1,8 +1,7 @@
 <?php namespace util\address\unittest;
 
-use util\address\XmlString;
-use util\address\CreationOf;
 use lang\XPClass;
+use util\address\{CreationOf, XmlString};
 
 class CreationOfTest extends \unittest\TestCase {
 

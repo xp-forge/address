@@ -1,11 +1,8 @@
 <?php namespace util\address;
 
-use io\streams\InputStream;
-use io\streams\Seekable;
-use lang\FunctionType;
-use lang\IllegalStateException;
-use text\StreamTokenizer;
-use text\StringTokenizer;
+use io\streams\{InputStream, Seekable};
+use lang\{FunctionType, IllegalStateException};
+use text\{StreamTokenizer, StringTokenizer};
 use util\collections\Pair;
 
 /**

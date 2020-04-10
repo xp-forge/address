@@ -1,7 +1,6 @@
 <?php namespace util\address\unittest;
 
-use lang\partial\Builder;
-use lang\partial\Value;
+use lang\partial\{Builder, Value};
 
 class Author implements \lang\Value {
   use Author\including\Builder;

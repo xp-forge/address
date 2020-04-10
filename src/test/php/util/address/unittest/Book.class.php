@@ -1,7 +1,6 @@
 <?php namespace util\address\unittest;
 
-use lang\partial\Builder;
-use lang\partial\Value;
+use lang\partial\{Builder, Value};
 
 class Book implements \lang\Value {
   use Book\including\Builder;

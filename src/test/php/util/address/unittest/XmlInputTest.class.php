@@ -1,11 +1,7 @@
 <?php namespace util\address\unittest;
 
 use util\Date;
-use util\address\CreationOf;
-use util\address\XmlFile;
-use util\address\XmlResource;
-use util\address\XmlStream;
-use util\address\XmlString;
+use util\address\{CreationOf, XmlFile, XmlResource, XmlStream, XmlString};
 
 class XmlInputTest extends \unittest\TestCase {
 

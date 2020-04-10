@@ -1,8 +1,7 @@
 <?php namespace util\address\unittest;
 
+use lang\partial\{Builder, Value};
 use util\Date;
-use lang\partial\Builder;
-use lang\partial\Value;
 
 class Item implements \lang\Value {
   use Item\including\Builder;

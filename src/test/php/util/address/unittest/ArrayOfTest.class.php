@@ -1,9 +1,6 @@
 <?php namespace util\address\unittest;
 
-use util\address\XmlString;
-use util\address\ArrayOf;
-use util\address\CreationOf;
-use util\address\Enclosing;
+use util\address\{ArrayOf, CreationOf, Enclosing, XmlString};
 
 class ArrayOfTest extends \unittest\TestCase {
 

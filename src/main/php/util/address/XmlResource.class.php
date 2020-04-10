@@ -1,7 +1,7 @@
 <?php namespace util\address;
 
-use lang\reflect\Package;
 use lang\XPClass;
+use lang\reflect\Package;
 
 /**
  * XML class loader resource input

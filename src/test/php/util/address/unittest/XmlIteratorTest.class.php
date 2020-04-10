@@ -1,9 +1,8 @@
 <?php namespace util\address\unittest;
 
-use io\streams\InputStream;
-use util\address\XmlIterator;
-use io\streams\MemoryInputStream;
+use io\streams\{InputStream, MemoryInputStream};
 use lang\IllegalStateException;
+use util\address\XmlIterator;
 
 class XmlIteratorTest extends \unittest\TestCase {
 
