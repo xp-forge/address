@@ -1,49 +1,50 @@
 <?php namespace util\address\unittest;
 
+use unittest\{Expect, Test};
 use util\address\{ArrayOf, CreationOf, Definition, Enclosing, XmlString};
 
 class AddressTest extends \unittest\TestCase {
 
-  #[@test]
+  #[Test]
   public function path() {
     $address= new XmlString('<doc/>');
     $this->assertEquals('/', $address->path());
   }
 
-  #[@test]
+  #[Test]
   public function path_after_end() {
     $address= new XmlString('<doc/>');
     $address->next();
     $this->assertNull($address->path());
   }
 
-  #[@test]
+  #[Test]
   public function empty_node_value() {
     $address= new XmlString('<doc/>');
     $this->assertNull($address->next());
   }
 
-  #[@test]
+  #[Test]
   public function value_for_node_with_content() {
     $address= new XmlString('<doc>Test</doc>');
     $this->assertEquals('Test', $address->next());
   }
 
-  #[@test, @expect('util.NoSuchElementException')]
+  #[Test, Expect('util.NoSuchElementException')]
   public function iteration_across_end() {
     $address= new XmlString('<doc/>');
     $address->next();
     $address->next();
   }
 
-  #[@test]
+  #[Test]
   public function next_after_resetting() {
     $address= new XmlString('<doc>Test</doc>');
     $address->reset();
     $this->assertEquals('Test', $address->next());
   }
 
-  #[@test]
+  #[Test]
   public function next_after_next_and_resetting() {
     $address= new XmlString('<doc>Test</doc>');
     $address->next();
@@ -51,27 +52,27 @@ class AddressTest extends \unittest\TestCase {
     $this->assertEquals('Test', $address->next());
   }
 
-  #[@test]
+  #[Test]
   public function valid() {
     $address= new XmlString('<doc>Test</doc>');
     $this->assertTrue($address->valid());
   }
 
-  #[@test]
+  #[Test]
   public function valid_after_end() {
     $address= new XmlString('<doc>Test</doc>');
     $address->next();
     $this->assertFalse($address->valid());
   }
 
-  #[@test]
+  #[Test]
   public function valid_after_resetting() {
     $address= new XmlString('<doc>Test</doc>');
     $address->reset();
     $this->assertTrue($address->valid());
   }
 
-  #[@test]
+  #[Test]
   public function valid_after_next_and_resetting() {
     $address= new XmlString('<doc>Test</doc>');
     $address->next();
@@ -79,7 +80,7 @@ class AddressTest extends \unittest\TestCase {
     $this->assertTrue($address->valid());
   }
 
-  #[@test]
+  #[Test]
   public function iteration() {
     $address= new XmlString('<doc><nested>Test</nested></doc>');
     $actual= [];
@@ -89,7 +90,7 @@ class AddressTest extends \unittest\TestCase {
     $this->assertEquals([['/' => null], ['//nested' => 'Test']], $actual);
   }
 
-  #[@test]
+  #[Test]
   public function next_with_definition() {
     $address= new XmlString('<doc><nested>Test</nested></doc>');
     $value= $address->next(new Enclosing('/'))->next(new class() implements Definition {
@@ -98,13 +99,13 @@ class AddressTest extends \unittest\TestCase {
     $this->assertEquals(['//nested' => 'Test'], $value);
   }
 
-  #[@test]
+  #[Test]
   public function iteration_support() {
     $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
     $this->assertEquals(['/' => null, '//a' => 'A', '//b' => 'B'], iterator_to_array($address));
   }
 
-  #[@test]
+  #[Test]
   public function iteration_support_for_empty_document() {
     $address= new XmlString('<doc/>');
     $this->assertEquals(['/' => null], iterator_to_array($address));

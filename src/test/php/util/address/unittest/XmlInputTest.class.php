@@ -1,5 +1,6 @@
 <?php namespace util\address\unittest;
 
+use unittest\{Test, Values};
 use util\Date;
 use util\address\{CreationOf, XmlFile, XmlResource, XmlStream, XmlString};
 
@@ -16,7 +17,7 @@ class XmlInputTest extends \unittest\TestCase {
     ];
   }
 
-  #[@test, @values('inputs')]
+  #[Test, Values('inputs')]
   public function feed($input) {
     $feed= $input->next(new CreationOf(Channel::with(), [
       'channel/title'       => function($iteration) { $this->title= $iteration->next(); },

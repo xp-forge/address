@@ -2,6 +2,7 @@
 
 use io\streams\{InputStream, MemoryInputStream};
 use lang\IllegalStateException;
+use unittest\{Test, Values};
 use util\address\XmlIterator;
 
 class XmlIteratorTest extends \unittest\TestCase {
@@ -20,12 +21,12 @@ class XmlIteratorTest extends \unittest\TestCase {
     $this->assertEquals($expected, $actual);
   }
 
-  #[@test]
+  #[Test]
   public function can_create() {
     new XmlIterator(new MemoryInputStream('<doc/>'));
   }
 
-  #[@test]
+  #[Test]
   public function empty_document() {
     $this->assertIterated(
       [['/' => null]],
@@ -33,7 +34,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function empty_document_with_declaration() {
     $this->assertIterated(
       [['/' => null]],
@@ -41,10 +42,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  '<doc><test/></doc>',
-  #  '<doc><test></test></doc>'
-  #])]
+  #[Test, Values(['<doc><test/></doc>', '<doc><test></test></doc>'])]
   public function single_empty_node($xml) {
     $this->assertIterated(
       [['/' => null], ['//test' => null]],
@@ -52,7 +50,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function single_node() {
     $this->assertIterated(
       [['/' => null], ['//test' => 'Test']],
@@ -60,7 +58,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function repeated_node() {
     $this->assertIterated(
       [['/' => null], ['//test' => 'a'], ['//test' => 'b']],
@@ -68,7 +66,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function nested_node() {
     $this->assertIterated(
       [['/' => null], ['//test' => null], ['//test/nested' => 'Test']],
@@ -76,14 +74,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  '<doc a="1" b="2" c="&gt;" d="&quot;" e="\'">',
-  #  "<doc a='1' b='2' c='&gt;' d='\"' e='&apos;'>",
-  #  '<doc a= "1" b= "2" c= "&gt;" d= "&quot;" e= "\'">',
-  #  "<doc a= '1' b= '2' c= '&gt;' d= '\"' e= '&apos;'>",
-  #  '<doc  a = "1"  b = "2"  c = "&gt;"  d = "&quot;"  e = "\'" >',
-  #  "<doc  a = '1'  b = '2'  c = '&gt;'  d = '\"' e = '&apos;'>"
-  #])]
+  #[Test, Values(['<doc a="1" b="2" c="&gt;" d="&quot;" e="\'">', "<doc a='1' b='2' c='&gt;' d='\"' e='&apos;'>", '<doc a= "1" b= "2" c= "&gt;" d= "&quot;" e= "\'">', "<doc a= '1' b= '2' c= '&gt;' d= '\"' e= '&apos;'>", '<doc  a = "1"  b = "2"  c = "&gt;"  d = "&quot;"  e = "\'" >', "<doc  a = '1'  b = '2'  c = '&gt;'  d = '\"' e = '&apos;'>"])]
   public function attributes($xml) {
     $this->assertIterated(
       [['/' => null], ['//@a' => '1'], ['//@b' => '2'], ['//@c' => '>'], ['//@d' => '"'], ['//@e' => "'"]],
@@ -91,13 +82,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  '<test><!-- Empty --></test>',
-  #  '<test><!----></test>',
-  #  '<test><!-- --></test>',
-  #  '<test><!-->--></test>',
-  #  '<test><!--no need to escape <code> & such in comments--></test>'
-  #])]
+  #[Test, Values(['<test><!-- Empty --></test>', '<test><!----></test>', '<test><!-- --></test>', '<test><!-->--></test>', '<test><!--no need to escape <code> & such in comments--></test>'])]
   public function comments($xml) {
     $this->assertIterated(
       [['/' => null]],
@@ -105,7 +90,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function embedded_comment() {
     $this->assertIterated(
       [['/' => 'AB']],
@@ -113,7 +98,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function xml_entities() {
     $this->assertIterated(
       [['/' => '&<>"\'']],
@@ -121,7 +106,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
+  #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(
       [['/' => 'Ü']],
@@ -129,7 +114,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function cdata_section() {
     $this->assertIterated(
       [['/' => null], ['//amp' => '&'], ['//lt' => '<'], ['//gt' => '>']],
@@ -137,7 +122,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function cdata_section_with_gt_embedded() {
     $this->assertIterated(
       [['/' => '2 > 1, 100 >> 1']],
@@ -145,12 +130,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  '<doc><a></a><b>Test</b><c>Te st</c></doc>',
-  #  '<doc><a> </a><b> Test </b><c> Te st </c></doc>',
-  #  '<doc> <a> </a> <b> Test </b> <c> Te st </c> </doc>',
-  #  '<doc> <a> </a> <b> Test </b> <c> Te&#x20;st </c> </doc>'
-  #])]
+  #[Test, Values(['<doc><a></a><b>Test</b><c>Te st</c></doc>', '<doc><a> </a><b> Test </b><c> Te st </c></doc>', '<doc> <a> </a> <b> Test </b> <c> Te st </c> </doc>', '<doc> <a> </a> <b> Test </b> <c> Te&#x20;st </c> </doc>'])]
   public function surrounding_whitespace_is_irrelevant($xml) {
     $this->assertIterated(
       [['/' => null], ['//a' => null], ['//b' => 'Test'], ['//c' => 'Te st']],
@@ -158,7 +138,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function whitespace_in_cdata_is_preserved() {
     $this->assertIterated(
       [['/' => ' ']],
@@ -166,14 +146,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  ['', "<char>\303\234</char>"],
-  #  ['', "<char><![CDATA[\303\234]]></char>"],
-  #  ['encoding="utf-8"', "<char>\303\234</char>"],
-  #  ['encoding="utf-8"', "<char><![CDATA[\303\234]]></char>"],
-  #  ['encoding="iso-8859-1"', "<char>\334</char>"],
-  #  ['encoding="iso-8859-1"', "<char><![CDATA[\334]]></char>"]
-  #])]
+  #[Test, Values([['', "<char>\303\234</char>"], ['', "<char><![CDATA[\303\234]]></char>"], ['encoding="utf-8"', "<char>\303\234</char>"], ['encoding="utf-8"', "<char><![CDATA[\303\234]]></char>"], ['encoding="iso-8859-1"', "<char>\334</char>"], ['encoding="iso-8859-1"', "<char><![CDATA[\334]]></char>"]])]
   public function encoding_handled($encoding, $xml) {
     $this->assertIterated(
       [['/' => 'Ü']],
@@ -181,7 +154,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function international_use() {
     $this->assertIterated(
       [['/' => null], ['//俄语' => 'данные'], ['//俄语/@լեզու' => 'ռուսերեն']],
@@ -189,7 +162,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function book_example() {
     $this->assertIterated(
       [
@@ -202,7 +175,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     );
   }
 
-  #[@test]
+  #[Test]
   public function iterated_twice_with_rewindable_stream() {
     $it= new XmlIterator(new MemoryInputStream('<doc><verified/></doc>'));
     $expected= [['/' => null], ['//verified' => null]];
@@ -210,7 +183,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     $this->assertIterated($expected, $it);
   }
 
-  #[@test]
+  #[Test]
   public function cannot_rewind_non_seekable() {
     $it= new XmlIterator(new class() implements InputStream {
       public function available() { return false; }
@@ -229,11 +202,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     }
   }
 
-  #[@test, @values([
-  #  '<doc><test><it>worked',
-  #  '<doc><test><it>worked</it>',
-  #  '<doc><test><it>worked</it></test>'
-  #])]
+  #[Test, Values(['<doc><test><it>worked', '<doc><test><it>worked</it>', '<doc><test><it>worked</it></test>'])]
   public function works_even_when_closing_tag_is_missing($xml) {
     $this->assertIterated(
       [['/' => null], ['//test' => null], ['//test/it' => 'worked']],

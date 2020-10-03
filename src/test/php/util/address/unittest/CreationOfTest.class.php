@@ -1,6 +1,7 @@
 <?php namespace util\address\unittest;
 
 use lang\XPClass;
+use unittest\{Test, Values};
 use util\address\{CreationOf, XmlString};
 
 class CreationOfTest extends \unittest\TestCase {
@@ -14,7 +15,7 @@ class CreationOfTest extends \unittest\TestCase {
     ];
   }
 
-  #[@test, @values('bookTypes')]
+  #[Test, Values('bookTypes')]
   public function compact_form($type) {
     $address= new XmlString('<book>Name</book>');
     $this->assertEquals(
@@ -25,7 +26,7 @@ class CreationOfTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values('bookTypes')]
+  #[Test, Values('bookTypes')]
   public function child_node($type) {
     $address= new XmlString('<book><name>Name</name></book>');
     $this->assertEquals(
@@ -36,7 +37,7 @@ class CreationOfTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values('bookTypes')]
+  #[Test, Values('bookTypes')]
   public function child_node_and_attributes($type) {
     $address= new XmlString('<book author="Test"><name>Name</name></book>');
     $this->assertEquals(
@@ -48,12 +49,7 @@ class CreationOfTest extends \unittest\TestCase {
     );
   }
 
-  #[@test, @values([
-  #  '<book><name>Name</name><author><name/></author></book>',
-  #  '<book><author><name/></author><name>Name</name></book>',
-  #  '<book><name>Name</name><author><name>Test</name></author></book>',
-  #  '<book><author><name>Test</name></author><name>Name</name></book>'
-  #])]
+  #[Test, Values(['<book><name>Name</name><author><name/></author></book>', '<book><author><name/></author><name>Name</name></book>', '<book><name>Name</name><author><name>Test</name></author></book>', '<book><author><name>Test</name></author><name>Name</name></book>'])]
   public function by_definition($xml) {
     $address= new XmlString($xml);
     $this->assertEquals(new Book('Name', new Author('Test')), $address->next(new BookDefinition()));
