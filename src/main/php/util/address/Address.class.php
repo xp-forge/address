@@ -1,5 +1,6 @@
 <?php namespace util\address;
 
+use IteratorAggregate, Traversable;
 use util\NoSuchElementException;
 
 /**
@@ -7,7 +8,7 @@ use util\NoSuchElementException;
  *
  * @test  xp://util.address.unittest.AddressTest
  */
-abstract class Address implements \IteratorAggregate {
+abstract class Address implements IteratorAggregate {
   private $iterator;
 
   /**
@@ -16,7 +17,7 @@ abstract class Address implements \IteratorAggregate {
    * @param  bool $rewind Whether to initially rewind the iterator
    * @return php.Iterator
    */
-  public function getIterator($rewind= false) {
+  public function getIterator($rewind= false): Traversable {
     if (null === $this->iterator) {
       $this->iterator= $this->newIterator();
       if ($rewind) {

@@ -52,7 +52,7 @@ class CreationOf implements Definition {
     $length= strlen($base);
 
     $this->next($return, '.', $iteration);
-    while (0 === strncmp($iteration->path(), $base, $length)) {
+    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
       $this->next($return, substr($iteration->path(), $length), $iteration);
     }
 
