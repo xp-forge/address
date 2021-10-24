@@ -36,4 +36,16 @@ class ObjectOfTest {
       ]))
     );
   }
+
+  #[Test, Values('bookTypes')]
+  public function child_node_and_attributes($type) {
+    $address= new XmlString('<book author="Test"><name>Name</name></book>');
+    Assert::equals(
+      new Book('Name', new Author('Test')),
+      $address->next(new ObjectOf($type, [
+        'name'    => function($iteration) { $this->name= $iteration->next(); },
+        '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
+      ]))
+    );
+  }
 }
