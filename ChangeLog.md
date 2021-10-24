@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #5: Refactor code base, dropping dependency on the *partial*
+  library
+  (@thekid)
+
 ## 2.0.0 / 2020-04-10
 
 * Implemented xp-framework/rfc#334: Drop PHP 5.6:
