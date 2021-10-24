@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #6: Add new `util.address.ObjectOf`, replacing the CreationOf
+  API, which requires objects to have a `with()` method returning an
+  InstanceCreation instance
+  (@thekid)
 * Merged PR #5: Refactor code base, dropping dependency on the *partial*
   library
   (@thekid)
