@@ -1,11 +1,11 @@
 <?php namespace util\address\unittest;
 
-use lang\partial\{Builder, Value};
-use util\Date;
+use lang\Value;
+use util\address\WithCreation;
+use util\{Date, Objects};
 
-class Item implements \lang\Value {
-  use Item\including\Builder;
-  use Item\including\Value;
+class Item implements Value {
+  use WithCreation;
 
   private $title, $description, $pubDate, $link, $guid;
 
@@ -24,5 +24,21 @@ class Item implements \lang\Value {
     $this->pubDate= $pubDate;
     $this->link= $link;
     $this->guid= $guid;
+  }
+
+  /** @return string */
+  public function hashCode() { return 'C'.Objects::hashOf((array)$this); }
+
+  /** @return string */
+  public function toString() { return nameof($this).'@'.Objects::stringOf(get_object_vars($this)); }
+
+  /**
+   * Compares this
+   *
+   * @param  var $value
+   * @return int
+   */
+  public function compareTo($value) {
+    return $value instanceof self ? Objects::compare((array)$this, (array)$value) : 1;
   }
 }

@@ -1,7 +1,5 @@
 <?php namespace util\address;
 
-use lang\partial\InstanceCreation;
-
 /**
  * Creates an object based on a given instance creation
  *
@@ -54,7 +52,7 @@ class CreationOf implements Definition {
     $length= strlen($base);
 
     $this->next($return, '.', $iteration);
-    while (0 === strncmp($iteration->path(), $base, $length)) {
+    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
       $this->next($return, substr($iteration->path(), $length), $iteration);
     }
 

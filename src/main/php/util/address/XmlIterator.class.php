@@ -1,5 +1,6 @@
 <?php namespace util\address;
 
+use Iterator, ReturnTypeWillChange;
 use io\streams\{InputStream, Seekable};
 use lang\{FunctionType, IllegalStateException};
 use text\{StreamTokenizer, StringTokenizer};
@@ -10,7 +11,7 @@ use util\collections\Pair;
  *
  * @test  xp://util.address.unittest.XmlIteratorTest
  */
-class XmlIterator implements \Iterator {
+class XmlIterator implements Iterator {
   const SEPARATOR= '/';
   private static $decode;
   private $input, $path, $valid, $node, $encoding= 'utf-8', $pairs= [];
@@ -190,7 +191,7 @@ class XmlIterator implements \Iterator {
               break;
             }
           }
-        } else {
+        } else if (null !== $token) {
           $this->pcdata(self::$decode->__invoke(iconv($this->encoding, \xp::ENCODING, $token)));
         }
       }
@@ -202,6 +203,7 @@ class XmlIterator implements \Iterator {
   }
 
   /** @return void */
+  #[ReturnTypeWillChange]
   public function rewind() {
     if (null !== $this->path) {
       $this->input->reset();
@@ -212,21 +214,25 @@ class XmlIterator implements \Iterator {
   }
 
   /** @return string */
+  #[ReturnTypeWillChange]
   public function current() {
     return $this->token->value;
   }
 
   /** @return string */
+  #[ReturnTypeWillChange]
   public function key() {
     return $this->token->key;
   }
 
   /** @return void */
+  #[ReturnTypeWillChange]
   public function next() {
     $this->token= $this->token();
   }
 
   /** @return bool */
+  #[ReturnTypeWillChange]
   public function valid() {
     return $this->valid;
   }
