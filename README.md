@@ -15,11 +15,7 @@ Example
 Given the following two value objects:
 
 ```php
-use util\address\WithCreation;
-
 class Book {
-  use WithCreation;
-
   private $name, $author;
 
   public function __construct($name, Author $author) {
@@ -29,8 +25,6 @@ class Book {
 }
 
 class Author {
-  use WithCreation;
-
   private $name;
 
   public function __construct($name) {
@@ -54,15 +48,15 @@ class Author {
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
-use util\address\{XmlStream, CreationOf};
+use util\address\{XmlStream, ObjectOf};
 
 $socket= /* ... */
 
 $address= new XmlStream($socket->in());
-$book= $address->next(new CreationOf(Book::with(), [
-  'name'   => function($val) { $this->name= $val->next(); },
-  'author' => function($val) { $this->author= $val->next(new CreationOf(Author::with(), [
-    'name'   => function($val) { $this->name= $val->next() ?: '(unknown author)'; }
+$book= $address->next(new ObjectOf(Book::class, [
+  'name'   => function($it) { $this->name= $it->next(); },
+  'author' => function($it) { $this->author= $it->next(new ObjectOf(Author::class, [
+    'name'   => function($it) { $this->name= $it->next() ?: '(unknown author)'; }
   ])); }
 ]);
 ```
@@ -73,21 +67,23 @@ Any `Address` instance can be iterated using the `foreach` statement. Using the 
 
 ```php
 use peer\http\HttpConnection;
-use util\address\{XmlStream, CreationOf};
+use util\address\{XmlStream, ObjectOf};
 
 $conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
 $stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
   ->filter(function($value, $path) { return '//channel/item' === $path; })
-  ->map(function() use($stream) { return $stream->next(new CreationOf(Item::with(), [
-    'title'       => function($val) { $this->title= $val->next(); },
-    'description' => function($val) { $this->description= $val->next(); },
-    'pubDate'     => function($val) { $this->pubDate= new Date($val->next()); },
-    'generator'   => function($val) { $this->generator= $val->next(); },
-    'link'        => function($val) { $this->link= $val->next(); },
-    'guid'        => function($val) { $this->guid= $val->next(); }
-  ])); })
+  ->map(function() use($stream) {
+    return $stream->next(new ObjectOf(Item::class, [
+      'title'       => function($it) { $this->title= $it->next(); },
+      'description' => function($it) { $this->description= $it->next(); },
+      'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
+      'generator'   => function($it) { $this->generator= $it->next(); },
+      'link'        => function($it) { $this->link= $it->next(); },
+      'guid'        => function($it) { $this->guid= $it->next(); }
+    ]));
+  })
   ->each(function($item) {
     Console::writeLine('- ', $item->title());
     Console::writeLine('  ', $item->link());
