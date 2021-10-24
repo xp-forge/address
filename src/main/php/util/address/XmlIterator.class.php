@@ -4,7 +4,6 @@ use Iterator, ReturnTypeWillChange;
 use io\streams\{InputStream, Seekable};
 use lang\{FunctionType, IllegalStateException};
 use text\{StreamTokenizer, StringTokenizer};
-use util\collections\Pair;
 
 /**
  * XML stream iterator
