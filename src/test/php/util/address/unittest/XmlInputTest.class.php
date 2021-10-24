@@ -1,10 +1,11 @@
 <?php namespace util\address\unittest;
 
+use unittest\Assert;
 use unittest\{Test, Values};
 use util\Date;
 use util\address\{CreationOf, XmlFile, XmlResource, XmlStream, XmlString};
 
-class XmlInputTest extends \unittest\TestCase {
+class XmlInputTest {
 
   /** @return var[][] */
   protected function inputs() {
@@ -35,7 +36,7 @@ class XmlInputTest extends \unittest\TestCase {
       ])); }
     ]));
 
-    $this->assertEquals(new Channel(
+    Assert::equals(new Channel(
       'xp-forge/sequence releases',
       'Latest releases on Packagist of xp-forge/sequence.',
       new Date('Mon, 03 Nov 2014 20:56:13 +0000'),

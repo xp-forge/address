@@ -2,10 +2,11 @@
 
 use io\streams\{InputStream, MemoryInputStream};
 use lang\IllegalStateException;
+use unittest\Assert;
 use unittest\{Test, Values};
 use util\address\XmlIterator;
 
-class XmlIteratorTest extends \unittest\TestCase {
+class XmlIteratorTest {
 
   /**
    * Assert iteration result
@@ -18,7 +19,7 @@ class XmlIteratorTest extends \unittest\TestCase {
     foreach ($fixture as $key => $value) {
       $actual[]= [$key => $value];
     }
-    $this->assertEquals($expected, $actual);
+    Assert::equals($expected, $actual);
   }
 
   #[Test]
