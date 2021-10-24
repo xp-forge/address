@@ -1,12 +1,9 @@
 <?php namespace util\address\unittest;
 
 use lang\Value;
-use util\address\WithCreation;
 use util\{Date, Objects};
 
 class Item implements Value {
-  use WithCreation;
-
   private $title, $description, $pubDate, $link, $guid;
 
   /**

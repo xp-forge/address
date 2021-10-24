@@ -3,7 +3,7 @@
 use unittest\Assert;
 use unittest\{Test, Values};
 use util\Date;
-use util\address\{CreationOf, XmlFile, XmlResource, XmlStream, XmlString};
+use util\address\{ObjectOf, XmlFile, XmlResource, XmlStream, XmlString};
 
 class XmlInputTest {
 
@@ -20,13 +20,13 @@ class XmlInputTest {
 
   #[Test, Values('inputs')]
   public function feed($input) {
-    $feed= $input->next(new CreationOf(Channel::with(), [
+    $feed= $input->next(new ObjectOf(Channel::class, [
       'channel/title'       => function($iteration) { $this->title= $iteration->next(); },
       'channel/description' => function($iteration) { $this->description= $iteration->next(); },
       'channel/pubDate'     => function($iteration) { $this->pubDate= new Date($iteration->next()); },
       'channel/generator'   => function($iteration) { $this->generator= $iteration->next(); },
       'channel/link'        => function($iteration) { $this->link= $iteration->next(); },
-      'channel/item'        => function($iteration) { $this->items[]= $iteration->next(new CreationOf(Item::with(), [
+      'channel/item'        => function($iteration) { $this->items[]= $iteration->next(new ObjectOf(Item::class, [
         'title'               => function($iteration) { $this->title= $iteration->next(); },
         'description'         => function($iteration) { $this->description= $iteration->next(); },
         'pubDate'             => function($iteration) { $this->pubDate= new Date($iteration->next()); },

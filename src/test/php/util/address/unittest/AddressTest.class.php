@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
-use unittest\Assert;
-use unittest\{Expect, Test};
+use unittest\{Assert, Expect, Test};
+use util\NoSuchElementException;
 use util\address\{ArrayOf, CreationOf, Definition, Enclosing, XmlString};
 
 class AddressTest {
@@ -31,7 +31,7 @@ class AddressTest {
     Assert::equals('Test', $address->next());
   }
 
-  #[Test, Expect('util.NoSuchElementException')]
+  #[Test, Expect(NoSuchElementException::class)]
   public function iteration_across_end() {
     $address= new XmlString('<doc/>');
     $address->next();

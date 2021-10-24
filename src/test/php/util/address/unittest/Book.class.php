@@ -2,11 +2,8 @@
 
 use lang\Value;
 use util\Objects;
-use util\address\WithCreation;
 
 class Book implements Value {
-  use WithCreation;
-
   private $name, $author;
 
   /**

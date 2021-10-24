@@ -1,8 +1,7 @@
 <?php namespace util\address\unittest;
 
-use unittest\Assert;
-use unittest\Test;
-use util\address\{ArrayOf, CreationOf, Enclosing, XmlString};
+use unittest\{Assert, Test};
+use util\address\{ArrayOf, ObjectOf, Enclosing, XmlString};
 
 class ArrayOfTest {
 
@@ -29,7 +28,7 @@ class ArrayOfTest {
     $address= new XmlString('<books><book>Book #1</book><book>Book #2</book></books>');
     Assert::equals(
       [new Book('Book #1'), new Book('Book #2')],
-      $address->next(new Enclosing('/'))->next(new ArrayOf(new CreationOf('util.address.unittest.Book', [
+      $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
         '.' => function($iteration) { $this->name= $iteration->next(); }
       ])))
     );
@@ -40,7 +39,7 @@ class ArrayOfTest {
     $address= new XmlString('<books><book author="Test">Book #1</book><book>Book #2</book></books>');
     Assert::equals(
       [new Book('Book #1', new Author('Test')), new Book('Book #2')],
-      $address->next(new Enclosing('/'))->next(new ArrayOf(new CreationOf('util.address.unittest.Book', [
+      $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
         '.'       => function($iteration) { $this->name= $iteration->next(); },
         '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
       ])))

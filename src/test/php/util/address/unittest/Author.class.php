@@ -1,11 +1,8 @@
 <?php namespace util\address\unittest;
 
 use lang\Value;
-use util\address\WithCreation;
 
 class Author implements Value {
-  use WithCreation;
-
   private $name;
 
   /**
