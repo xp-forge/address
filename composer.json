@@ -6,14 +6,13 @@
   "description" : "Creates objects from XML input streams while parsing them.",
   "keywords": ["module", "xp"],
   "require" : {
-    "xp-framework/core": "^10.0 | ^9.0 | ^8.0 | ^7.0",
+    "xp-framework/core": "^11.0 | ^10.0",
     "xp-framework/reflection": "^1.0",
-    "xp-framework/tokenize": "^9.0 | ^8.0 | ^7.0",
-    "xp-framework/collections": "^10.0 | ^9.0 | ^8.0 | ^7.0",
+    "xp-framework/tokenize": "^9.0 | ^8.1",
     "php" : ">=7.0.0"
   },
   "require-dev" : {
-    "xp-framework/unittest": "^11.0 | ^10.0"
+    "xp-framework/unittest": "^11.0 | ^10.1"
   },
   "autoload" : {
     "files" : ["src/main/php/autoload.php"]
