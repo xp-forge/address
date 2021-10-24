@@ -21,7 +21,7 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new ObjectOf($type, [
-        '.' => function($iteration) { $this->name= $iteration->next(); }
+        '.' => function($it) { $this->name= $it->next(); }
       ]))
     );
   }
@@ -32,7 +32,7 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new ObjectOf($type, [
-        'name'    => function($iteration) { $this->name= $iteration->next(); }
+        'name'    => function($it) { $this->name= $it->next(); }
       ]))
     );
   }
@@ -43,8 +43,8 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name', new Author('Test')),
       $address->next(new ObjectOf($type, [
-        'name'    => function($iteration) { $this->name= $iteration->next(); },
-        '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
+        'name'    => function($it) { $this->name= $it->next(); },
+        '@author' => function($it) { $this->author= new Author($it->next()); }
       ]))
     );
   }
@@ -53,9 +53,9 @@ class ObjectOfTest {
   public function child_node_ordering($xml) {
     $address= new XmlString($xml);
     Assert::equals(new Book('Name', new Author('Test')), $address->next(new ObjectOf(Book::class, [
-      'name'   => function($iteration) { $this->name= $iteration->next(); },
-      'author' => function($iteration) { $this->author= $iteration->next(new ObjectOf(Author::class, [
-        'name'   => function($iteration) { $this->name= $iteration->next() ?? 'Test'; }
+      'name'   => function($it) { $this->name= $it->next(); },
+      'author' => function($it) { $this->author= $it->next(new ObjectOf(Author::class, [
+        'name'   => function($it) { $this->name= $it->next() ?? 'Test'; }
       ])); }
     ])));
   }
