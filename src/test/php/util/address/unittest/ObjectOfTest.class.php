@@ -48,4 +48,15 @@ class ObjectOfTest {
       ]))
     );
   }
+
+  #[Test, Values(['<book><name>Name</name><author><name/></author></book>', '<book><author><name/></author><name>Name</name></book>', '<book><name>Name</name><author><name>Test</name></author></book>', '<book><author><name>Test</name></author><name>Name</name></book>'])]
+  public function child_node_ordering($xml) {
+    $address= new XmlString($xml);
+    Assert::equals(new Book('Name', new Author('Test')), $address->next(new ObjectOf(Book::class, [
+      'name'   => function($iteration) { $this->name= $iteration->next(); },
+      'author' => function($iteration) { $this->author= $iteration->next(new ObjectOf(Author::class, [
+        'name'   => function($iteration) { $this->name= $iteration->next() ?? 'Test'; }
+      ])); }
+    ])));
+  }
 }
