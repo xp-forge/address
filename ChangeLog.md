@@ -3,8 +3,11 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
-## 4.0.0 / 2021-10-24
+## 3.0.0 / 2021-10-24
 
+* Removed dependency on `xp-framework/collections` library, add a `Pair`
+  class of our own
+  (@thekid)
 * Made library compatible with XP 11, dropped XP 9 (and lower versions)
   (@thekid)
 * Merged PR #6: Add new `util.address.ObjectOf`. It replaces the old
