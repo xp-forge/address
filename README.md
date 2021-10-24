@@ -14,11 +14,10 @@ Example
 Given the following two value objects:
 
 ```php
-use lang\partial\{WithCreation, ValueObject};
+use util\address\WithCreation;
 
 class Book {
-  use Book\including\WithCreation;
-  use Book\including\ValueObject;
+  use WithCreation;
 
   private $name, $author;
 
@@ -29,8 +28,7 @@ class Book {
 }
 
 class Author {
-  use Author\including\WithCreation;
-  use Author\including\ValueObject;
+  use WithCreation;
 
   private $name;
 

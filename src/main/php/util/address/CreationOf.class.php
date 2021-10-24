@@ -1,7 +1,5 @@
 <?php namespace util\address;
 
-use lang\partial\InstanceCreation;
-
 /**
  * Creates an object based on a given instance creation
  *
