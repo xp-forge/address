@@ -40,12 +40,24 @@ class MapOfTest {
   }
 
   #[Test]
-  public function star() {
+  public function any_child() {
     $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new MapOf([
         '*' => function($it, $node) { return [$node => $it->next()]; }
+      ]))
+    );
+  }
+
+  #[Test]
+  public function any_attribute() {
+    $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
+    Assert::equals(
+      ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
+      $address->next(new MapOf([
+        '@*' => function($it, $node) { return [$node => $it->next()]; },
+        '.'  => function($it) { return ['name' => $it->next()]; }
       ]))
     );
   }

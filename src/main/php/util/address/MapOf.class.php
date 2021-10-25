@@ -27,8 +27,12 @@ class MapOf implements Definition {
    * @return [:var]
    */
   protected function next($path, $iteration) {
-    if ($address= $this->addresses[$path] ?? ('.' === $path ? null : $this->addresses['*'] ?? null)) {
+    if ($address= $this->addresses[$path] ?? null) {
       return $address($iteration, $path);
+    } else if ('.' !== $path[0] && $address= $this->addresses['*'] ?? null) {
+      return $address($iteration, $path);
+    } else if ('@' === $path[0] && $address= $this->addresses['@*'] ?? null) {
+      return $address($iteration, substr($path, 1));
     }
 
     $iteration->next();
