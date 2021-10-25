@@ -9,7 +9,7 @@ use lang\Reflection;
  * @test  util.address.unittest.RecordOfTest
  */
 class RecordOf implements Definition {
-  private $type, $addresses;
+  private $constructor, $addresses;
 
   /**
    * Creates a new object definition
@@ -18,7 +18,7 @@ class RecordOf implements Definition {
    * @param  [:function(util.address.Iteration): void] $addresses
    */
   public function __construct($type, $addresses) {
-    $this->type= Reflection::of($type);
+    $this->constructor= Reflection::of($type)->constructor();
     $this->addresses= $addresses;
   }
 
@@ -56,6 +56,6 @@ class RecordOf implements Definition {
       $this->next($named, substr($iteration->path(), $length), $iteration);
     }
 
-    return $this->type->constructor()->newInstance($named);
+    return $this->constructor->newInstance($named);
   }
 }
