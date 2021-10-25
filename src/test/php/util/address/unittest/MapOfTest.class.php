@@ -56,7 +56,7 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
       $address->next(new MapOf([
-        '@*' => function($it, $node) { return [$node => $it->next()]; },
+        '@*' => function($it, $attr) { return [$attr => $it->next()]; },
         '.'  => function($it) { return ['name' => $it->next()]; }
       ]))
     );
