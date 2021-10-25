@@ -30,32 +30,37 @@ class RecordOf implements Definition {
    * @param  util.address.Iteration $iteration
    * @return void
    */
-  protected function next(&$named, $path, $iteration) {
-    if (isset($this->addresses[$path])) {
-      foreach ($this->addresses[$path]($iteration) as $name => $value) {
-        $named[$name]= $value;
-      }
-    } else {
-      $iteration->next();
-    }
+  private function next(&$named, $path, $iteration) {
+    $address= $this->addresses[$path]
+      ?? $this->addresses['*']
+      ?? ('@' === $path[0] ? $this->addresses['@*'] ?? null : null)
+    ;
+
+    $address ? $address($named, $iteration, $path) : $iteration->next();
   }
 
   /**
    * Creates a value from a given iteration
    *
    * @param  util.address.Iteration $iteration
-   * @return object
+   * @return [:var]
    */
   public function create($iteration) {
-    $named= [];
     $base= $iteration->path().'/';
-    $length= strlen($base);
+    $offset= strlen($base);
+    $named= [];
 
-    $this->next($named, '.', $iteration);
-    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
-      $this->next($named, substr($iteration->path(), $length), $iteration);
+    // Select current node
+    if ($address= $this->addresses['.'] ?? null) {
+      $address($named, $iteration, '.');
+    } else {
+      $iteration->next();
     }
 
+    // Select attributes and children
+    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $offset)) {
+      $this->next($named, substr($iteration->path(), $offset), $iteration);
+    }
     return $this->constructor->newInstance($named);
   }
 }

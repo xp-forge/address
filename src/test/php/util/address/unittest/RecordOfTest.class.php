@@ -21,7 +21,7 @@ class RecordOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new RecordOf($type, [
-        '.' => function($it) { return ['name' => $it->next()]; }
+        '.' => function(&$arguments, $it) { $arguments['name']= $it->next(); }
       ]))
     );
   }
@@ -32,7 +32,7 @@ class RecordOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new RecordOf($type, [
-        'name'    => function($it) { return ['name' => $it->next()]; }
+        'name'    => function(&$arguments, $it) { $arguments['name']= $it->next(); }
       ]))
     );
   }
@@ -43,8 +43,8 @@ class RecordOfTest {
     Assert::equals(
       new Book('Name', new Author('Test')),
       $address->next(new RecordOf($type, [
-        'name'    => function($it) { return ['name' => $it->next()]; },
-        '@author' => function($it) { return ['author' => new Author($it->next())]; }
+        'name'    => function(&$arguments, $it) { $arguments['name']= $it->next(); },
+        '@author' => function(&$arguments, $it) { $arguments['author']= new Author($it->next()); }
       ]))
     );
   }
