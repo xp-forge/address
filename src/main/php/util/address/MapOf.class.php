@@ -30,6 +30,7 @@ class MapOf implements Definition {
     if ($address= $this->addresses[$path] ?? ('.' === $path ? null : $this->addresses['*'] ?? null)) {
       return $address($iteration, $path);
     }
+
     $iteration->next();
     return [];
   }
@@ -41,7 +42,6 @@ class MapOf implements Definition {
    * @return object
    */
   public function create($iteration) {
-    $map= [];
     $base= $iteration->path().'/';
     $length= strlen($base);
 
