@@ -54,7 +54,7 @@ class MapOfTest {
   public function any_attribute() {
     $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
     Assert::equals(
-      ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
+      ['name' => 'Name', '@asin' => 'B01N1UPZ10', '@author' => 'Test'],
       $address->next(new MapOf([
         '@*' => function(&$self, $it, $attr) { $self[$attr]= $it->next(); },
         '.'  => function(&$self, $it) { $self['name']= $it->next(); }

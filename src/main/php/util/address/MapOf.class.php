@@ -28,20 +28,19 @@ class MapOf implements Definition {
    * @return void
    */
   private function next(&$result, $path, $iteration) {
-    if ($address= $this->addresses[$path] ?? $this->addresses['*'] ?? null) {
-      $address($result, $iteration, $path);
-    } else if ('@' === $path[0] && $address= $this->addresses['@*'] ?? null) {
-      $address($result, $iteration, substr($path, 1));
-    } else {
-      $iteration->next();
-    }
+    $address= $this->addresses[$path]
+      ?? $this->addresses['*']
+      ?? ('@' === $path[0] ? $this->addresses['@*'] ?? null : null)
+    ;
+
+    $address ? $address($result, $iteration, $path) : $iteration->next();
   }
 
   /**
    * Creates a value from a given iteration
    *
    * @param  util.address.Iteration $iteration
-   * @return object
+   * @return [:var]
    */
   public function create($iteration) {
     $base= $iteration->path().'/';
