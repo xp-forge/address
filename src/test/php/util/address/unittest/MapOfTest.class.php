@@ -11,7 +11,7 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new MapOf([
-        '.' => function($it) { return ['name' => $it->next()]; }
+        '.' => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
   }
@@ -22,7 +22,7 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new MapOf([
-        'name'    => function($it) { return ['name' => $it->next()]; }
+        'name'    => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
   }
@@ -33,8 +33,8 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new MapOf([
-        '@author' => function($it) { return ['author' => $it->next()]; },
-        'name'    => function($it) { return ['name' => $it->next()]; }
+        '@author' => function(&$self, $it) { $self['author']= $it->next(); },
+        'name'    => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
   }
@@ -45,7 +45,7 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new MapOf([
-        '*' => function($it, $node) { return [$node => $it->next()]; }
+        '*' => function(&$self, $it, $node) { $self[$node]= $it->next(); }
       ]))
     );
   }
@@ -56,8 +56,8 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
       $address->next(new MapOf([
-        '@*' => function($it, $attr) { return [$attr => $it->next()]; },
-        '.'  => function($it) { return ['name' => $it->next()]; }
+        '@*' => function(&$self, $it, $attr) { $self[$attr]= $it->next(); },
+        '.'  => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
   }
