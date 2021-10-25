@@ -8,7 +8,7 @@ use lang\Reflection;
  * @test  util.address.unittest.MapOfTest
  */
 class MapOf implements Definition {
-  private $constructor, $addresses;
+  private $addresses;
 
   /**
    * Creates a new map definition
@@ -28,8 +28,8 @@ class MapOf implements Definition {
    * @return void
    */
   protected function next(&$map, $path, $iteration) {
-    if (isset($this->addresses[$path])) {
-      foreach ($this->addresses[$path]($iteration) as $name => $value) {
+    if ($address= $this->addresses[$path] ?? ('.' === $path ? null : $this->addresses['*'] ?? null)) {
+      foreach ($address($iteration, $path) as $name => $value) {
         $map[$name]= $value;
       }
     } else {

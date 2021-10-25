@@ -38,4 +38,15 @@ class MapOfTest {
       ]))
     );
   }
+
+  #[Test]
+  public function star() {
+    $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
+    Assert::equals(
+      ['name' => 'Name', 'author' => 'Test'],
+      $address->next(new MapOf([
+        '*' => function($it, $node) { return [$node => $it->next()]; }
+      ]))
+    );
+  }
 }
