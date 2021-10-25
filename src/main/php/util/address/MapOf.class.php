@@ -20,7 +20,8 @@ class MapOf implements Definition {
   }
 
   /**
-   * Address a given path. If nothing is defined, discard value silently.
+   * Address a given path. If nothing is defined, discard value silently and
+   * return an empty map.
    *
    * @param  string $path
    * @param  util.address.Iteration $iteration
@@ -47,11 +48,11 @@ class MapOf implements Definition {
    */
   public function create($iteration) {
     $base= $iteration->path().'/';
-    $length= strlen($base);
+    $offset= strlen($base);
 
     $map= $this->next('.', $iteration);
-    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
-      $map+= $this->next(substr($iteration->path(), $length), $iteration);
+    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $offset)) {
+      $map+= $this->next(substr($iteration->path(), $offset), $iteration);
     }
 
     return $map;
