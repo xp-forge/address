@@ -32,7 +32,7 @@ class RecordOf implements Definition {
    */
   protected function next(&$named, $path, $iteration) {
     if (isset($this->addresses[$path])) {
-      foreach ($this->addresses[$path]->__invoke($iteration) as $name => $value) {
+      foreach ($this->addresses[$path]($iteration) as $name => $value) {
         $named[$name]= $value;
       }
     } else {
