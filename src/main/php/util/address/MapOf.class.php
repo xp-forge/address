@@ -22,19 +22,16 @@ class MapOf implements Definition {
   /**
    * Address a given path. If nothing is defined, discard value silently.
    *
-   * @param  [:var] $map
    * @param  string $path
    * @param  util.address.Iteration $iteration
-   * @return void
+   * @return [:var]
    */
-  protected function next(&$map, $path, $iteration) {
+  protected function next($path, $iteration) {
     if ($address= $this->addresses[$path] ?? ('.' === $path ? null : $this->addresses['*'] ?? null)) {
-      foreach ($address($iteration, $path) as $name => $value) {
-        $map[$name]= $value;
-      }
-    } else {
-      $iteration->next();
+      return $address($iteration, $path);
     }
+    $iteration->next();
+    return [];
   }
 
   /**
@@ -48,9 +45,9 @@ class MapOf implements Definition {
     $base= $iteration->path().'/';
     $length= strlen($base);
 
-    $this->next($map, '.', $iteration);
+    $map= $this->next('.', $iteration);
     while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
-      $this->next($map, substr($iteration->path(), $length), $iteration);
+      $map+= $this->next(substr($iteration->path(), $length), $iteration);
     }
 
     return $map;
