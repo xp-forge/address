@@ -54,9 +54,9 @@ $socket= /* ... */
 
 $address= new XmlStream($socket->in());
 $book= $address->next(new ObjectOf(Book::class, [
-  'name'   => function($it) { $this->name= $it->next(); },
-  'author' => function($it) { $this->author= $it->next(new ObjectOf(Author::class, [
-    'name'   => function($it) { $this->name= $it->next() ?: '(unknown author)'; }
+  'name'   => function($self, $it) { $self->name= $it->next(); },
+  'author' => function($self, $it) { $self->author= $it->next(new ObjectOf(Author::class, [
+    'name'   => function($self, $it) { $self->name= $it->next() ?: '(unknown author)'; }
   ])); }
 ]);
 ```
@@ -76,12 +76,12 @@ Sequence::of($stream)
   ->filter(function($value, $path) { return '//channel/item' === $path; })
   ->map(function() use($stream) {
     return $stream->next(new ObjectOf(Item::class, [
-      'title'       => function($it) { $this->title= $it->next(); },
-      'description' => function($it) { $this->description= $it->next(); },
-      'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
-      'generator'   => function($it) { $this->generator= $it->next(); },
-      'link'        => function($it) { $this->link= $it->next(); },
-      'guid'        => function($it) { $this->guid= $it->next(); }
+      'title'       => function($self, $it) { $self->title= $it->next(); },
+      'description' => function($self, $it) { $self->description= $it->next(); },
+      'pubDate'     => function($self, $it) { $self->pubDate= new Date($it->next()); },
+      'generator'   => function($self, $it) { $self->generator= $it->next(); },
+      'link'        => function($self, $it) { $self->link= $it->next(); },
+      'guid'        => function($self, $it) { $self->guid= $it->next(); }
     ]));
   })
   ->each(function($item) {
