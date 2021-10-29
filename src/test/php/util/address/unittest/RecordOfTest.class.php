@@ -48,4 +48,28 @@ class RecordOfTest {
       ]))
     );
   }
+
+  #[Test, Values('bookTypes')]
+  public function any_child($type) {
+    $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
+    Assert::equals(
+      new Book('Name', new Author('Test')),
+      $address->next(new RecordOf($type, [
+        'author' => function(&$arguments, $it) { $arguments['author']= new Author($it->next()); },
+        '*'      => function(&$arguments, $it, $name) { $arguments[$name]= $it->next(); }
+      ]))
+    );
+  }
+
+  #[Test, Values('bookTypes')]
+  public function any_attribute($type) {
+    $address= new XmlString('<book name="Name"><author>Test</author></book>');
+    Assert::equals(
+      new Book('Name', new Author('Test')),
+      $address->next(new RecordOf($type, [
+        'author' => function(&$arguments, $it) { $arguments['author']= new Author($it->next()); },
+        '@*'     => function(&$arguments, $it, $name) { $arguments[$name]= $it->next(); }
+      ]))
+    );
+  }
 }
