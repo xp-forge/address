@@ -1,8 +1,7 @@
 <?php namespace util\address\unittest;
 
 use lang\XPClass;
-use unittest\Assert;
-use unittest\{Test, Values};
+use unittest\{Assert, Test, Values};
 use util\address\{RecordOf, XmlString};
 
 class RecordOfTest {
