@@ -67,9 +67,12 @@ Any `Address` instance can be iterated using the `foreach` statement. Using the 
 
 ```php
 use peer\http\HttpConnection;
+use util\data\Sequence;
+use util\Date;
 use util\address\{XmlStream, ObjectOf};
+use util\cmd\Console;
 
-$conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
+$conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
