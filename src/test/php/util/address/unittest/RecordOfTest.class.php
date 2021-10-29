@@ -10,6 +10,7 @@ class RecordOfTest {
   /** @return var[][] */
   protected function bookTypes() {
     return [
+      [Book::class],
       ['util.address.unittest.Book'],
       [XPClass::forName('util.address.unittest.Book')],
     ];
