@@ -21,7 +21,7 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new ObjectOf($type, [
-        '.' => function($it) { $this->name= $it->next(); }
+        '.' => function($self, $it) { $self->name= $it->next(); }
       ]))
     );
   }
@@ -32,7 +32,7 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name'),
       $address->next(new ObjectOf($type, [
-        'name'    => function($it) { $this->name= $it->next(); }
+        'name'    => function($self, $it) { $self->name= $it->next(); }
       ]))
     );
   }
@@ -43,8 +43,8 @@ class ObjectOfTest {
     Assert::equals(
       new Book('Name', new Author('Test')),
       $address->next(new ObjectOf($type, [
-        'name'    => function($it) { $this->name= $it->next(); },
-        '@author' => function($it) { $this->author= new Author($it->next()); }
+        'name'    => function($self, $it) { $self->name= $it->next(); },
+        '@author' => function($self, $it) { $self->author= new Author($it->next()); }
       ]))
     );
   }
@@ -53,5 +53,14 @@ class ObjectOfTest {
   public function child_node_ordering($xml) {
     $address= new XmlString($xml);
     Assert::equals(new Book('Name', new Author('Test')), $address->next(new BookDefinition()));
+  }
+
+  #[Test, Values('bookTypes')]
+  public function deprecated_form($type) {
+    $definition= new ObjectOf($type, ['.' => function($it) { $this->name= $it->next(); }]);
+    \xp::gc();
+
+    $address= new XmlString('<book>Name</book>');
+    Assert::equals(new Book('Name'), $address->next($definition));
   }
 }

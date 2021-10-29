@@ -14,11 +14,23 @@ class ObjectOf implements Definition {
    * Creates a new object definition
    *
    * @param  lang.XPClass|string $type
-   * @param  [:function(util.address.Iteration): void] $addresses
+   * @param  [:function(object, util.address.Iteration): void] $addresses
    */
   public function __construct($type, $addresses) {
     $this->type= Reflection::of($type);
-    $this->addresses= $addresses;
+    $this->addresses= [];
+
+    foreach ($addresses as $path => $address) {
+      $t= typeof($address);
+      if (1 === sizeof($t->signature())) {
+        trigger_error('Use function(object, util.address.Iteration) instead!', E_USER_DEPRECATED);
+        $this->addresses[$path]= function($instance, $iteration) use($address) {
+          $address->bindTo($instance, $instance)->__invoke($iteration);
+        };
+      } else {
+        $this->addresses[$path]= $address->bindTo(null, $this->type->literal());
+      }
+    }
   }
 
   /**
@@ -30,8 +42,8 @@ class ObjectOf implements Definition {
    * @return void
    */
   protected function next($instance, $path, $iteration) {
-    if (isset($this->addresses[$path])) {
-      $this->addresses[$path]->bindTo($instance, $instance)->__invoke($iteration);
+    if ($address= $this->addresses[$path] ?? null) {
+      $address($instance, $iteration);
     } else {
       $iteration->next();
     }
