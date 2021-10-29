@@ -42,11 +42,14 @@ class ObjectOf implements Definition {
    * @return void
    */
   protected function next($instance, $path, $iteration) {
-    if ($address= $this->addresses[$path] ?? null) {
-      $address($instance, $iteration);
+    if ('@' === $path[0]) {
+      $address= $this->addresses[$path] ?? $this->addresses['@*'] ?? null;
+      $path= substr($path, 1);
     } else {
-      $iteration->next();
+      $address= $this->addresses[$path] ?? $this->addresses['*'] ?? null;
     }
+
+    $address ? $address($instance, $iteration, $path) : $iteration->next();
   }
 
   /**
@@ -56,12 +59,17 @@ class ObjectOf implements Definition {
    * @return object
    */
   public function create($iteration) {
-    $return= $this->type->initializer(null)->newInstance();
-
     $base= $iteration->path().'/';
     $length= strlen($base);
+    $return= $this->type->initializer(null)->newInstance();
 
-    $this->next($return, '.', $iteration);
+    // Select current node
+    if ($address= $this->addresses['.'] ?? null) {
+      $address($return, $iteration, '.');
+    } else {
+      $iteration->next();
+    }
+
     while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
       $this->next($return, substr($iteration->path(), $length), $iteration);
     }
