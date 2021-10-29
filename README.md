@@ -76,20 +76,15 @@ $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
-  ->filter(function($value, $path) { return '//channel/item' === $path; })
-  ->map(function() use($stream) {
-    return $stream->next(new ObjectOf(Item::class, [
-      'title'       => function($self, $it) { $self->title= $it->next(); },
-      'description' => function($self, $it) { $self->description= $it->next(); },
-      'pubDate'     => function($self, $it) { $self->pubDate= new Date($it->next()); },
-      'generator'   => function($self, $it) { $self->generator= $it->next(); },
-      'link'        => function($self, $it) { $self->link= $it->next(); },
-      'guid'        => function($self, $it) { $self->guid= $it->next(); }
-    ]));
-  })
-  ->each(function($item) {
-    Console::writeLine('- ', $item->title());
-    Console::writeLine('  ', $item->link());
-  })
+  ->filter(fn($value, $path) => '//channel/item' === $path)
+  ->map(fn() => $stream->next(new ObjectOf(Item::class, [
+    'title'       => fn($self, $it) => $self->title= $it->next(),
+    'description' => fn($self, $it) => $self->description= $it->next(),
+    'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
+    'generator'   => fn($self, $it) => $self->generator= $it->next(),
+    'link'        => fn($self, $it) => $self->link= $it->next(),
+    'guid'        => fn($self, $it) => $self->guid= $it->next(),
+  ])))
+  ->each(fn($item) => Console::writeLine('- ', $item->title, "\n  ", $item->link))
 ;
 ```
