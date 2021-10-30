@@ -13,6 +13,12 @@ class ArrayOfTest {
 
   #[Test]
   public function array_definition_with_base() {
+    $address= new XmlString('<books><book>Book #1</book><book>Book #2</book></books>');
+    Assert::equals(['Book #1', 'Book #2'], $address->next(new Enclosing('/'))->next(new ArrayOf(null, ['book'])));
+  }
+
+  #[Test]
+  public function array_definition_with_multiple_bases() {
     $address= new XmlString('<tests><unit>a</unit><unit>b</unit><integration>c</integration></tests>');
     Assert::equals(['a', 'b', 'c'], $address->next(new Enclosing('/'))->next(new ArrayOf(null, ['unit', 'integration'])));
   }
