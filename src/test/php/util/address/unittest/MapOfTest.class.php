@@ -61,4 +61,16 @@ class MapOfTest {
       ]))
     );
   }
+
+  #[Test]
+  public function can_initialize() {
+    $address= new XmlString('<book asin="B01N1UPZ10">Name</book>');
+    Assert::equals(
+      ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
+      $address->next(new MapOf([
+        '.'  => function(&$self, $it) { $self= ['name' => $it->next(), 'authors' => []]; },
+        '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
+      ]))
+    );
+  }
 }
