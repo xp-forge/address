@@ -61,6 +61,60 @@ $book= $address->next(new ObjectOf(Book::class, [
 ]);
 ```
 
+Creating values
+---------------
+Definitions are used to create structured data from the XML input. Here are all the implementations:
+
+### ObjectOf
+
+Creates objects without invoking their constructors. Modifies the members directly, including non-public ones.
+
+```php
+use util\address\{XmlString, ObjectOf};
+
+class Book {
+  public $isbn, $name;
+}
+
+$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $xml->next(new ObjectOf(Book::class, [
+  '@isbn' => function($self, $it) { $self->isbn= $it->next(); },
+  'name'  => function($self, $it) { $self->name= $it->next(); },
+]);
+```
+
+### MapOf
+
+Much like *ObjectOf*, but creates a map instead of an object.
+
+```php
+use util\address\{XmlString, MapOf};
+
+$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $xml->next(new MapOf(
+  '@isbn' => function(&$self, $it) { $self['isbn']= $it->next(); },
+  'name'  => function(&$self, $it) { $self['name']= $it->next(); },
+]);
+```
+
+### RecordOf
+
+Works with *record* classes, which are defined as having an all-arg constructor. Modifies the named constructor arguments.
+
+```php
+use util\address\{XmlString, RecordOf};
+
+class Book {
+  public function __construct(private $isbn, private $name) { }
+}
+
+$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $xml->next(new RecordOf(Book::class, [
+  '@isbn' => function(&$args, $it) { $args['isbn']= $it->next(); },
+  'name'  => function(&$args, $it) { $args['name']= $it->next(); },
+]);
+```
+
 Iteration
 ---------
 Any `Address` instance can be iterated using the `foreach` statement. Using the [data sequences library](https://github.com/xp-forge/sequence) in combination with calling the `next()` method here's a way to parse an RSS feed's items:
