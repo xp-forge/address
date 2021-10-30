@@ -91,7 +91,7 @@ Much like *ObjectOf*, but creates a map instead of an object.
 use util\address\{XmlString, MapOf};
 
 $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
-$book= $xml->next(new MapOf(
+$book= $xml->next(new MapOf([
   '@isbn' => function(&$self, $it) { $self['isbn']= $it->next(); },
   'name'  => function(&$self, $it) { $self['name']= $it->next(); },
 ]);
