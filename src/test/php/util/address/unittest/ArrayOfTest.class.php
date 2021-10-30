@@ -35,7 +35,7 @@ class ArrayOfTest {
     Assert::equals(
       [new Book('Book #1'), new Book('Book #2')],
       $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
-        '.' => function($iteration) { $this->name= $iteration->next(); }
+        '.' => function($self, $it) { $self->name= $it->next(); }
       ])))
     );
   }
@@ -46,8 +46,8 @@ class ArrayOfTest {
     Assert::equals(
       [new Book('Book #1', new Author('Test')), new Book('Book #2')],
       $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
-        '.'       => function($iteration) { $this->name= $iteration->next(); },
-        '@author' => function($iteration) { $this->author= new Author($iteration->next()); }
+        '.'       => function($self, $it) { $self->name= $it->next(); },
+        '@author' => function($self, $it) { $self->author= new Author($it->next()); }
       ])))
     );
   }

@@ -54,9 +54,9 @@ $socket= /* ... */
 
 $address= new XmlStream($socket->in());
 $book= $address->next(new ObjectOf(Book::class, [
-  'name'   => function($it) { $this->name= $it->next(); },
-  'author' => function($it) { $this->author= $it->next(new ObjectOf(Author::class, [
-    'name'   => function($it) { $this->name= $it->next() ?: '(unknown author)'; }
+  'name'   => function($self, $it) { $self->name= $it->next(); },
+  'author' => function($self, $it) { $self->author= $it->next(new ObjectOf(Author::class, [
+    'name'   => function($self, $it) { $self->name= $it->next() ?: '(unknown author)'; }
   ])); }
 ]);
 ```
@@ -67,26 +67,24 @@ Any `Address` instance can be iterated using the `foreach` statement. Using the 
 
 ```php
 use peer\http\HttpConnection;
+use util\data\Sequence;
+use util\Date;
 use util\address\{XmlStream, ObjectOf};
+use util\cmd\Console;
 
-$conn= new HttpConnection('http://www.tagesschau.de/xml/rss2');
+$conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
-  ->filter(function($value, $path) { return '//channel/item' === $path; })
-  ->map(function() use($stream) {
-    return $stream->next(new ObjectOf(Item::class, [
-      'title'       => function($it) { $this->title= $it->next(); },
-      'description' => function($it) { $this->description= $it->next(); },
-      'pubDate'     => function($it) { $this->pubDate= new Date($it->next()); },
-      'generator'   => function($it) { $this->generator= $it->next(); },
-      'link'        => function($it) { $this->link= $it->next(); },
-      'guid'        => function($it) { $this->guid= $it->next(); }
-    ]));
-  })
-  ->each(function($item) {
-    Console::writeLine('- ', $item->title());
-    Console::writeLine('  ', $item->link());
-  })
+  ->filter(fn($value, $path) => '//channel/item' === $path)
+  ->map(fn() => $stream->next(new ObjectOf(Item::class, [
+    'title'       => fn($self, $it) => $self->title= $it->next(),
+    'description' => fn($self, $it) => $self->description= $it->next(),
+    'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
+    'generator'   => fn($self, $it) => $self->generator= $it->next(),
+    'link'        => fn($self, $it) => $self->link= $it->next(),
+    'guid'        => fn($self, $it) => $self->guid= $it->next(),
+  ])))
+  ->each(fn($item) => Console::writeLine('- ', $item->title, "\n  ", $item->link))
 ;
 ```

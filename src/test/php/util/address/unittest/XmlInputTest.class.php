@@ -21,18 +21,18 @@ class XmlInputTest {
   #[Test, Values('inputs')]
   public function feed($input) {
     $feed= $input->next(new ObjectOf(Channel::class, [
-      'channel/title'       => function($iteration) { $this->title= $iteration->next(); },
-      'channel/description' => function($iteration) { $this->description= $iteration->next(); },
-      'channel/pubDate'     => function($iteration) { $this->pubDate= new Date($iteration->next()); },
-      'channel/generator'   => function($iteration) { $this->generator= $iteration->next(); },
-      'channel/link'        => function($iteration) { $this->link= $iteration->next(); },
-      'channel/item'        => function($iteration) { $this->items[]= $iteration->next(new ObjectOf(Item::class, [
-        'title'               => function($iteration) { $this->title= $iteration->next(); },
-        'description'         => function($iteration) { $this->description= $iteration->next(); },
-        'pubDate'             => function($iteration) { $this->pubDate= new Date($iteration->next()); },
-        'generator'           => function($iteration) { $this->generator= $iteration->next(); },
-        'link'                => function($iteration) { $this->link= $iteration->next(); },
-        'guid'                => function($iteration) { $this->guid= $iteration->next(); }
+      'channel/title'       => function($self, $it) { $self->title= $it->next(); },
+      'channel/description' => function($self, $it) { $self->description= $it->next(); },
+      'channel/pubDate'     => function($self, $it) { $self->pubDate= new Date($it->next()); },
+      'channel/generator'   => function($self, $it) { $self->generator= $it->next(); },
+      'channel/link'        => function($self, $it) { $self->link= $it->next(); },
+      'channel/item'        => function($self, $it) { $self->items[]= $it->next(new ObjectOf(Item::class, [
+        'title'               => function($self, $it) { $self->title= $it->next(); },
+        'description'         => function($self, $it) { $self->description= $it->next(); },
+        'pubDate'             => function($self, $it) { $self->pubDate= new Date($it->next()); },
+        'generator'           => function($self, $it) { $self->generator= $it->next(); },
+        'link'                => function($self, $it) { $self->link= $it->next(); },
+        'guid'                => function($self, $it) { $self->guid= $it->next(); }
       ])); }
     ]));
 
