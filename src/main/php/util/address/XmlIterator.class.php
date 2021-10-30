@@ -189,7 +189,7 @@ class XmlIterator implements Iterator {
     }
 
     $pair= array_shift($this->pairs);
-    // echo "<<< ", $pair ? $pair->toString() : "(null)", "\n";
+    // echo "<<< ", $pair ? "Pair<{$pair->key}= {$pair->value}>" : "(null)", "\n";
     return $pair;
   }
 
