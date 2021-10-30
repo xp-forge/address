@@ -3,6 +3,18 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #9: Refactor `util.address.ObjectOf` to accept functions
+  typed `function(object, util.address.Iteration): void` instead of
+  binding *$this* to the target object instance.
+  (@thekid)
+* Merged PR #8: Add `util.address.MapOf` to create maps. Comparable
+  to *RecordOf* in all aspects except the return type.
+  (@thekid)
+* Merged PR #7: Add `util.address.RecordOf` for record classes. While
+  the *ObjectOf* class modifies members directly, this class modifies
+  named constructor arguments.
+  (@thekid)
+
 ## 3.0.0 / 2021-10-24
 
 * Removed dependency on `xp-framework/collections` library, add a `Pair`
