@@ -73,4 +73,17 @@ class MapOfTest {
       ]))
     );
   }
+
+  #[Test]
+  public function can_use_subpaths() {
+    $address= new XmlString('<book><name>Name</name><authors><name>A</name><name>B</name></authors></book>');
+    Assert::equals(
+      ['name' => 'Name', 'authors' => ['A', 'B']],
+      $address->next(new MapOf([
+        '.'            => function(&$self, $it) { $self= ['authors' => []]; $it->next(); },
+        'name'         => function(&$self, $it) { $self['name']= $it->next(); },
+        'authors/name' => function(&$self, $it) { $self['authors'][]= $it->next(); },
+      ]))
+    );
+  }
 }
