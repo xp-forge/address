@@ -1,7 +1,16 @@
 <?php namespace util\address;
 
 abstract class ByAddresses implements Definition {
-  protected $addresses;
+  protected $addresses= [];
+
+  /** @param [:function(var, util.address.Iteration, string): void] */
+  public function __construct($addresses) {
+    foreach ($addresses as $path => $address) {
+      foreach (explode('|', $path) as $match) {
+        $this->addresses[$match]= $address;
+      }
+    }
+  }
 
   /**
    * Creates next value

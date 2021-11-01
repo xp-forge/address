@@ -17,13 +17,11 @@ class ObjectOf extends ByAddresses {
    * @param  [:function(object, util.address.Iteration, string): void] $addresses
    * @throws lang.IllegalArgumentException if type is not instantiable
    */
-  public function __construct($type, $addresses) {
+  public function __construct($type, array $addresses) {
     $this->type= Reflection::of($type);
     if (!$this->type->instantiable()) {
       throw new IllegalArgumentException('Given type '.$this->type->name().' is not instantiable');
     }
-
-    $this->addresses= [];
 
     // Handle BC: Up until (and including 3.0.0), functions of the form
     // `function($it) { $this->member= $it->next(); }` were passed. Trigger
@@ -32,11 +30,16 @@ class ObjectOf extends ByAddresses {
       $t= typeof($address);
       if (1 === sizeof($t->signature())) {
         trigger_error('Use function(object, util.address.Iteration) instead!', E_USER_DEPRECATED);
-        $this->addresses[$path]= function($instance, $iteration) use($address) {
+        $f= function($instance, $iteration) use($address) {
           $address->bindTo($instance, $instance)->__invoke($iteration);
         };
       } else {
-        $this->addresses[$path]= $address->bindTo(null, $this->type->literal());
+        $f= $address->bindTo(null, $this->type->literal());
+      }
+
+      // Inlined parent constructor
+      foreach (explode('|', $path) as $match) {
+        $this->addresses[$match]= $f;
       }
     }
   }

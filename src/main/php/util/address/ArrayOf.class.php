@@ -3,6 +3,7 @@
 /**
  * Creates an array of elements based on a given component definition
  *
+ * @deprecated Use ValueOf instead!
  * @test  xp://util.address.unittest.ArrayOfTest
  */
 class ArrayOf implements Definition {

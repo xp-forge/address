@@ -2,6 +2,7 @@
 
 use lang\IllegalStateException;
 
+/** @deprecated Use ValueOf instead! */
 class Enclosing implements Definition {
   private $path;
 
