@@ -8,7 +8,7 @@ Address
 [![Supports PHP 8.0+](https://raw.githubusercontent.com/xp-framework/web/master/static/php-8_0plus.svg)](http://php.net/)
 [![Latest Stable Version](https://poser.pugx.org/xp-forge/address/version.png)](https://packagist.org/packages/xp-forge/address)
 
-Creates objects from XML input streams while parsing them.
+Creates objects from XML input streams while parsing them. Yes, this still happens in 2021 😉
 
 Example
 -------
