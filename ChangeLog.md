@@ -3,6 +3,14 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 4.0.0 / 2021-11-01
+
+* Merged PR #11: Deprecate the ArrayOf and Enclosing classes, folding
+  their functionality into `util.address.ValueOf`
+  (@thekid)
+* Renamed MapOf to `util.address.ValueOf` and require a default value
+  to be passed to its constructor
+  (@thekid)
 * Made `util.address.ObjectOf` (and *RecordOf*) raise exceptions if
   the given type is not instantiable
   (@thekid)
