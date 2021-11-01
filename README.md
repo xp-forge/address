@@ -65,6 +65,21 @@ Creating values
 ---------------
 Definitions are used to create structured data from the XML input. Here are all the implementations:
 
+### ValueOf
+
+Simplemost version which is given a seed value, which it can modify through the given address functions.
+
+```php
+use util\address\{XmlString, ValueOf};
+
+$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $xml->next(new ValueOf([], [
+  '@isbn' => function(&$self, $it) { $self['isbn']= $it->next(); },
+  'name'  => function(&$self, $it) { $self['name']= $it->next(); },
+]);
+```
+
+
 ### ObjectOf
 
 Creates objects without invoking their constructors. Modifies the members directly, including non-public ones.
@@ -80,20 +95,6 @@ $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name>
 $book= $xml->next(new ObjectOf(Book::class, [
   '@isbn' => function($self, $it) { $self->isbn= $it->next(); },
   'name'  => function($self, $it) { $self->name= $it->next(); },
-]);
-```
-
-### MapOf
-
-Much like *ObjectOf*, but creates a map instead of an object.
-
-```php
-use util\address\{XmlString, MapOf};
-
-$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
-$book= $xml->next(new MapOf([
-  '@isbn' => function(&$self, $it) { $self['isbn']= $it->next(); },
-  'name'  => function(&$self, $it) { $self['name']= $it->next(); },
 ]);
 ```
 

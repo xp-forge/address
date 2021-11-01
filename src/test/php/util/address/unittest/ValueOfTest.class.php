@@ -2,16 +2,16 @@
 
 use unittest\{Assert, Test};
 use util\Date;
-use util\address\{MapOf, XmlString};
+use util\address\{ValueOf, XmlString};
 
-class MapOfTest {
+class ValueOfTest {
 
   #[Test]
   public function compact_form() {
     $address= new XmlString('<book>Name</book>');
     Assert::equals(
       ['name' => 'Name'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '.' => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
@@ -22,7 +22,7 @@ class MapOfTest {
     $address= new XmlString('<book><name>Name</name></book>');
     Assert::equals(
       ['name' => 'Name'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         'name'    => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
@@ -33,7 +33,7 @@ class MapOfTest {
     $address= new XmlString($xml);
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         'name'        => function(&$self, $it) { $self['name']= $it->next(); },
         'author/name' => function(&$self, $it) { $self['author']= $it->next() ?? 'Test'; },
       ]))
@@ -45,7 +45,7 @@ class MapOfTest {
     $address= new XmlString('<book author="Test"><name>Name</name></book>');
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '@author' => function(&$self, $it) { $self['author']= $it->next(); },
         'name'    => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
@@ -57,7 +57,7 @@ class MapOfTest {
     $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '*' => function(&$self, $it, $name) { $self[$name]= $it->next(); }
       ]))
     );
@@ -68,7 +68,7 @@ class MapOfTest {
     $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
         '.'  => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
@@ -80,7 +80,7 @@ class MapOfTest {
     $address= new XmlString('<book asin="B01N1UPZ10">Name</book>');
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '.'  => function(&$self, $it) { $self= ['name' => $it->next(), 'authors' => []]; },
         '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
       ]))
@@ -92,7 +92,7 @@ class MapOfTest {
     $address= new XmlString('<book><name>Name</name><authors><name>A</name><name>B</name></authors></book>');
     Assert::equals(
       ['name' => 'Name', 'authors' => ['A', 'B']],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         '.'            => function(&$self, $it) { $self['authors']= []; $it->next(); },
         'name'         => function(&$self, $it) { $self['name']= $it->next(); },
         'authors/name' => function(&$self, $it) { $self['authors'][]= $it->next(); },
@@ -105,7 +105,7 @@ class MapOfTest {
     $address= new XmlString('<books><book>Book #1</book><book>Book #2</book></books>');
     Assert::equals(
       ['Book #1', 'Book #2'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         'book' => function(&$self, $it) { $self[]= $it->next(); },
       ]))
     );
@@ -116,7 +116,7 @@ class MapOfTest {
     $address= new XmlString('<tests><unit>a</unit><unit>b</unit><integration>c</integration><system>d</system></tests>');
     Assert::equals(
       ['unit:a', 'unit:b', 'integration:c'],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         'unit|integration' => function(&$self, $it, $name) { $self[]= $name.':'.$it->next(); },
       ]))
     );
@@ -128,7 +128,7 @@ class MapOfTest {
     $values= [];
     Assert::equals(
       ['date' => new Date('2022-10-31 16:26:53')],
-      $address->next(new MapOf([
+      $address->next(new ValueOf([], [
         'date' => function(&$self, $it) use(&$values) { $values[0]= $it->next(); },
         'time' => function(&$self, $it) use(&$values) { $values[1]= $it->next(); },
         '/'    => function(&$self, $it) use(&$values) { $self['date']= new Date(implode(' ', $values)); },
