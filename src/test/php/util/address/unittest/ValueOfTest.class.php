@@ -53,6 +53,18 @@ class ValueOfTest {
   }
 
   #[Test]
+  public function uses_default_value() {
+    $address= new XmlString('<book asin="B01N1UPZ10">Name</book>');
+    Assert::equals(
+      ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
+      $address->next(new ValueOf(['authors' => []], [
+        '.'     => function(&$self, $it) { $self['name']= $it->next(); },
+        '@asin' => function(&$self, $it) { $self['asin']= $it->next(); },
+      ]))
+    );
+  }
+
+  #[Test]
   public function any_child() {
     $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
     Assert::equals(
@@ -76,24 +88,11 @@ class ValueOfTest {
   }
 
   #[Test]
-  public function can_initialize() {
-    $address= new XmlString('<book asin="B01N1UPZ10">Name</book>');
-    Assert::equals(
-      ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
-      $address->next(new ValueOf([], [
-        '.'  => function(&$self, $it) { $self= ['name' => $it->next(), 'authors' => []]; },
-        '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
-      ]))
-    );
-  }
-
-  #[Test]
   public function can_use_subpaths() {
     $address= new XmlString('<book><name>Name</name><authors><name>A</name><name>B</name></authors></book>');
     Assert::equals(
       ['name' => 'Name', 'authors' => ['A', 'B']],
-      $address->next(new ValueOf([], [
-        '.'            => function(&$self, $it) { $self['authors']= []; $it->next(); },
+      $address->next(new ValueOf(['authors' => []], [
         'name'         => function(&$self, $it) { $self['name']= $it->next(); },
         'authors/name' => function(&$self, $it) { $self['authors'][]= $it->next(); },
       ]))
@@ -107,6 +106,17 @@ class ValueOfTest {
       ['Book #1', 'Book #2'],
       $address->next(new ValueOf([], [
         'book' => function(&$self, $it) { $self[]= $it->next(); },
+      ]))
+    );
+  }
+
+  #[Test]
+  public function can_reassing_value() {
+    $address= new XmlString('<book>Book #1</book>');
+    Assert::equals(
+      'Book #1',
+      $address->next(new ValueOf(null, [
+        '.' => function(&$self, $it) { $self= $it->next(); },
       ]))
     );
   }
