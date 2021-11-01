@@ -1,6 +1,7 @@
 <?php namespace util\address\unittest;
 
 use unittest\{Assert, Test};
+use util\Date;
 use util\address\{MapOf, XmlString};
 
 class MapOfTest {
@@ -80,9 +81,24 @@ class MapOfTest {
     Assert::equals(
       ['name' => 'Name', 'authors' => ['A', 'B']],
       $address->next(new MapOf([
-        '.'            => function(&$self, $it) { $self= ['authors' => []]; $it->next(); },
+        '.'            => function(&$self, $it) { $self['authors']= []; $it->next(); },
         'name'         => function(&$self, $it) { $self['name']= $it->next(); },
         'authors/name' => function(&$self, $it) { $self['authors'][]= $it->next(); },
+      ]))
+    );
+  }
+
+  #[Test]
+  public function combine_values_during_finalization() {
+    $address= new XmlString('<created><date>2022-10-31</date><time>16:26:53</time></created>');
+
+    $values= [];
+    Assert::equals(
+      ['date' => new Date('2022-10-31 16:26:53')],
+      $address->next(new MapOf([
+        'date' => function(&$self, $it) use(&$values) { $values[0]= $it->next(); },
+        'time' => function(&$self, $it) use(&$values) { $values[1]= $it->next(); },
+        '/'    => function(&$self, $it) use(&$values) { $self['date']= new Date(implode(' ', $values)); },
       ]))
     );
   }

@@ -8,37 +8,18 @@ use lang\Reflection;
  *
  * @test  util.address.unittest.RecordOfTest
  */
-class RecordOf implements Definition {
-  private $constructor, $addresses;
+class RecordOf extends ByAddresses {
+  private $constructor;
 
   /**
    * Creates a new object definition
    *
    * @param  lang.XPClass|string $type
-   * @param  [:function(util.address.Iteration): void] $addresses
+   * @param  [:function(object, util.address.Iteration, string): void] $addresses
    */
   public function __construct($type, $addresses) {
     $this->constructor= Reflection::of($type)->constructor();
     $this->addresses= $addresses;
-  }
-
-  /**
-   * Address a given path. If nothing is defined, discard value silently.
-   *
-   * @param  [:var] $named
-   * @param  string $path
-   * @param  util.address.Iteration $iteration
-   * @return void
-   */
-  private function next(&$named, $path, $iteration) {
-    if ('@' === $path[0]) {
-      $address= $this->addresses[$path] ?? $this->addresses['@*'] ?? null;
-      $path= substr($path, 1);
-    } else {
-      $address= $this->addresses[$path] ?? $this->addresses['*'] ?? null;
-    }
-
-    $address ? $address($named, $iteration, $path) : $iteration->next();
   }
 
   /**
@@ -48,21 +29,6 @@ class RecordOf implements Definition {
    * @return [:var]
    */
   public function create($iteration) {
-    $base= $iteration->path().'/';
-    $offset= strlen($base);
-    $named= [];
-
-    // Select current node
-    if ($address= $this->addresses['.'] ?? null) {
-      $address($named, $iteration, '.');
-    } else {
-      $iteration->next();
-    }
-
-    // Select attributes and children
-    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $offset)) {
-      $this->next($named, substr($iteration->path(), $offset), $iteration);
-    }
-    return $this->constructor->newInstance($named);
+    return $this->constructor->newInstance($this->next($iteration, []));
   }
 }
