@@ -15,7 +15,7 @@ class RecordOf extends ByAddresses {
    * Creates a new object definition
    *
    * @param  lang.XPClass|string $type
-   * @param  [:function(util.address.Iteration): void] $addresses
+   * @param  [:function(object, util.address.Iteration, string): void] $addresses
    */
   public function __construct($type, $addresses) {
     $this->constructor= Reflection::of($type)->constructor();
