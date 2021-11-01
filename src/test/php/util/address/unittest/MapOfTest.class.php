@@ -101,6 +101,28 @@ class MapOfTest {
   }
 
   #[Test]
+  public function can_produce_arrays() {
+    $address= new XmlString('<books><book>Book #1</book><book>Book #2</book></books>');
+    Assert::equals(
+      ['Book #1', 'Book #2'],
+      $address->next(new MapOf([
+        'book' => function(&$self, $it) { $self[]= $it->next(); },
+      ]))
+    );
+  }
+
+  #[Test]
+  public function can_select_multiple() {
+    $address= new XmlString('<tests><unit>a</unit><unit>b</unit><integration>c</integration><system>d</system></tests>');
+    Assert::equals(
+      ['unit:a', 'unit:b', 'integration:c'],
+      $address->next(new MapOf([
+        'unit|integration' => function(&$self, $it, $name) { $self[]= $name.':'.$it->next(); },
+      ]))
+    );
+  }
+
+  #[Test]
   public function combine_values_during_finalization() {
     $address= new XmlString('<created><date>2022-10-31</date><time>16:26:53</time></created>');
     $values= [];

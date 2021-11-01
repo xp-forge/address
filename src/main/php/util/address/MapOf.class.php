@@ -8,15 +8,6 @@
 class MapOf extends ByAddresses {
 
   /**
-   * Creates a new map definition
-   *
-   * @param  [:function([:var], util.address.Iteration, string): void] $addresses
-   */
-  public function __construct($addresses= []) {
-    $this->addresses= $addresses;
-  }
-
-  /**
    * Creates a value from a given iteration
    *
    * @param  util.address.Iteration $iteration

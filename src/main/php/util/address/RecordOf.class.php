@@ -29,7 +29,7 @@ class RecordOf extends ByAddresses {
       throw new IllegalArgumentException('Given type '.$reflect->name().' does not have a constructor');
     }
 
-    $this->addresses= $addresses;
+    parent::__construct($addresses);
   }
 
   /**

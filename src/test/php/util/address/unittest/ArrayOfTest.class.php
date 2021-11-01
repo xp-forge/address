@@ -3,6 +3,7 @@
 use unittest\{Assert, Test};
 use util\address\{ArrayOf, ObjectOf, Enclosing, XmlString};
 
+/** @deprecated */
 class ArrayOfTest {
 
   #[Test]
