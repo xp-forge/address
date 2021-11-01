@@ -1,5 +1,6 @@
 <?php namespace util\address;
 
+use ReflectionFunction;
 use lang\{Reflection, IllegalArgumentException};
 
 /**
@@ -27,14 +28,14 @@ class ObjectOf extends ByAddresses {
     // `function($it) { $this->member= $it->next(); }` were passed. Trigger
     // deprecation warning and rewrite accordingly.
     foreach ($addresses as $path => $address) {
-      $t= typeof($address);
-      if (1 === sizeof($t->signature())) {
+      $reflect= new ReflectionFunction($address);
+      if (1 === $reflect->getNumberOfParameters()) {
         trigger_error('Use function(object, util.address.Iteration) instead!', E_USER_DEPRECATED);
         $f= function($instance, $iteration) use($address) {
           $address->bindTo($instance, $instance)->__invoke($iteration);
         };
       } else {
-        $f= $address->bindTo(null, $this->type->literal());
+        $f= $address->bindTo($reflect->getClosureThis(), $this->type->literal());
       }
 
       // Inlined parent constructor

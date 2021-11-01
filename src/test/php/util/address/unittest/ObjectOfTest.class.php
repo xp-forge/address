@@ -10,6 +10,9 @@ class ObjectOfTest {
   /** @return util.address.Address */
   private function address() { return new XmlString('<book author="Test">Name</book>'); }
 
+  /** Fixture for can_use_public_methods_from_this() test */
+  public function toUpper(string $in): string { return strtoupper($in); }
+
   /** @return iterable */
   private function types() {
     return [
@@ -46,6 +49,15 @@ class ObjectOfTest {
     ]);
 
     Assert::equals(new Book('Name'), $this->address()->next($definition));
+  }
+
+  #[Test]
+  public function can_use_public_methods_from_this() {
+    $definition= new ObjectOf(Book::class, [
+      '.' => function($self, $it) { $self->name= $this->toUpper($it->next()); },
+    ]);
+
+    Assert::equals(new Book('NAME'), $this->address()->next($definition));
   }
 
   #[Test]
