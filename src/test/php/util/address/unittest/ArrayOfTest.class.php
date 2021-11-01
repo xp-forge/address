@@ -27,7 +27,15 @@ class ArrayOfTest {
   #[Test]
   public function array_of_books_definition() {
     $address= new XmlString('<books><book><name>Book #1</name></book><book><name>Book #2</name></book></books>');
-    Assert::equals([new Book('Book #1'), new Book('Book #2')], $address->next(new Enclosing('/'))->next(new ArrayOf(new BookDefinition())));
+    Assert::equals(
+      [new Book('Book #1'), new Book('Book #2')],
+      $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
+        'name'   => function($self, $it) { $self->name= $it->next(); },
+        'author' => function($self, $it) { $self->author= $it->next(new ObjectOf(Author::class, [
+          'name'   => function($self, $it) { $self->name= $it->next() ?: 'Test'; }
+        ])); }
+      ])))
+    );
   }
 
   #[Test]
