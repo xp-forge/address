@@ -5,6 +5,11 @@ XML streams to objects
 
 ## 4.0.0 / 2021-11-01
 
+This major release offers three ways to create values from XML: Using
+ValueOf, ObjectOf or RecordOf. The first is the most generic form and
+accepts a default value while the latter two produce objects of a given
+type, differing in the way they create these.
+
 * Merged PR #11: Deprecate the ArrayOf and Enclosing classes, folding
   their functionality into `util.address.ValueOf`
   (@thekid)
@@ -28,6 +33,10 @@ XML streams to objects
 
 ## 3.0.0 / 2021-10-24
 
+This release brings this library up-to-date by dropping dependencies
+on archived libraries and adding a more generic object instantation
+mechanism not reliant on a certain class architecture.
+
 * Removed dependency on `xp-framework/collections` library, add a `Pair`
   class of our own
   (@thekid)
@@ -43,13 +52,16 @@ XML streams to objects
 
 ## 2.0.0 / 2020-04-10
 
-* Implemented xp-framework/rfc#334: Drop PHP 5.6:
-  . **Heads up:** Minimum required PHP version now is PHP 7.0.0
-  . Rewrote code base, grouping use statements
-  . Converted `newinstance` to anonymous classes
-  (@thekid)
+This release is the first release to no longer run on PHP 5, implementing
+xp-framework/rfc#334.
+
+* **Heads up:** Minimum required PHP version now is PHP 7.0.0 - @thekid
+* Rewrote code base, grouping use statements - @thekid
+* Converted `newinstance` to anonymous classes - @thekid
 
 ## 1.0.0 / 2020-04-04
+
+First major release, compatible with the current XP and PHP versions.
 
 * Made compatible with XP 10, PHP 7+ - @thekid
 
