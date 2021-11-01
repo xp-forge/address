@@ -7,19 +7,22 @@ use lang\Reflection;
  *
  * @test  util.address.unittest.ObjectOfTest
  */
-class ObjectOf implements Definition {
-  private $type, $addresses;
+class ObjectOf extends ByAddresses {
+  private $type;
 
   /**
    * Creates a new object definition
    *
    * @param  lang.XPClass|string $type
-   * @param  [:function(object, util.address.Iteration): void] $addresses
+   * @param  [:function(object, util.address.Iteration, string): void] $addresses
    */
   public function __construct($type, $addresses) {
     $this->type= Reflection::of($type);
     $this->addresses= [];
 
+    // Handle BC: Up until (and including 3.0.0), functions of the form
+    // `function($it) { $this->member= $it->next(); }` were passed. Trigger
+    // deprecation warning and rewrite accordingly.
     foreach ($addresses as $path => $address) {
       $t= typeof($address);
       if (1 === sizeof($t->signature())) {
@@ -34,46 +37,12 @@ class ObjectOf implements Definition {
   }
 
   /**
-   * Address a given path. If nothing is defined, discard value silently.
-   *
-   * @param  object $instance
-   * @param  string $path
-   * @param  util.address.Iteration $iteration
-   * @return void
-   */
-  protected function next($instance, $path, $iteration) {
-    if ('@' === $path[0]) {
-      $address= $this->addresses[$path] ?? $this->addresses['@*'] ?? null;
-      $path= substr($path, 1);
-    } else {
-      $address= $this->addresses[$path] ?? $this->addresses['*'] ?? null;
-    }
-
-    $address ? $address($instance, $iteration, $path) : $iteration->next();
-  }
-
-  /**
    * Creates a value from a given iteration
    *
    * @param  util.address.Iteration $iteration
-   * @return object
+   * @return [:var]
    */
   public function create($iteration) {
-    $base= $iteration->path().'/';
-    $length= strlen($base);
-    $return= $this->type->initializer(null)->newInstance();
-
-    // Select current node
-    if ($address= $this->addresses['.'] ?? null) {
-      $address($return, $iteration, '.');
-    } else {
-      $iteration->next();
-    }
-
-    while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $length)) {
-      $this->next($return, substr($iteration->path(), $length), $iteration);
-    }
-
-    return $return;
+    return $this->next($iteration, $this->type->initializer(null)->newInstance());
   }
 }
