@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 4.0.1 / 2021-11-01
+
+* Fixed *Cannot unbind $this of closure using $this* - @thekid
+
 ## 4.0.0 / 2021-11-01
 
 This major release offers three ways to create values from XML: Using
