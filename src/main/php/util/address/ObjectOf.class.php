@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-use lang\Reflection;
+use lang\{Reflection, IllegalArgumentException};
 
 /**
  * Creates an object based on a given type and addresses
@@ -15,9 +15,14 @@ class ObjectOf extends ByAddresses {
    *
    * @param  lang.XPClass|string $type
    * @param  [:function(object, util.address.Iteration, string): void] $addresses
+   * @throws lang.IllegalArgumentException if type is not instantiable
    */
   public function __construct($type, $addresses) {
     $this->type= Reflection::of($type);
+    if (!$this->type->instantiable()) {
+      throw new IllegalArgumentException('Given type '.$this->type->name().' is not instantiable');
+    }
+
     $this->addresses= [];
 
     // Handle BC: Up until (and including 3.0.0), functions of the form

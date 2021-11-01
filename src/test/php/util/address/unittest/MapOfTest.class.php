@@ -28,6 +28,18 @@ class MapOfTest {
     );
   }
 
+  #[Test, Values(['<book><name>Name</name><author><name/></author></book>', '<book><author><name/></author><name>Name</name></book>', '<book><name>Name</name><author><name>Test</name></author></book>', '<book><author><name>Test</name></author><name>Name</name></book>'])]
+  public function child_node_ordering_irrelevant($xml) {
+    $address= new XmlString($xml);
+    Assert::equals(
+      ['name' => 'Name', 'author' => 'Test'],
+      $address->next(new MapOf([
+        'name'        => function(&$self, $it) { $self['name']= $it->next(); },
+        'author/name' => function(&$self, $it) { $self['author']= $it->next() ?? 'Test'; },
+      ]))
+    );
+  }
+
   #[Test]
   public function child_node_and_attributes() {
     $address= new XmlString('<book author="Test"><name>Name</name></book>');
@@ -91,7 +103,6 @@ class MapOfTest {
   #[Test]
   public function combine_values_during_finalization() {
     $address= new XmlString('<created><date>2022-10-31</date><time>16:26:53</time></created>');
-
     $values= [];
     Assert::equals(
       ['date' => new Date('2022-10-31 16:26:53')],

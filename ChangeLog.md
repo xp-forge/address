@@ -3,6 +3,9 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Made `util.address.ObjectOf` (and *RecordOf*) raise exceptions if
+  the given type is not instantiable
+  (@thekid)
 * Merged PR #9: Refactor `util.address.ObjectOf` to accept functions
   typed `function(object, util.address.Iteration): void` instead of
   binding *$this* to the target object instance.

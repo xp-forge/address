@@ -1,6 +1,8 @@
 <?php namespace util\address;
 
-use lang\Reflection;
+use lang\reflection\InvocationFailed;
+use lang\{Reflection, IllegalArgumentException};
+use util\Objects;
 
 /**
  * Creates a record based on a given type and addresses. Records
@@ -16,9 +18,17 @@ class RecordOf extends ByAddresses {
    *
    * @param  lang.XPClass|string $type
    * @param  [:function(object, util.address.Iteration, string): void] $addresses
+   * @throws lang.IllegalArgumentException if type is not instantiable or doesn't have a constructor
    */
-  public function __construct($type, $addresses) {
-    $this->constructor= Reflection::of($type)->constructor();
+  public function __construct($type, array $addresses) {
+    $reflect= Reflection::of($type);
+    if (!$reflect->instantiable()) {
+      throw new IllegalArgumentException('Given type '.$reflect->name().' is not instantiable');
+    }
+    if (null === ($this->constructor= $reflect->constructor())) {
+      throw new IllegalArgumentException('Given type '.$reflect->name().' does not have a constructor');
+    }
+
     $this->addresses= $addresses;
   }
 
@@ -27,8 +37,13 @@ class RecordOf extends ByAddresses {
    *
    * @param  util.address.Iteration $iteration
    * @return [:var]
+   * @throws lang.Throwable
    */
   public function create($iteration) {
-    return $this->constructor->newInstance($this->next($iteration, []));
+    try {
+      return $this->constructor->newInstance($this->next($iteration, []));
+    } catch (InvocationFailed $e) {
+      throw $e->getCause();
+    }
   }
 }
