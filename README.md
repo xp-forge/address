@@ -16,7 +16,7 @@ Given the following two value objects:
 
 ```php
 class Book {
-  private $name, $author;
+  public $name, $author;
 
   public function __construct($name, Author $author) {
     $this->name= $name;
@@ -25,7 +25,7 @@ class Book {
 }
 
 class Author {
-  private $name;
+  public $name;
 
   public function __construct($name) {
     $this->name= $name;
@@ -72,13 +72,25 @@ Simplemost version which is given a seed value, which it can modify through the 
 ```php
 use util\address\{XmlString, ValueOf};
 
-$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+// Parse into string 'Tim Taylor'
+$xml= new XmlString('<name>Tim Taylor</name>');
+$name= $xml->next(new ValueOf(null, [
+  '.' => function(&$self, $it) { $self= $it->next(); },
+]);
+
+// Parse into array ['More', 'Power']
+$xml= new XmlString('<tools><tool>More</tool><tool>Power</tool></tools>');
+$name= $xml->next(new ValueOf([], [
+  'tool' => function(&$self, $it) { $self[]= $it->next(); },
+]);
+
+// Parse into map ['id' => 6100, 'name' => 'more power']
+$xml= new XmlString('<tool id="6100">more power</tool>');
 $book= $xml->next(new ValueOf([], [
-  '@isbn' => function(&$self, $it) { $self['isbn']= $it->next(); },
-  'name'  => function(&$self, $it) { $self['name']= $it->next(); },
+  '@id' => function(&$self, $it) { $self['id']= (int)$it->next(); },
+  '.'   => function(&$self, $it) { $self['name']= $it->next(); },
 ]);
 ```
-
 
 ### ObjectOf
 
@@ -91,6 +103,7 @@ class Book {
   public $isbn, $name;
 }
 
+// Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
 $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
 $book= $xml->next(new ObjectOf(Book::class, [
   '@isbn' => function($self, $it) { $self->isbn= $it->next(); },
@@ -100,15 +113,19 @@ $book= $xml->next(new ObjectOf(Book::class, [
 
 ### RecordOf
 
-Works with *record* classes, which are defined as having an all-arg constructor. Modifies the named constructor arguments.
+Works with *record* classes, which are defined as being immutable and having an all-arg constructor. Modifies the named constructor arguments.
 
 ```php
 use util\address\{XmlString, RecordOf};
 
 class Book {
   public function __construct(private $isbn, private $name) { }
+
+  public function isbn() { return $this->isbn; }
+  public function name() { return $this->name; }
 }
 
+// Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
 $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
 $book= $xml->next(new RecordOf(Book::class, [
   '@isbn' => function(&$args, $it) { $args['isbn']= $it->next(); },
