@@ -135,35 +135,28 @@ $book= $xml->next(new RecordOf(Book::class, [
 
 Iteration
 ---------
-Any `Address` instance can be iterated using the `foreach` statement. Here's a way to parse an RSS feed's items:
+Any `Address` instance can be iterated using the `foreach` statement. Using the [data sequences library](https://github.com/xp-forge/sequence) in combination with calling the `value()` method here's a way to parse an RSS feed's items:
 
 ```php
 use peer\http\HttpConnection;
+use util\data\Sequence;
 use util\Date;
 use util\address\{XmlStream, ObjectOf};
 use util\cmd\Console;
 
-class Item {
-  public $title, $description, $pubDate, $generator, $link, $guid;
-}
-
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
-while ($stream->valid()) {
-  if ('//channel/item' !== $stream->path()) {
-    $stream->next();
-    continue;
-  }
-
-  $item= $stream->next(new ObjectOf(Item::class, [
+Sequence::of($stream)
+  ->filter(fn($value, $path) => '//channel/item' === $path)
+  ->map(fn() => $stream->value(new ObjectOf(Item::class, [
     'title'       => fn($self, $it) => $self->title= $it->next(),
     'description' => fn($self, $it) => $self->description= $it->next(),
     'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
     'generator'   => fn($self, $it) => $self->generator= $it->next(),
     'link'        => fn($self, $it) => $self->link= $it->next(),
     'guid'        => fn($self, $it) => $self->guid= $it->next(),
-  ]));
-  Console::writeLine('- ', $item->title, "\n  ", $item->link);
-}
+  ])))
+  ->each(fn($item) => Console::writeLine('- ', $item->title, "\n  ", $item->link))
+;
 ```

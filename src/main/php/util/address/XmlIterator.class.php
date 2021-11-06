@@ -194,6 +194,12 @@ class XmlIterator implements Iterator {
   }
 
   /** @return void */
+  public function backup() {
+    $this->valid= true;
+    $this->token && array_unshift($this->pairs, $this->token);
+  }
+
+  /** @return void */
   #[ReturnTypeWillChange]
   public function rewind() {
     if (null !== $this->path) {

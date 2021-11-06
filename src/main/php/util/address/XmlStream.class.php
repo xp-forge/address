@@ -19,6 +19,6 @@ class XmlStream extends Address {
     $this->in= $in;
   }
 
-  /** @return php.Iterator */
-  protected function newIterator() { return new XmlIterator($this->in); }
+  /** @return io.streams.InputStream */
+  protected function stream() { return $this->in; }
 }

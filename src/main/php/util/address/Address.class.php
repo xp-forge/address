@@ -19,7 +19,7 @@ abstract class Address implements IteratorAggregate {
    */
   public function getIterator($rewind= false): Traversable {
     if (null === $this->iterator) {
-      $this->iterator= $this->newIterator();
+      $this->iterator= new XmlIterator($this->stream());
       if ($rewind) {
         $this->iterator->rewind();
       }
@@ -27,8 +27,8 @@ abstract class Address implements IteratorAggregate {
     return $this->iterator;
   }
 
-  /** @return php.Iterator */
-  protected abstract function newIterator();
+  /** @return io.streams.InputStream */
+  protected abstract function stream();
 
   /**
    * Reset this input
@@ -55,6 +55,24 @@ abstract class Address implements IteratorAggregate {
   }
 
   /**
+   * Returns the current value according to the given definition
+   *
+   * @param  util.address.Definition $definition
+   * @param  string $base
+   * @return var
+   */
+  public function value(Definition $definition= null, $base= '/') {
+    $it= $this->getIterator(true);
+    if (null === $definition) return $it->current();
+
+    // Fetch next value, which will typically forward the cursor over all
+    // child nodes, then back up exactly one iteration step.
+    $value= $definition->create(new Iteration($this, $base));
+    $it->backup();
+    return $value;
+  }
+
+  /**
    * Returns the next value according to the given definition
    *
    * @param  util.address.Definition $definition
@@ -63,6 +81,7 @@ abstract class Address implements IteratorAggregate {
    * @throws util.NoSuchElementException if there are no more eements
    */
   public function next(Definition $definition= null, $base= '/') {
+    $this->value= null;
     if ($definition) {
       return $definition->create(new Iteration($this, $base));
     } else {
