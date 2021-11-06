@@ -81,7 +81,6 @@ abstract class Address implements IteratorAggregate {
    * @throws util.NoSuchElementException if there are no more eements
    */
   public function next(Definition $definition= null, $base= '/') {
-    $this->value= null;
     if ($definition) {
       return $definition->create(new Iteration($this, $base));
     } else {
