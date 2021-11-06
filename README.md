@@ -144,6 +144,10 @@ use util\Date;
 use util\address\{XmlStream, ObjectOf};
 use util\cmd\Console;
 
+class Item {
+  public $title, $description, $pubDate, $generator, $link, $guid;
+}
+
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
