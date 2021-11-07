@@ -6,15 +6,15 @@ class Iteration {
   /**
    * Creates an iteration
    *
-   * @param  util.address.XmlIterator $input
+   * @param  util.address.Address $input
    * @param  string $base
    */
-  public function __construct(XmlIterator $input, $base) {
+  public function __construct(Address $input, $base) {
     $this->input= $input;
-    $this->base= $base;
+    $this->base= $base.'/';
   }
 
-  /** @return util.address.XmlIterator */
+  /** @return util.address.Address */
   public function input() { return $this->input; }
 
   /** @return string */
@@ -24,7 +24,7 @@ class Iteration {
   public function valid() { return $this->input->valid(); }
 
   /** @return string */
-  public function path() { return $this->input->valid() ? $this->input->key() : null; }
+  public function path() { return $this->input->path(); }
 
   /**
    * Returns the next value according to the given definition
@@ -33,10 +33,6 @@ class Iteration {
    * @return var
    */
   public function next(Definition $definition= null) {
-    try {
-      return $this->input->value($definition, $this->base.'/');
-    } finally {
-      $this->input->next();
-    }
+    return $this->input->next($definition, $this->input->path());
   }
 }

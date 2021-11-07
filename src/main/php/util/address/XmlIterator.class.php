@@ -196,19 +196,19 @@ class XmlIterator implements Iterator {
   }
 
   /**
-   * Returns current value and stores it, returning it on subsequent calls.
+   * Creates value from definition and stores it, returning it on subsequent calls.
    *
    * @param  util.address.Definition $definition
+   * @param  util.address.Address $address
    * @param  string $base
    * @return var
    */
-  public function value($definition, $base) {
-    if (null === $definition) return $this->token->content;
-    
-    // Fetch next value, which will typically forward the cursor over all child nodes, storing
-    // the created value on the token; then back up exactly one iteration step.
+  public function value($definition, $address, $base) {
     if (null === $this->token->value) {
-      $token= new Token($this->token->path, null, [$definition->create(new Iteration($this, $base))]);
+
+      // Fetch next value, which will typically forward the cursor over all child nodes,
+      // storing the created value on the token; then back up exactly one iteration step.
+      $token= new Token($this->token->path, null, [$definition->create(new Iteration($address, $base))]);
       $this->valid= true;
       $this->token && array_unshift($this->tokens, $this->token);
       $this->token= $token;
