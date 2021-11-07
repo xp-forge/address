@@ -1,18 +1,28 @@
 <?php namespace util\address;
 
 class Token {
-  public $path, $content, $value;
+  public $path, $content;
+  public $source= null;
 
   /**
    * Creates a new token
    *
    * @param  string $path
    * @param  var $content
-   * @param  ?array<var> $value
    */
-  public function __construct($path, $content, $value= null) {
+  public function __construct($path, $content) {
     $this->path= $path;
     $this->content= $content;
-    $this->value= $value;
+  }
+
+  /**
+   * Sets source
+   *
+   * @param  util.address.Token[] $source
+   * @return self
+   */
+  public function from($source) {
+    $this->source= $source;
+    return $this;
   }
 }

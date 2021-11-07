@@ -16,6 +16,7 @@ class XmlIterator implements Iterator {
   private $input, $path, $valid, $node;
   private $encoding= 'utf-8';
   private $tokens= [];
+  public $token;
 
   /**
    * Creates a new XML iterator on a given stream
@@ -196,7 +197,7 @@ class XmlIterator implements Iterator {
   }
 
   /**
-   * Creates value from definition and stores it, returning it on subsequent calls.
+   * Creates value from definition.
    *
    * @param  util.address.Definition $definition
    * @param  util.address.Address $address
@@ -204,17 +205,25 @@ class XmlIterator implements Iterator {
    * @return var
    */
   public function value($definition, $address, $base) {
-    if (null === $this->token->value) {
+    if (null === $this->token->source) {
+      $token= $this->token;
 
-      // Fetch next value, which will typically forward the cursor over all child nodes,
-      // storing the created value on the token; then back up exactly one iteration step.
-      $token= new Token($this->token->path, null, [$definition->create(new Iteration($address, $base))]);
+      // Create value, storing tokens during the iteration
+      $iteration= new Iteration($address, $base);
+      $value= $definition->create($iteration);
+
+      // Unless we are at the end of the stream, push back last token.
       $this->valid= true;
       $this->token && array_unshift($this->tokens, $this->token);
-      $this->token= $token;
-    }
+      $this->token= $token->from($iteration->tokens);
+      return $value;
+    } else {
 
-    return $this->token->value[0];
+      // Restore tokens consumed by previous iteration
+      $this->tokens= array_merge($this->token->source, [$this->token], $this->tokens);
+      $this->token= array_shift($this->tokens);
+      return $definition->create(new Iteration($address, $base));
+    }
   }
 
   /** @return void */

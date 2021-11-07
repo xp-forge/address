@@ -134,21 +134,10 @@ class AddressTest {
   #[Test]
   public function repeated_value_with_definition() {
     $definition= $this->asMap();
+
     $address= new XmlString('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->value($definition), '#1');
     Assert::equals(['/' => 'Test'], $address->value($definition), '#2');
-  }
-
-  #[Test, Ignore('Implementation would require a breaking change to the util.address.Definition interface')]
-  public function repeated_value_with_varying_definition() {
-    $address= new XmlString('<doc>Test</doc>');
-    $address->value($this->asMap());
-
-    Assert::throws(IllegalStateException::class, function() use($address) {
-      $address->value(new class() implements Definition {
-        public function create($it) { return $it->next(); }
-      });
-    });
   }
 
   #[Test]
@@ -161,25 +150,14 @@ class AddressTest {
   }
 
   #[Test]
-  public function values_are_garbage_collected_on_next() {
-    $definition= new class() implements Definition {
-      public $collected= 0;
-
-      public function create($it) {
-        $self= $this; // ...as $this is bound to the created instance!
-        return newinstance(Runnable::class, [], [
-          '__destruct' => function() use($self) { $self->collected++; },
-          'run'        => function() { /* NOOP */ },
-        ]);
-      }
+  public function repeated_value_with_varying_definition() {
+    $asValue= new class() implements Definition {
+      public function create($it) { return $it->next(); }
     };
 
     $address= new XmlString('<doc>Test</doc>');
-    Assert::instance(Runnable::class, $address->value($definition));
-    Assert::equals(0, $definition->collected, 'Before next()');
-
-    Assert::instance(Runnable::class, $address->next($definition));
-    Assert::equals(1, $definition->collected, 'After next()');
+    Assert::equals(['/' => 'Test'], $address->value($this->asMap()), '#1');
+    Assert::equals('Test', $address->value($asValue), '#2');
   }
 
   #[Test]

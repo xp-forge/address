@@ -2,6 +2,7 @@
 
 class Iteration {
   private $input, $base;
+  public $tokens= [];
 
   /**
    * Creates an iteration
@@ -27,13 +28,17 @@ class Iteration {
   public function path() { return $this->input->path(); }
 
   /**
-   * Returns the next value according to the given definition
+   * Returns the next value according to the given definition.
    *
    * @param  util.address.Definition $definition
    * @return var
-   * @throws util.NoSuchElementException if there are no more elements
    */
   public function next(Definition $definition= null) {
-    return $this->input->next($definition, $this->input->path());
+    $it= $this->input->getIterator(true);
+    $this->tokens[]= $it->token;
+
+    $value= null === $definition ? $it->current() : $it->value($definition, $this->input, $this->base);
+    $it->next();
+    return $value;
   }
 }
