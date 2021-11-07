@@ -31,6 +31,7 @@ class Iteration {
    *
    * @param  util.address.Definition $definition
    * @return var
+   * @throws util.NoSuchElementException if there are no more elements
    */
   public function next(Definition $definition= null) {
     return $this->input->next($definition, $this->input->path());

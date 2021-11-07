@@ -60,7 +60,7 @@ abstract class Address implements IteratorAggregate {
    * @param  util.address.Definition $definition
    * @param  string $base
    * @return var
-   * @throws util.NoSuchElementException if there are no more eements
+   * @throws util.NoSuchElementException if there are no more elements
    */
   public function value(Definition $definition= null, $base= '/') {
     $it= $this->getIterator(true);
@@ -77,7 +77,7 @@ abstract class Address implements IteratorAggregate {
    * @param  util.address.Definition $definition
    * @param  string $base
    * @return var
-   * @throws util.NoSuchElementException if there are no more eements
+   * @throws util.NoSuchElementException if there are no more elements
    */
   public function next(Definition $definition= null, $base= '/') {
     $it= $this->getIterator(true);
