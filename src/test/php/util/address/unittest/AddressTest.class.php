@@ -1,10 +1,18 @@
 <?php namespace util\address\unittest;
 
-use unittest\{Assert, Expect, Test};
+use lang\{IllegalStateException, Runnable};
+use unittest\{Assert, Expect, Ignore, Test};
 use util\NoSuchElementException;
 use util\address\{ArrayOf, CreationOf, Definition, XmlString};
 
 class AddressTest {
+
+  /** @return util.address.Definition */
+  private function asMap() {
+    return new class() implements Definition {
+      public function create($it) { return [$it->path() => $it->next()]; }
+    };
+  }
 
   #[Test]
   public function path() {
@@ -107,19 +115,64 @@ class AddressTest {
   #[Test]
   public function next_with_definition() {
     $address= new XmlString('<doc>Test</doc>');
-    $value= $address->next(new class() implements Definition {
-      public function create($iteration) { return [$iteration->path() => $iteration->next()]; }
-    });
-    Assert::equals(['/' => 'Test'], $value);
+    Assert::equals(['/' => 'Test'], $address->next($this->asMap()));
   }
 
   #[Test]
   public function value_with_definition() {
     $address= new XmlString('<doc>Test</doc>');
-    $value= $address->value(new class() implements Definition {
-      public function create($iteration) { return [$iteration->path() => $iteration->next()]; }
+    Assert::equals(['/' => 'Test'], $address->value($this->asMap()));
+  }
+
+  #[Test]
+  public function repeated_value_with_definition() {
+    $definition= $this->asMap();
+    $address= new XmlString('<doc>Test</doc>');
+    Assert::equals(['/' => 'Test'], $address->value($definition), '#1');
+    Assert::equals(['/' => 'Test'], $address->value($definition), '#2');
+  }
+
+  #[Test, Ignore('Implementation would require a breaking change to the util.address.Definition interface')]
+  public function repeated_value_with_varying_definition() {
+    $address= new XmlString('<doc>Test</doc>');
+    $address->value($this->asMap());
+
+    Assert::throws(IllegalStateException::class, function() use($address) {
+      $address->value(new class() implements Definition {
+        public function create($it) { return $it->next(); }
+      });
     });
-    Assert::equals(['/' => 'Test'], $value);
+  }
+
+  #[Test]
+  public function next_after_value_with_definition() {
+    $definition= $this->asMap();
+
+    $address= new XmlString('<doc>Test</doc>');
+    Assert::equals(['/' => 'Test'], $address->value($definition), '#1');
+    Assert::equals(['/' => 'Test'], $address->next($definition), '#2');
+  }
+
+  #[Test]
+  public function values_are_garbage_collected_on_next() {
+    $definition= new class() implements Definition {
+      public $collected= 0;
+
+      public function create($it) {
+        $self= $this; // ...as $this is bound to the created instance!
+        return newinstance(Runnable::class, [], [
+          '__destruct' => function() use($self) { $self->collected++; },
+          'run'        => function() { /* NOOP */ },
+        ]);
+      }
+    };
+
+    $address= new XmlString('<doc>Test</doc>');
+    Assert::instance(Runnable::class, $address->value($definition));
+    Assert::equals(0, $definition->collected, 'Before next()');
+
+    Assert::instance(Runnable::class, $address->next($definition));
+    Assert::equals(1, $definition->collected, 'After next()');
   }
 
   #[Test]

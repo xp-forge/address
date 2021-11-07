@@ -13,7 +13,9 @@ use text\{StreamTokenizer, StringTokenizer};
 class XmlIterator implements Iterator {
   const SEPARATOR= '/';
 
-  private $input, $path, $valid, $node, $encoding= 'utf-8', $pairs= [];
+  private $input, $path, $valid, $node;
+  private $encoding= 'utf-8';
+  private $pairs= [];
 
   /**
    * Creates a new XML iterator on a given stream
@@ -73,7 +75,7 @@ class XmlIterator implements Iterator {
    */
   protected function cdata($content) {
     if ($this->pairs) {
-      $this->pairs[$this->node]->value.= $content;
+      $this->pairs[$this->node]->content.= $content;
     }
   }
 
@@ -85,7 +87,7 @@ class XmlIterator implements Iterator {
    */
   protected function pcdata($content) {
     if ($this->pairs && '' !== ($t= trim($content))) {
-      $this->pairs[$this->node]->value.= $t;
+      $this->pairs[$this->node]->content.= $t;
     }
   }
 
@@ -189,14 +191,31 @@ class XmlIterator implements Iterator {
     }
 
     $pair= array_shift($this->pairs);
-    // echo "<<< ", $pair ? "Pair<{$pair->key}= {$pair->value}>" : "(null)", "\n";
+    // echo "<<< ", $pair ? "Pair<{$pair->path}= {$pair->content}>" : "(null)", "\n";
     return $pair;
   }
 
-  /** @return void */
-  public function backup() {
-    $this->valid= true;
-    $this->token && array_unshift($this->pairs, $this->token);
+  /**
+   * Returns current value and stores it, returning it on subsequent calls.
+   *
+   * @param  util.address.Definition $definition
+   * @param  string $base
+   * @return var
+   */
+  public function value($definition, $base) {
+    if (null === $definition) {
+      return $this->token->content;
+    } else if (null === $this->token->value) {
+
+      // Fetch next value, which will typically forward the cursor over all
+      // child nodes, then back up exactly one iteration step.
+      $token= new Pair($this->token->path, null, [$definition->create(new Iteration($this, $base))]);
+      $this->valid= true;
+      $this->token && array_unshift($this->pairs, $this->token);
+      $this->token= $token;
+    }
+
+    return $this->token->value[0];
   }
 
   /** @return void */
@@ -213,13 +232,13 @@ class XmlIterator implements Iterator {
   /** @return string */
   #[ReturnTypeWillChange]
   public function current() {
-    return $this->token->value;
+    return $this->token->content;
   }
 
   /** @return string */
   #[ReturnTypeWillChange]
   public function key() {
-    return $this->token->key;
+    return $this->token->path;
   }
 
   /** @return void */

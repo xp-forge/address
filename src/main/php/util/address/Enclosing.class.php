@@ -27,6 +27,6 @@ class Enclosing implements Definition {
     }
 
     $iteration->next();
-    return $iteration->input();
+    return $iteration;
   }
 }
