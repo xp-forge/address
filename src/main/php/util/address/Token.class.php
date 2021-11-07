@@ -1,12 +1,12 @@
 <?php namespace util\address;
 
-class Pair {
+class Token {
   public $path, $content, $value;
 
   /**
-   * Creates a new pair
+   * Creates a new token
    *
-   * @param  var $path
+   * @param  string $path
    * @param  var $content
    * @param  ?array<var> $value
    */

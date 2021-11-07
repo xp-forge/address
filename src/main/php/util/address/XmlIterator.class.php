@@ -15,7 +15,7 @@ class XmlIterator implements Iterator {
 
   private $input, $path, $valid, $node;
   private $encoding= 'utf-8';
-  private $pairs= [];
+  private $tokens= [];
 
   /**
    * Creates a new XML iterator on a given stream
@@ -57,11 +57,11 @@ class XmlIterator implements Iterator {
       $this->path.= self::SEPARATOR.$name;
     }
 
-    $this->node= sizeof($this->pairs);
-    $this->pairs[]= new Pair($this->path, null);
+    $this->node= sizeof($this->tokens);
+    $this->tokens[]= new Token($this->path, null);
     if ('' !== trim($attr)) {
       foreach ($this->attributesIn($attr) as $name => $value) {
-        $this->pairs[]= new Pair($this->path.'/@'.$name, $value);
+        $this->tokens[]= new Token($this->path.'/@'.$name, $value);
       }
     }
     $this->valid= true;
@@ -74,8 +74,8 @@ class XmlIterator implements Iterator {
    * @return void
    */
   protected function cdata($content) {
-    if ($this->pairs) {
-      $this->pairs[$this->node]->content.= $content;
+    if ($this->tokens) {
+      $this->tokens[$this->node]->content.= $content;
     }
   }
 
@@ -86,8 +86,8 @@ class XmlIterator implements Iterator {
    * @return void
    */
   protected function pcdata($content) {
-    if ($this->pairs && '' !== ($t= trim($content))) {
-      $this->pairs[$this->node]->content.= $t;
+    if ($this->tokens && '' !== ($t= trim($content))) {
+      $this->tokens[$this->node]->content.= $t;
     }
   }
 
@@ -150,9 +150,9 @@ class XmlIterator implements Iterator {
     return $attributes;
   }
 
-  /** @return util.collections.Pair */
+  /** @return util.collections.token */
   protected function token() {
-    if (empty($this->pairs)) {
+    if (empty($this->tokens)) {
 
       $this->valid= false;
       while ($this->input->hasMoreTokens()) {
@@ -190,9 +190,9 @@ class XmlIterator implements Iterator {
       }
     }
 
-    $pair= array_shift($this->pairs);
-    // echo "<<< ", $pair ? "Pair<{$pair->path}= {$pair->content}>" : "(null)", "\n";
-    return $pair;
+    $token= array_shift($this->tokens);
+    // echo "<<< ", $token ? "token<{$token->path}= {$token->content}>" : "(null)", "\n";
+    return $token;
   }
 
   /**
@@ -203,15 +203,14 @@ class XmlIterator implements Iterator {
    * @return var
    */
   public function value($definition, $base) {
-    if (null === $definition) {
-      return $this->token->content;
-    } else if (null === $this->token->value) {
-
-      // Fetch next value, which will typically forward the cursor over all
-      // child nodes, then back up exactly one iteration step.
-      $token= new Pair($this->token->path, null, [$definition->create(new Iteration($this, $base))]);
+    if (null === $definition) return $this->token->content;
+    
+    // Fetch next value, which will typically forward the cursor over all child nodes, storing
+    // the created value on the token; then back up exactly one iteration step.
+    if (null === $this->token->value) {
+      $token= new Token($this->token->path, null, [$definition->create(new Iteration($this, $base))]);
       $this->valid= true;
-      $this->token && array_unshift($this->pairs, $this->token);
+      $this->token && array_unshift($this->tokens, $this->token);
       $this->token= $token;
     }
 
