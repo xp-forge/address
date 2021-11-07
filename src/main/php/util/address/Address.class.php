@@ -60,10 +60,13 @@ abstract class Address implements IteratorAggregate {
    * @param  util.address.Definition $definition
    * @param  string $base
    * @return var
+   * @throws util.NoSuchElementException if there are no more eements
    */
   public function value(Definition $definition= null, $base= '/') {
     $it= $this->getIterator(true);
-    return $it->valid() ? $it->value($definition, $base) : null;
+    if ($it->valid()) return $it->value($definition, $base);
+
+    throw new NoSuchElementException('No more elements in iterator');    
   }
 
   /**
@@ -80,8 +83,8 @@ abstract class Address implements IteratorAggregate {
       $value= $it->value($definition, $base);
       $it->next();
       return $value;
-    } else {
-      throw new NoSuchElementException('No more elements in iterator');
     }
+
+    throw new NoSuchElementException('No more elements in iterator');
   }
 }

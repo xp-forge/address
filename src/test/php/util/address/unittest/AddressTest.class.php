@@ -40,10 +40,17 @@ class AddressTest {
   }
 
   #[Test, Expect(NoSuchElementException::class)]
-  public function iteration_across_end() {
+  public function next_after_end() {
     $address= new XmlString('<doc/>');
     $address->next();
     $address->next();
+  }
+
+  #[Test, Expect(NoSuchElementException::class)]
+  public function value_after_end() {
+    $address= new XmlString('<doc/>');
+    $address->next();
+    $address->value();
   }
 
   #[Test]
