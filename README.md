@@ -148,19 +148,21 @@ class Item {
   public $title, $description, $pubDate, $generator, $link, $guid;
 }
 
+$item= new ObjectOf(Item::class, [
+  'title'       => fn($self, $it) => $self->title= $it->next(),
+  'description' => fn($self, $it) => $self->description= $it->next(),
+  'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
+  'generator'   => fn($self, $it) => $self->generator= $it->next(),
+  'link'        => fn($self, $it) => $self->link= $it->next(),
+  'guid'        => fn($self, $it) => $self->guid= $it->next(),
+]);
+
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
 Sequence::of($stream)
   ->filter(fn($value, $path) => '//channel/item' === $path)
-  ->map(fn() => $stream->value(new ObjectOf(Item::class, [
-    'title'       => fn($self, $it) => $self->title= $it->next(),
-    'description' => fn($self, $it) => $self->description= $it->next(),
-    'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
-    'generator'   => fn($self, $it) => $self->generator= $it->next(),
-    'link'        => fn($self, $it) => $self->link= $it->next(),
-    'guid'        => fn($self, $it) => $self->guid= $it->next(),
-  ])))
+  ->map(fn() => $stream->value($item))
   ->each(fn($item) => Console::writeLine('- ', $item->title, "\n  ", $item->link))
 ;
 ```
