@@ -150,20 +150,22 @@ class Item {
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
+$definition= new ObjectOf(Item::class, [
+  'title'       => fn($self, $it) => $self->title= $it->next(),
+  'description' => fn($self, $it) => $self->description= $it->next(),
+  'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
+  'generator'   => fn($self, $it) => $self->generator= $it->next(),
+  'link'        => fn($self, $it) => $self->link= $it->next(),
+  'guid'        => fn($self, $it) => $self->guid= $it->next(),
+]);
+
 while ($stream->valid()) {
   if ('//channel/item' !== $stream->path()) {
     $stream->next();
     continue;
   }
 
-  $item= $stream->next(new ObjectOf(Item::class, [
-    'title'       => fn($self, $it) => $self->title= $it->next(),
-    'description' => fn($self, $it) => $self->description= $it->next(),
-    'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
-    'generator'   => fn($self, $it) => $self->generator= $it->next(),
-    'link'        => fn($self, $it) => $self->link= $it->next(),
-    'guid'        => fn($self, $it) => $self->guid= $it->next(),
-  ]));
+  $item= $stream->next($definition);
   Console::writeLine('- ', $item->title, "\n  ", $item->link);
 }
 ```
