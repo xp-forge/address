@@ -16,6 +16,7 @@ class Pointer {
    * @throws util.NoSuchElementException if there are no more elements
    */
   public function value(Definition $definition= null) {
-    return $this->address->value($definition);
+    $it= $this->address->getIterator(true);
+    return null === $definition ? $it->current() : $it->value($definition, $this->address, '/', true);
   }
 }
