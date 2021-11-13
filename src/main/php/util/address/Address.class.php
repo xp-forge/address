@@ -15,7 +15,7 @@ abstract class Address implements IteratorAggregate {
    * Gets iterator
    *
    * @param  bool $rewind Whether to initially rewind the iterator
-   * @return php.Iterator
+   * @return Traversable
    */
   public function getIterator($rewind= false): Traversable {
     if (null === $this->iterator) {
@@ -25,6 +25,29 @@ abstract class Address implements IteratorAggregate {
       }
     }
     return $this->iterator;
+  }
+
+  /**
+   * Iterate over pointers
+   *
+   * @param  ?string $filter
+   * @return iterable
+   */
+  public function pointers($filter= null) {
+    $it= $this->getIterator(true);
+    $pointer= new Pointer($this);
+
+    if (null === $filter) {
+      while ($it->valid()) {
+        yield $it->key() => $pointer;
+        $it->next();
+      }
+    } else {
+      while ($it->valid()) {
+        $filter === $it->key() && yield $filter => $pointer;
+        $it->next();
+      }
+    }
   }
 
   /** @return io.streams.InputStream */

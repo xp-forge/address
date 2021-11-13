@@ -1,31 +1,31 @@
 <?php namespace util\address;
 
 class Iteration {
-  private $input, $base;
+  private $address, $base;
   public $tokens= [];
 
   /**
    * Creates an iteration
    *
-   * @param  util.address.Address $input
+   * @param  util.address.Address $address
    * @param  string $base
    */
-  public function __construct(Address $input, $base) {
-    $this->input= $input;
+  public function __construct(Address $address, $base) {
+    $this->address= $address;
     $this->base= $base.'/';
   }
 
   /** @return util.address.Address */
-  public function input() { return $this->input; }
+  public function address() { return $this->address; }
 
   /** @return string */
   public function base() { return $this->base; }
 
   /** @return bool */
-  public function valid() { return $this->input->valid(); }
+  public function valid() { return $this->address->valid(); }
 
   /** @return string */
-  public function path() { return $this->input->path(); }
+  public function path() { return $this->address->path(); }
 
   /**
    * Returns the next value according to the given definition.
@@ -34,10 +34,10 @@ class Iteration {
    * @return var
    */
   public function next(Definition $definition= null) {
-    $it= $this->input->getIterator(true);
+    $it= $this->address->getIterator(true);
     $this->tokens[]= $it->token;
 
-    $value= null === $definition ? $it->current() : $it->value($definition, $this->input, $this->base, false);
+    $value= null === $definition ? $it->current() : $it->value($definition, $this->address, $this->base, false);
     $it->next();
     return $value;
   }
