@@ -3,7 +3,7 @@
 class Pointer {
   private $address;
 
-  /** @param util.address.Address $address */
+  /** Creates a pointer to a given address */
   public function __construct(Address $address) {
     $this->address= $address;
   }
