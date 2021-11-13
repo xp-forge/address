@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 4.1.0 / 2021-11-13
+
 * Merged PR #15: Add `Address::pointers()` to iterate over paths and
   pointers, optionally filtering by a given path
   (@thekid)
