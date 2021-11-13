@@ -18,7 +18,7 @@ Given the following two value objects:
 class Book {
   public $name, $author;
 
-  public function __construct($name, Author $author) {
+  public function __construct(string $name, Author $author) {
     $this->name= $name;
     $this->author= $author;
   }
@@ -27,7 +27,7 @@ class Book {
 class Author {
   public $name;
 
-  public function __construct($name) {
+  public function __construct(string $name) {
     $this->name= $name;
   }
 }
@@ -119,7 +119,7 @@ Works with *record* classes, which are defined as being immutable and having an 
 use util\address\{XmlString, RecordOf};
 
 class Book {
-  public function __construct(private $isbn, private $name) { }
+  public function __construct(private string $isbn, private string $name) { }
 
   public function isbn() { return $this->isbn; }
   public function name() { return $this->name; }
