@@ -202,9 +202,10 @@ class XmlIterator implements Iterator {
    * @param  util.address.Definition $definition
    * @param  util.address.Address $address
    * @param  string $base
+   * @param  bool $source
    * @return var
    */
-  public function value($definition, $address, $base) {
+  public function value($definition, $address, $base, $source) {
     if (null === $this->token->source) {
       $token= $this->token;
 
@@ -215,7 +216,7 @@ class XmlIterator implements Iterator {
       // Unless we are at the end of the stream, push back last token.
       $this->valid= true;
       $this->token && array_unshift($this->tokens, $this->token);
-      $this->token= $token->from($iteration->tokens);
+      $this->token= $source ? $token->from($iteration->tokens) : $token;
       return $value;
     } else {
 

@@ -37,7 +37,7 @@ class Iteration {
     $it= $this->input->getIterator(true);
     $this->tokens[]= $it->token;
 
-    $value= null === $definition ? $it->current() : $it->value($definition, $this->input, $this->base);
+    $value= null === $definition ? $it->current() : $it->value($definition, $this->input, $this->base, false);
     $it->next();
     return $value;
   }

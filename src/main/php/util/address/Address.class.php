@@ -65,7 +65,7 @@ abstract class Address implements IteratorAggregate {
   public function value(Definition $definition= null, $base= '/') {
     $it= $this->getIterator(true);
     if ($it->valid()) {
-      return null === $definition ? $it->current() : $it->value($definition, $this, $base);
+      return null === $definition ? $it->current() : $it->value($definition, $this, $base, true);
     }
 
     throw new NoSuchElementException('No more elements in iterator');    
@@ -82,7 +82,7 @@ abstract class Address implements IteratorAggregate {
   public function next(Definition $definition= null, $base= '/') {
     $it= $this->getIterator(true);
     if ($it->valid()) {
-      $value= null === $definition ? $it->current() : $it->value($definition, $this, $base);
+      $value= null === $definition ? $it->current() : $it->value($definition, $this, $base, false);
       $it->next();
       return $value;
     }
