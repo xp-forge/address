@@ -3,6 +3,9 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #13: Introduce `Address::value()` to return current value
+  (@thekid)
+
 ## 4.0.1 / 2021-11-01
 
 * Fixed *Cannot unbind $this of closure using $this* - @thekid
