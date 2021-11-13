@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #14: Make util.address.Address subclasses implement the
+  lang.Value interface, making them comparable and giving them more
+  readable string representations
+  (@thekid)
 * Merged PR #13: Introduce `Address::value()` to return current value
   (@thekid)
 
