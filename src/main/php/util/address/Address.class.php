@@ -1,6 +1,7 @@
 <?php namespace util\address;
 
 use IteratorAggregate, Traversable;
+use lang\Value;
 use util\NoSuchElementException;
 
 /**
@@ -8,7 +9,7 @@ use util\NoSuchElementException;
  *
  * @test  xp://util.address.unittest.AddressTest
  */
-abstract class Address implements IteratorAggregate {
+abstract class Address implements Value, IteratorAggregate {
   private $iterator;
 
   /**

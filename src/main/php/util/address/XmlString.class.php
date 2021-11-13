@@ -8,7 +8,7 @@ use io\streams\MemoryInputStream;
  * @test  xp://util.address.unittest.XmlInputTest
  */
 class XmlString extends Address {
-  private $stream;
+  private $input;
 
   /**
    * Creates a new file-based XML input
@@ -16,9 +16,30 @@ class XmlString extends Address {
    * @param  string $input
    */
   public function __construct($input) {
-    $this->stream= new MemoryInputStream($input);
+    $this->input= $input;
   }
 
   /** @return io.streams.InputStream */
-  protected function stream() { return $this->stream; }
+  protected function stream() { return new MemoryInputStream($this->input); }
+
+  /** @return string */
+  public function toString() {
+    $l= strlen($this->input);
+    return nameof($this).'<"'.($l > 10 ? substr($this->input, 0, 10).'..." ('.$l.' bytes)>' : $this->input.'">');
+  }
+
+  /** @return string */
+  public function hashCode() {
+    return md5($this->input);
+  }
+
+  /**
+   * Comparison
+   *
+   * @param  var $value
+   * @return int
+   */
+  public function compareTo($value) {
+    return $value instanceof self ? $this->input <=> $value->input : 1;
+  }
 }

@@ -30,4 +30,28 @@ class XmlResource extends Address {
 
   /** @return io.streams.InputStream */
   protected function stream() { return $this->package->getResourceAsStream($this->name)->in(); }
+
+  /** @return string */
+  public function toString() {
+    return nameof($this).'<'.$this->name.'@'.$this->package->toString().'>';
+  }
+
+  /** @return string */
+  public function hashCode() {
+    return 'R'.md5($this->name.'@'.$this->package->getName());
+  }
+
+  /**
+   * Comparison
+   *
+   * @param  var $value
+   * @return int
+   */
+  public function compareTo($value) {
+    if ($value instanceof self) {
+      $r= $this->name <=> $value->name;
+      return 0 === $r ? $this->package->compareTo($value->package) : $r;
+    }
+    return 1;
+  }
 }
