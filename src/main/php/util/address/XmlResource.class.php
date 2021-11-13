@@ -1,14 +1,14 @@
 <?php namespace util\address;
 
-use lang\XPClass;
 use lang\reflect\Package;
+use lang\{XPClass, Value};
 
 /**
  * XML class loader resource input
  *
- * @test  xp://util.address.unittest.XmlInputTest
+ * @test  util.address.unittest.XmlInputTest
  */
-class XmlResource extends Address {
+class XmlResource extends Address implements Value {
   private $package, $name;
 
   /**

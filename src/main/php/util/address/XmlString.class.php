@@ -1,13 +1,14 @@
 <?php namespace util\address;
 
 use io\streams\MemoryInputStream;
+use lang\Value;
 
 /**
  * XML string input
  *
- * @test  xp://util.address.unittest.XmlInputTest
+ * @test  util.address.unittest.XmlInputTest
  */
-class XmlString extends Address {
+class XmlString extends Address implements Value {
   private $input;
 
   /**

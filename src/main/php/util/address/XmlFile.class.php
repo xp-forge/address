@@ -1,13 +1,14 @@
 <?php namespace util\address;
 
 use io\File;
+use lang\Value;
 
 /**
  * XML file input
  *
- * @test  xp://util.address.unittest.XmlInputTest
+ * @test  util.address.unittest.XmlInputTest
  */
-class XmlFile extends Address {
+class XmlFile extends Address implements Value {
   private $file;
 
   /**

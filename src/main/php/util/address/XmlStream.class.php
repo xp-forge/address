@@ -1,14 +1,15 @@
 <?php namespace util\address;
 
 use io\streams\InputStream;
+use lang\Value;
 use util\Objects;
 
 /**
  * XML stream input
  *
- * @test  xp://util.address.unittest.XmlInputTest
+ * @test  util.address.unittest.XmlInputTest
  */
-class XmlStream extends Address {
+class XmlStream extends Address implements Value {
   private $in;
 
   /**
