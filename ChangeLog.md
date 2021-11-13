@@ -3,6 +3,9 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #15: Add `Address::pointers()` to iterate over paths and
+  pointers, optionally filtering by a given path
+  (@thekid)
 * Merged PR #14: Make util.address.Address subclasses implement the
   lang.Value interface, making them comparable and giving them more
   readable string representations
