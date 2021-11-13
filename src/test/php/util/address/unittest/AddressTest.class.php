@@ -229,4 +229,16 @@ class AddressTest {
     }
     Assert::equals(['/' => null, '//a' => 'A', '//b' => 'B'], $actual);
   }
+
+  #[Test]
+  public function pointers_can_resume() {
+    $actual= [];
+
+    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address->next();
+    foreach ($address->pointers() as $path => $pointer) {
+      $actual[$path]= $pointer->value();
+    }
+    Assert::equals(['//a' => 'A', '//b' => 'B'], $actual);
+  }
 }
