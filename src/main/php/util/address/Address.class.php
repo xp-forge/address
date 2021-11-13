@@ -19,7 +19,7 @@ abstract class Address implements IteratorAggregate {
    */
   public function getIterator($rewind= false): Traversable {
     if (null === $this->iterator) {
-      $this->iterator= $this->newIterator();
+      $this->iterator= new XmlIterator($this->stream());
       if ($rewind) {
         $this->iterator->rewind();
       }
@@ -27,8 +27,8 @@ abstract class Address implements IteratorAggregate {
     return $this->iterator;
   }
 
-  /** @return php.Iterator */
-  protected abstract function newIterator();
+  /** @return io.streams.InputStream */
+  protected abstract function stream();
 
   /**
    * Reset this input
@@ -55,25 +55,38 @@ abstract class Address implements IteratorAggregate {
   }
 
   /**
+   * Returns the current value according to the given definition
+   *
+   * @param  util.address.Definition $definition
+   * @param  string $base
+   * @return var
+   * @throws util.NoSuchElementException if there are no more elements
+   */
+  public function value(Definition $definition= null, $base= '/') {
+    $it= $this->getIterator(true);
+    if ($it->valid()) {
+      return null === $definition ? $it->current() : $it->value($definition, $this, $base, true);
+    }
+
+    throw new NoSuchElementException('No more elements in iterator');    
+  }
+
+  /**
    * Returns the next value according to the given definition
    *
    * @param  util.address.Definition $definition
    * @param  string $base
    * @return var
-   * @throws util.NoSuchElementException if there are no more eements
+   * @throws util.NoSuchElementException if there are no more elements
    */
   public function next(Definition $definition= null, $base= '/') {
-    if ($definition) {
-      return $definition->create(new Iteration($this, $base));
-    } else {
-      $it= $this->getIterator(true);
-      if ($it->valid()) {
-        $value= $it->current();
-        $it->next();
-        return $value;
-      } else {
-        throw new NoSuchElementException('No more elements in iterator');
-      }
+    $it= $this->getIterator(true);
+    if ($it->valid()) {
+      $value= null === $definition ? $it->current() : $it->value($definition, $this, $base, false);
+      $it->next();
+      return $value;
     }
+
+    throw new NoSuchElementException('No more elements in iterator');
   }
 }

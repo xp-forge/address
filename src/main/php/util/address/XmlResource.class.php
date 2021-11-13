@@ -28,6 +28,6 @@ class XmlResource extends Address {
     $this->name= $name;
   }
 
-  /** @return php.Iterator */
-  protected function newIterator() { return new XmlIterator($this->package->getResourceAsStream($this->name)->in()); }
+  /** @return io.streams.InputStream */
+  protected function stream() { return $this->package->getResourceAsStream($this->name)->in(); }
 }

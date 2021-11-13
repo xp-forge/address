@@ -19,6 +19,6 @@ class XmlString extends Address {
     $this->stream= new MemoryInputStream($input);
   }
 
-  /** @return php.Iterator */
-  protected function newIterator() { return new XmlIterator($this->stream); }
+  /** @return io.streams.InputStream */
+  protected function stream() { return $this->stream; }
 }

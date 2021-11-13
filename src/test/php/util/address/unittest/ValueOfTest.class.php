@@ -145,4 +145,21 @@ class ValueOfTest {
       ]))
     );
   }
+
+  #[Test, Values([1, 2, 3])]
+  public function call_value_repeatedly($times) {
+    $definition= new ValueOf([], [
+      '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
+      '.'  => function(&$self, $it) { $self['name']= $it->next(); }
+    ]);
+
+    $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
+    for ($i= 1; $i <= $times; $i++) {
+      Assert::equals(
+        ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
+        $address->value($definition),
+        "Invocation #{$i}"
+      );
+    }
+  }
 }

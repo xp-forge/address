@@ -19,6 +19,6 @@ class XmlFile extends Address {
     $this->file= $file;
   }
 
-  /** @return php.Iterator */
-  protected function newIterator() { return new XmlIterator($this->file->in()); }
+  /** @return io.streams.InputStream */
+  protected function stream() { return $this->file->in(); }
 }
