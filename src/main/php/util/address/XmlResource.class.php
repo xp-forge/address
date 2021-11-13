@@ -14,8 +14,8 @@ class XmlResource extends Address implements Value {
   /**
    * Creates a new resource-based XML input
    *
-   * @param  var $arg Either a lang.reflect.Package, a lang.XPClass or a string referring to a package
-   * @param  string $name
+   * @param  lang.XPClass|lang.reflect.Package|string $arg Class or package
+   * @param  string $name Resource name
    */
   public function __construct($arg, $name) {
     if ($arg instanceof XPClass) {
