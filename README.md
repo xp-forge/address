@@ -160,9 +160,18 @@ $item= new ObjectOf(Item::class, [
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');
 $stream= new XmlStream($conn->get()->in());
 
+$definition= new ObjectOf(Item::class, [
+  'title'       => fn($self, $it) => $self->title= $it->next(),
+  'description' => fn($self, $it) => $self->description= $it->next(),
+  'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
+  'generator'   => fn($self, $it) => $self->generator= $it->next(),
+  'link'        => fn($self, $it) => $self->link= $it->next(),
+  'guid'        => fn($self, $it) => $self->guid= $it->next(),
+]);
+
 Sequence::of($stream)
   ->filter(fn($value, $path) => '//channel/item' === $path)
-  ->map(fn() => $stream->value($item))
+  ->map(fn() => $stream->value($definition))
   ->each(fn($item) => Console::writeLine('- ', $item->title, "\n  ", $item->link))
 ;
 ```
