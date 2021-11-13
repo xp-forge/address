@@ -3,10 +3,13 @@
 class Pointer {
   private $address;
 
-  /** @param util.address.Address */
-  public function __construct($address) {
+  /** @param util.address.Address $address */
+  public function __construct(Address $address) {
     $this->address= $address;
   }
+
+  /** @return util.address.Address */
+  public function address() { return $this->address; }
 
   /**
    * Returns the current value according to the given definition
