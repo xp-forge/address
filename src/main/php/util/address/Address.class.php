@@ -35,15 +35,16 @@ abstract class Address implements IteratorAggregate {
    */
   public function pointers($filter= null) {
     $it= $this->getIterator(true);
+    $pointer= new Pointer($this);
 
     if (null === $filter) {
       while ($it->valid()) {
-        yield $it->key() => new Pointer($this);
+        yield $it->key() => $pointer;
         $it->next();
       }
     } else {
       while ($it->valid()) {
-        $filter === $it->key() && yield $filter => new Pointer($this);
+        $filter === $it->key() && yield $filter => $pointer;
         $it->next();
       }
     }
