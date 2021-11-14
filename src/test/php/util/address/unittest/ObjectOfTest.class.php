@@ -35,8 +35,8 @@ class ObjectOfTest {
   #[Test]
   public function instantiates_type() {
     $definition= new ObjectOf(Book::class, [
-      '@author' => function($self, $it) { $self->author= new Author($it->next()); },
-      '.'       => function($self, $it) { $self->name= $it->next(); },
+      '@author' => function($self) { $self->author= new Author(yield); },
+      '.'       => function($self) { $self->name= yield; },
     ]);
 
     Assert::equals(new Book('Name', new Author('Test')), $this->address()->next($definition));
@@ -45,7 +45,7 @@ class ObjectOfTest {
   #[Test]
   public function can_omit_properties() {
     $definition= new ObjectOf(Book::class, [
-      '.' => function($self, $it) { $self->name= $it->next(); },
+      '.' => function($self) { $self->name= yield; },
     ]);
 
     Assert::equals(new Book('Name'), $this->address()->next($definition));
@@ -54,7 +54,7 @@ class ObjectOfTest {
   #[Test]
   public function can_use_public_methods_from_this() {
     $definition= new ObjectOf(Book::class, [
-      '.' => function($self, $it) { $self->name= $this->toUpper($it->next()); },
+      '.' => function($self) { $self->name= $this->toUpper(yield); },
     ]);
 
     Assert::equals(new Book('NAME'), $this->address()->next($definition));
@@ -68,7 +68,7 @@ class ObjectOfTest {
       }
     ]);
     $definition= new ObjectOf($class, [
-      '.' => function($self, $it) { $self->name= $it->next(); },
+      '.' => function($self) { $self->name= yield; },
     ]);
 
     Assert::instance($class, $this->address()->next($definition));

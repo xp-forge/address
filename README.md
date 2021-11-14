@@ -54,10 +54,10 @@ $socket= /* ... */
 
 $address= new XmlStream($socket->in());
 $book= $address->next(new ObjectOf(Book::class, [
-  'name'   => function($self, $it) { $self->name= $it->next(); },
-  'author' => function($self, $it) { $self->author= $it->next(new ObjectOf(Author::class, [
-    'name'   => function($self, $it) { $self->name= $it->next() ?: '(unknown author)'; }
-  ])); }
+  'name'   => function($self) { $self->name= yield; },
+  'author' => function($self) { $self->author= yield new ObjectOf(Author::class, [
+    'name'   => function($self) { $self->name= yield ?: '(unknown author)'; }
+  ]); }
 ]);
 ```
 
@@ -75,20 +75,20 @@ use util\address\{XmlString, ValueOf};
 // Parse into string 'Tim Taylor'
 $xml= new XmlString('<name>Tim Taylor</name>');
 $name= $xml->next(new ValueOf(null, [
-  '.' => function(&$self, $it) { $self= $it->next(); },
+  '.' => function(&$self) { $self= yield; },
 ]);
 
 // Parse into array ['More', 'Power']
 $xml= new XmlString('<tools><tool>More</tool><tool>Power</tool></tools>');
 $name= $xml->next(new ValueOf([], [
-  'tool' => function(&$self, $it) { $self[]= $it->next(); },
+  'tool' => function(&$self) { $self[]= yield; },
 ]);
 
 // Parse into map ['id' => 6100, 'name' => 'more power']
 $xml= new XmlString('<tool id="6100">more power</tool>');
 $book= $xml->next(new ValueOf([], [
-  '@id' => function(&$self, $it) { $self['id']= (int)$it->next(); },
-  '.'   => function(&$self, $it) { $self['name']= $it->next(); },
+  '@id' => function(&$self) { $self['id']= (int)yield; },
+  '.'   => function(&$self) { $self['name']= yield; },
 ]);
 ```
 
@@ -106,8 +106,8 @@ class Book {
 // Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
 $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
 $book= $xml->next(new ObjectOf(Book::class, [
-  '@isbn' => function($self, $it) { $self->isbn= $it->next(); },
-  'name'  => function($self, $it) { $self->name= $it->next(); },
+  '@isbn' => function($self) { $self->isbn= yield; },
+  'name'  => function($self) { $self->name= yield; },
 ]);
 ```
 
@@ -128,8 +128,8 @@ class Book {
 // Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
 $xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
 $book= $xml->next(new RecordOf(Book::class, [
-  '@isbn' => function(&$args, $it) { $args['isbn']= $it->next(); },
-  'name'  => function(&$args, $it) { $args['name']= $it->next(); },
+  '@isbn' => function(&$args) { $args['isbn']= yield; },
+  'name'  => function(&$args) { $args['name']= yield; },
 ]);
 ```
 
@@ -149,12 +149,12 @@ class Item {
 }
 
 $definition= new ObjectOf(Item::class, [
-  'title'       => fn($self, $it) => $self->title= $it->next(),
-  'description' => fn($self, $it) => $self->description= $it->next(),
-  'pubDate'     => fn($self, $it) => $self->pubDate= new Date($it->next()),
-  'generator'   => fn($self, $it) => $self->generator= $it->next(),
-  'link'        => fn($self, $it) => $self->link= $it->next(),
-  'guid'        => fn($self, $it) => $self->guid= $it->next(),
+  'title'       => fn($self) => $self->title= yield,
+  'description' => fn($self) => $self->description= yield,
+  'pubDate'     => fn($self) => $self->pubDate= new Date(yield),
+  'generator'   => fn($self) => $self->generator= yield,
+  'link'        => fn($self) => $self->link= yield,
+  'guid'        => fn($self) => $self->guid= yield,
 ]);
 
 $conn= new HttpConnection('https://www.tagesschau.de/xml/rss2/');

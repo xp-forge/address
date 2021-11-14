@@ -30,10 +30,10 @@ class ArrayOfTest {
     Assert::equals(
       [new Book('Book #1'), new Book('Book #2')],
       $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
-        'name'   => function($self, $it) { $self->name= $it->next(); },
-        'author' => function($self, $it) { $self->author= $it->next(new ObjectOf(Author::class, [
-          'name'   => function($self, $it) { $self->name= $it->next() ?: 'Test'; }
-        ])); }
+        'name'   => function($self) { $self->name= yield; },
+        'author' => function($self) { $self->author= yield new ObjectOf(Author::class, [
+          'name'   => function($self) { $self->name= yield ?: 'Test'; }
+        ]); }
       ])))
     );
   }
@@ -44,7 +44,7 @@ class ArrayOfTest {
     Assert::equals(
       [new Book('Book #1'), new Book('Book #2')],
       $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
-        '.' => function($self, $it) { $self->name= $it->next(); }
+        '.' => function($self) { $self->name= yield; }
       ])))
     );
   }
@@ -55,8 +55,8 @@ class ArrayOfTest {
     Assert::equals(
       [new Book('Book #1', new Author('Test')), new Book('Book #2')],
       $address->next(new Enclosing('/'))->next(new ArrayOf(new ObjectOf(Book::class, [
-        '.'       => function($self, $it) { $self->name= $it->next(); },
-        '@author' => function($self, $it) { $self->author= new Author($it->next()); }
+        '.'       => function($self) { $self->name= yield; },
+        '@author' => function($self) { $self->author= new Author(yield); }
       ])))
     );
   }

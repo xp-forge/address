@@ -21,19 +21,19 @@ class XmlInputTest {
   #[Test, Values('inputs')]
   public function feed($input) {
     $feed= $input->next(new ObjectOf(Channel::class, [
-      'channel/title'       => function($self, $it) { $self->title= $it->next(); },
-      'channel/description' => function($self, $it) { $self->description= $it->next(); },
-      'channel/pubDate'     => function($self, $it) { $self->pubDate= new Date($it->next()); },
-      'channel/generator'   => function($self, $it) { $self->generator= $it->next(); },
-      'channel/link'        => function($self, $it) { $self->link= $it->next(); },
-      'channel/item'        => function($self, $it) { $self->items[]= $it->next(new ObjectOf(Item::class, [
-        'title'               => function($self, $it) { $self->title= $it->next(); },
-        'description'         => function($self, $it) { $self->description= $it->next(); },
-        'pubDate'             => function($self, $it) { $self->pubDate= new Date($it->next()); },
-        'generator'           => function($self, $it) { $self->generator= $it->next(); },
-        'link'                => function($self, $it) { $self->link= $it->next(); },
-        'guid'                => function($self, $it) { $self->guid= $it->next(); }
-      ])); }
+      'channel/title'       => function($self) { $self->title= yield; },
+      'channel/description' => function($self) { $self->description= yield; },
+      'channel/pubDate'     => function($self) { $self->pubDate= new Date(yield); },
+      'channel/generator'   => function($self) { $self->generator= yield; },
+      'channel/link'        => function($self) { $self->link= yield; },
+      'channel/item'        => function($self) { $self->items[]= yield new ObjectOf(Item::class, [
+        'title'               => function($self) { $self->title= yield; },
+        'description'         => function($self) { $self->description= yield; },
+        'pubDate'             => function($self) { $self->pubDate= new Date(yield); },
+        'generator'           => function($self) { $self->generator= yield; },
+        'link'                => function($self) { $self->link= yield; },
+        'guid'                => function($self) { $self->guid= yield; }
+      ]); }
     ]));
 
     Assert::equals(new Channel(

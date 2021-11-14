@@ -37,8 +37,8 @@ class RecordOfTest {
   #[Test]
   public function instantiates_type() {
     $definition= new RecordOf(Book::class, [
-      '@author' => function(&$args, $it) { $args['author']= new Author($it->next()); },
-      '.'       => function(&$args, $it) { $args['name']= $it->next(); },
+      '@author' => function(&$args) { $args['author']= new Author(yield); },
+      '.'       => function(&$args) { $args['name']= yield; },
     ]);
 
     Assert::equals(new Book('Name', new Author('Test')), $this->address()->next($definition));
@@ -47,7 +47,7 @@ class RecordOfTest {
   #[Test]
   public function optional_args_can_be_omitted() {
     $definition= new RecordOf(Book::class, [
-      '.' => function(&$args, $it) { $args['name']= $it->next(); },
+      '.' => function(&$args) { $args['name']= yield; },
     ]);
 
     Assert::equals(new Book('Name'), $this->address()->next($definition));
@@ -56,16 +56,16 @@ class RecordOfTest {
   #[Test, Expect(class: Error::class, withMessage: '/Unknown named parameter .+/')]
   public function excess_args_raise_an_error() {
     $this->address()->next(new RecordOf(Book::class, [
-      '.' => function(&$args, $it) { $args['name']= $it->next(); },
-      '/' => function(&$args, $it) { $args['extra']= true; },
+      '.' => function(&$args) { $args['name']= yield; },
+      '/' => function(&$args) { $args['extra']= true; },
     ]));
   }
 
   #[Test, Expect(class: Error::class, withMessage: '/Argument .+ must be (of type|an instance of)/')]
   public function raises_error_if_required_argument_is_mistyped() {
     $this->address()->next(new RecordOf(Book::class, [
-      '@author' => function(&$args, $it) { $args['author']= $it->next(); }, // Missing `new Author(...)`
-      '.'       => function(&$args, $it) { $args['name']= $it->next(); },
+      '@author' => function(&$args) { $args['author']= yield; }, // Missing `new Author(...)`
+      '.'       => function(&$args) { $args['name']= yield; },
     ]));
   }
 
