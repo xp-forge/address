@@ -24,22 +24,10 @@ class ObjectOf extends ByAddresses {
       throw new IllegalArgumentException('Given type '.$this->type->name().' is not instantiable');
     }
 
+    $class= $this->type->literal();
     foreach ($addresses as $path => $address) {
-      $r= new ReflectionFunction($address);
-      if ($r->isGenerator()) {
-        $handler= $address->bindTo($r->getClosureThis(), $this->type->literal());
-      } else {
-        '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
-        $bound= $address->bindTo($r->getClosureThis(), $this->type->literal());
-        $handler= function(&$result, $path, $iteration) use($bound) {
-          $bound($result, $iteration, $path);
-          return [];
-        };
-      }
-
-      foreach (explode('|', $path) as $match) {
-        $this->addresses[$match]= $handler;
-      }
+      $reflect= new ReflectionFunction($address);
+      $this->add($path, $reflect, $address->bindTo($reflect->getClosureThis(), $class));
     }
   }
 

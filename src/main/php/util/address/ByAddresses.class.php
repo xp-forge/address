@@ -9,20 +9,30 @@ abstract class ByAddresses implements Definition {
   /** @param [:function(var, ?string): Generator] */
   public function __construct($addresses) {
     foreach ($addresses as $path => $address) {
-      $r= new ReflectionFunction($address);
-      if ($r->isGenerator()) {
-        $handler= $address;
-      } else {
-        '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
-        $handler= function(&$result, $path, $iteration) use($address) {
-          $address($result, $iteration, $path);
-          return [];
-        };
-      }
+      $this->add($path, new ReflectionFunction($address), $address);
+    }
+  }
 
-      foreach (explode('|', $path) as $match) {
-        $this->addresses[$match]= $handler;
-      }
+  /**
+   * Add a given address function for a given path or a list of paths.
+   *
+   * @param  string $path
+   * @param  ReflectionFunction $reflect
+   * @param  function(var, ?string): Generator $address
+   */
+  protected function add($path, $reflect, $address) {
+    if ($reflect->isGenerator()) {
+      $handler= $address;
+    } else {
+      '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
+      $handler= function(&$result, $path, $iteration) use($address) {
+        $address($result, $iteration, $path);
+        return [];
+      };
+    }
+
+    foreach (explode('|', $path) as $match) {
+      $this->addresses[$match]= $handler;
     }
   }
 
