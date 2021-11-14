@@ -107,6 +107,20 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test]
+  public function entities_from_doctype() {
+    $this->assertIterated(
+      [['/' => 'Copyright 2021'], ['//@power' => '6100']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE books [
+          <!ENTITY more "6100">
+          <!ENTITY copy "Copyright">
+        ]>
+        <book power="&more;">&copy; 2021</book>
+      '))
+    );
+  }
+
   #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(

@@ -16,6 +16,7 @@ class XmlIterator implements Iterator {
   private $input, $path, $valid, $node;
   private $encoding= 'utf-8';
   private $tokens= [];
+  private $entities= ['amp' => '&', 'apos' => "'", 'quot' => '"', 'gt' => '>', 'lt' => '<'];
   public $token;
 
   /**
@@ -26,6 +27,20 @@ class XmlIterator implements Iterator {
   public function __construct(InputStream $input) {
     $this->input= new StreamTokenizer($input, '<>', true);
     $this->path= null;
+  }
+
+  /**
+   * Decodes a given string value, taking into account the doctype entities
+   *
+   * @param  string $value
+   * @return string
+   */
+  protected function decode($value) {
+    return preg_replace_callback(
+      '/&([#a-zA-Z0-9_:.-]+);/',
+      function($m) { return $this->entities[$m[1]] ?? html_entity_decode($m[0], ENT_XML1 | ENT_SUBSTITUTE, \xp::ENCODING); },
+      $this->encoding === \xp::ENCODING ? $value : iconv($this->encoding, \xp::ENCODING, $value)
+    );
   }
 
   /**
@@ -103,6 +118,19 @@ class XmlIterator implements Iterator {
   }
 
   /**
+   * Handle doctype
+   *
+   * @param  string $declaration
+   * @return void
+   */
+  protected function doctype($declaration) {
+    preg_match_all('/<!ENTITY ([^ ]+) "([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
+    foreach ($matches as $match) {
+      $this->entities[$match[1]]= $match[2];
+    }
+  }
+
+  /**
    * Handle closing a tag
    *
    * @return void
@@ -124,7 +152,10 @@ class XmlIterator implements Iterator {
     while (0 !== substr_compare($token, $end, $l) && $this->input->hasMoreTokens()) {
       $token.= $this->input->nextToken('>');
     }
-    return iconv($this->encoding, \xp::ENCODING, substr($token, 0, $l));
+    return $this->encoding === \xp::ENCODING
+      ? substr($token, 0, $l)
+      : iconv($this->encoding, \xp::ENCODING, substr($token, 0, $l))
+    ;
   }
 
   /**
@@ -143,7 +174,7 @@ class XmlIterator implements Iterator {
       } else if ('"' === $token || "'" === $token) {
         $value= $st->nextToken($token);
         $st->nextToken($token);
-        $attributes[$name]= html_entity_decode(iconv($this->encoding, \xp::ENCODING, $value), ENT_XML1 | ENT_QUOTES, \xp::ENCODING);
+        $attributes[$name]= $this->decode($value);
       } else {
         $last= $token;
       }
@@ -171,6 +202,8 @@ class XmlIterator implements Iterator {
               $this->cdata($this->tokenUntil(substr($tag, 8), ']]>'));
             } else if (0 === strncmp('!--', $tag, 3)) {
               $this->comment($this->tokenUntil(substr($tag, 3), '-->'));
+            } else if (0 === strncmp('!DOCTYPE', $tag, 8)) {
+              $this->doctype($this->tokenUntil(substr($tag, strpos($tag, '[', 8) + 1), ']>'));
             } else {
               throw new IllegalStateException('Cannot handle '.$tag);
             }
@@ -186,7 +219,7 @@ class XmlIterator implements Iterator {
             }
           }
         } else if (null !== $token) {
-          $this->pcdata(html_entity_decode(iconv($this->encoding, \xp::ENCODING, $token), ENT_XML1 | ENT_QUOTES, \xp::ENCODING));
+          $this->pcdata($this->decode($token));
         }
       }
     }
