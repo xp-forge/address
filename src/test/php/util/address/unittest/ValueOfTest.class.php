@@ -1,6 +1,7 @@
 <?php namespace util\address\unittest;
 
-use unittest\{Assert, Test};
+use unittest\actions\RuntimeVersion;
+use unittest\{Assert, Action, Test};
 use util\Date;
 use util\address\{ValueOf, XmlString};
 
@@ -13,6 +14,18 @@ class ValueOfTest {
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
         '.' => function(&$self) { $self['name']= yield; }
+      ]))
+    );
+  }
+
+  /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
+  #[Test, Action(eval: 'new RuntimeVersion(">=7.4")')]
+  public function can_use_fn() {
+    $address= new XmlString('<book>Name</book>');
+    Assert::equals(
+      ['name' => 'Name'],
+      $address->next(new ValueOf([], [
+        '.' => eval('return fn(&$self, $it) => $self["name"]= yield;')
       ]))
     );
   }
