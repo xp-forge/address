@@ -58,7 +58,7 @@ class YieldTest {
       ['name' => 'Name', 'author' => null, 'date' => '1977-12-14'],
       $address->next(new ValueOf([], [
         '.' => function(&$self) {
-          $self= yield new ValueOf(null, ['*' => function(&$self, $it, $path) {
+          $self= yield new ValueOf(null, ['*' => function(&$self, $path) {
             $self[$path]= yield;
           }]);
         },
