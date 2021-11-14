@@ -73,15 +73,4 @@ class ObjectOfTest {
 
     Assert::instance($class, $this->address()->next($definition));
   }
-
-  /** @deprecated */
-  #[Test]
-  public function deprecated_form_of_address_functions() {
-    $definition= new ObjectOf(Book::class, [
-      '.' => function($it) { $this->name= $it->next(); },
-    ]);
-    \xp::gc();
-
-    Assert::equals(new Book('Name'), $this->address()->next($definition));
-  }
 }

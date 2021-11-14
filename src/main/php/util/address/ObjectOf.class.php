@@ -24,28 +24,18 @@ class ObjectOf extends ByAddresses {
       throw new IllegalArgumentException('Given type '.$this->type->name().' is not instantiable');
     }
 
-    // Handle BC: Up until (and including 3.0.0), functions of the form
-    // `function($it) { $this->member= $it->next(); }` were passed. Trigger
-    // deprecation warning and rewrite accordingly.
     foreach ($addresses as $path => $address) {
       $r= new ReflectionFunction($address);
       if ($r->isGenerator()) {
         $handler= $address->bindTo($r->getClosureThis(), $this->type->literal());
-      } else if (1 === $r->getNumberOfParameters()) {
-        trigger_error('Use function(object, util.address.Iteration) instead!', E_USER_DEPRECATED);
-        $handler= function($instance, $path, $iteration) use($address) {
-          $address->bindTo($instance, $instance)->__invoke($iteration);
-          return [];
-        };
       } else {
         $bound= $address->bindTo($r->getClosureThis(), $this->type->literal());
-        $handler= function($instance, $path, $iteration) use($bound) {
-          $bound($instance, $iteration, $path);
+        $handler= function(&$result, $path, $iteration) use($bound) {
+          $bound($result, $iteration, $path);
           return [];
         };
       }
 
-      // Inlined parent constructor
       foreach (explode('|', $path) as $match) {
         $this->addresses[$match]= $handler;
       }
