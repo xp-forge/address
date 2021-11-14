@@ -3,6 +3,13 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 4.2.0 / 2021-11-14
+
+* Merged PR #16: Use `yield` inside address functions. Using functions
+  of the form `fn(&$self) => $self['item']= yield;` inside definitions
+  is the new preferred way to process the values!
+  (@thekid)
+
 ## 4.1.0 / 2021-11-13
 
 * Merged PR #15: Add `Address::pointers()` to iterate over paths and
