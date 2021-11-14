@@ -29,6 +29,7 @@ class ObjectOf extends ByAddresses {
       if ($r->isGenerator()) {
         $handler= $address->bindTo($r->getClosureThis(), $this->type->literal());
       } else {
+        '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
         $bound= $address->bindTo($r->getClosureThis(), $this->type->literal());
         $handler= function(&$result, $path, $iteration) use($bound) {
           $bound($result, $iteration, $path);

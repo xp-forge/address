@@ -4,6 +4,7 @@ use unittest\actions\RuntimeVersion;
 use unittest\{Assert, Action, Test};
 use util\address\{ValueOf, XmlString};
 
+/** @deprecated */
 class UsingNextTest {
   const BOOK = '<book id="1"><name>Name</name><author/><date>1977-12-14</date></book>';
 
@@ -16,6 +17,7 @@ class UsingNextTest {
         'name' => function(&$self, $it) { $self['name']= $it->next(); }
       ]))
     );
+    \xp::gc();
   }
 
   #[Test]
@@ -31,6 +33,7 @@ class UsingNextTest {
         },
       ]))
     );
+    \xp::gc();
   }
 
   /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
@@ -43,5 +46,6 @@ class UsingNextTest {
         'name' => eval('return fn(&$self, $it) => $self["name"]= $it->next();')
       ]))
     );
+    \xp::gc();
   }
 }

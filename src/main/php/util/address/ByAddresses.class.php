@@ -13,6 +13,7 @@ abstract class ByAddresses implements Definition {
       if ($r->isGenerator()) {
         $handler= $address;
       } else {
+        '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
         $handler= function(&$result, $path, $iteration) use($address) {
           $address($result, $iteration, $path);
           return [];
