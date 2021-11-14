@@ -1,7 +1,7 @@
 <?php namespace util\address;
 
 class Iteration {
-  private $address, $base;
+  private $address;
   public $tokens= [];
 
   /**
@@ -10,16 +10,12 @@ class Iteration {
    * @param  util.address.Address $address
    * @param  string $base
    */
-  public function __construct(Address $address, $base) {
+  public function __construct(Address $address) {
     $this->address= $address;
-    $this->base= $base.'/';
   }
 
   /** @return util.address.Address */
   public function address() { return $this->address; }
-
-  /** @return string */
-  public function base() { return $this->base; }
 
   /** @return bool */
   public function valid() { return $this->address->valid(); }
@@ -37,7 +33,7 @@ class Iteration {
     $it= $this->address->getIterator(true);
     $this->tokens[]= $it->token;
 
-    $value= null === $definition ? $it->current() : $it->value($definition, $this->address, $this->base, false);
+    $value= null === $definition ? $it->current() : $it->value($definition, $this->address, false);
     $it->next();
     return $value;
   }

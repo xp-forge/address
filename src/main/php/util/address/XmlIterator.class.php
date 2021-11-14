@@ -201,16 +201,15 @@ class XmlIterator implements Iterator {
    *
    * @param  util.address.Definition $definition
    * @param  util.address.Address $address
-   * @param  string $base
    * @param  bool $source
    * @return var
    */
-  public function value($definition, $address, $base, $source) {
+  public function value($definition, $address, $source) {
     if (null === $this->token->source) {
       $token= $this->token;
 
       // Create value, storing tokens during the iteration
-      $iteration= new Iteration($address, $base);
+      $iteration= new Iteration($address);
       $value= $definition->create($iteration);
 
       // Unless we are at the end of the stream, push back last token.
@@ -223,7 +222,7 @@ class XmlIterator implements Iterator {
       // Restore tokens consumed by previous iteration
       $this->tokens= array_merge($this->token->source, [$this->token], $this->tokens);
       $this->token= array_shift($this->tokens);
-      return $definition->create(new Iteration($address, $base));
+      return $definition->create(new Iteration($address));
     }
   }
 
