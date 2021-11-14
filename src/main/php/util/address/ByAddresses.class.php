@@ -1,13 +1,34 @@
 <?php namespace util\address;
 
+use Generator;
+
+/** Base class for ValueOf, ObjectOf and RecordOf */
 abstract class ByAddresses implements Definition {
   protected $addresses= [];
 
-  /** @param [:function(var, util.address.Iteration, string): void] */
+  /** @param [:function(var, util.address.Iteration, string): ?iterable] */
   public function __construct($addresses) {
     foreach ($addresses as $path => $address) {
       foreach (explode('|', $path) as $match) {
         $this->addresses[$match]= $address;
+      }
+    }
+  }
+
+  /**
+   * Invoke the address function. If it uses `yield`, send values.
+   *
+   * @param  function(var, util.address.Iteration, string): ?iterable
+   * @param  var $result
+   * @param  util.address.Iteration $iteration
+   * @param  string $path
+   * @return void
+   */
+  protected function invoke($address, &$result, $iteration, $path) {
+    $r= $address($result, $iteration, $path);
+    if ($r instanceof Generator) {
+      foreach ($r as $definition) {
+        $r->send($iteration->next($definition));
       }
     }
   }
@@ -25,7 +46,7 @@ abstract class ByAddresses implements Definition {
 
     // Select current node
     if ($address= $this->addresses['.'] ?? null) {
-      $address($result, $iteration, '.');
+      $this->invoke($address, $result, $iteration, '.');
     } else {
       $iteration->next();
     }
@@ -41,12 +62,12 @@ abstract class ByAddresses implements Definition {
       }
 
       // Address a given path. If nothing is defined, discard value silently.
-      $address ? $address($result, $iteration, $relative) : $iteration->next();
+      $address ? $this->invoke($address, $result, $iteration, $relative) : $iteration->next();
     }
 
     // End of current node
     if ($address= $this->addresses['/'] ?? null) {
-      $address($result, $iteration, '/');
+      $this->invoke($address, $result, $iteration, '/');
     }
 
     return $result;
