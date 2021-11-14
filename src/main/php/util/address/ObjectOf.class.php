@@ -28,19 +28,26 @@ class ObjectOf extends ByAddresses {
     // `function($it) { $this->member= $it->next(); }` were passed. Trigger
     // deprecation warning and rewrite accordingly.
     foreach ($addresses as $path => $address) {
-      $reflect= new ReflectionFunction($address);
-      if (1 === $reflect->getNumberOfParameters()) {
+      $r= new ReflectionFunction($address);
+      if ($r->isGenerator()) {
+        $handler= $address->bindTo($r->getClosureThis(), $this->type->literal());
+      } else if (1 === $r->getNumberOfParameters()) {
         trigger_error('Use function(object, util.address.Iteration) instead!', E_USER_DEPRECATED);
-        $f= function($instance, $iteration) use($address) {
+        $handler= function($instance, $path, $iteration) use($address) {
           $address->bindTo($instance, $instance)->__invoke($iteration);
+          return [];
         };
       } else {
-        $f= $address->bindTo($reflect->getClosureThis(), $this->type->literal());
+        $bound= $address->bindTo($r->getClosureThis(), $this->type->literal());
+        $handler= function($instance, $path, $iteration) use($bound) {
+          $bound($instance, $iteration, $path);
+          return [];
+        };
       }
 
       // Inlined parent constructor
       foreach (explode('|', $path) as $match) {
-        $this->addresses[$match]= $f;
+        $this->addresses[$match]= $handler;
       }
     }
   }

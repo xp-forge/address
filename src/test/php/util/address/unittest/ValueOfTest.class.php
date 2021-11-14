@@ -1,6 +1,7 @@
 <?php namespace util\address\unittest;
 
-use unittest\{Assert, Test};
+use unittest\actions\RuntimeVersion;
+use unittest\{Assert, Action, Test};
 use util\Date;
 use util\address\{ValueOf, XmlString};
 
@@ -12,7 +13,19 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
-        '.' => function(&$self, $it) { $self['name']= $it->next(); }
+        '.' => function(&$self) { $self['name']= yield; }
+      ]))
+    );
+  }
+
+  /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
+  #[Test, Action(eval: 'new RuntimeVersion(">=7.4")')]
+  public function can_use_fn() {
+    $address= new XmlString('<book>Name</book>');
+    Assert::equals(
+      ['name' => 'Name'],
+      $address->next(new ValueOf([], [
+        '.' => eval('return fn(&$self, $it) => $self["name"]= yield;')
       ]))
     );
   }
@@ -23,7 +36,7 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
-        'name'    => function(&$self, $it) { $self['name']= $it->next(); }
+        'name'    => function(&$self) { $self['name']= yield; }
       ]))
     );
   }
@@ -34,8 +47,8 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
-        'name'        => function(&$self, $it) { $self['name']= $it->next(); },
-        'author/name' => function(&$self, $it) { $self['author']= $it->next() ?? 'Test'; },
+        'name'        => function(&$self) { $self['name']= yield; },
+        'author/name' => function(&$self) { $self['author']= yield ?? 'Test'; },
       ]))
     );
   }
@@ -46,8 +59,8 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
-        '@author' => function(&$self, $it) { $self['author']= $it->next(); },
-        'name'    => function(&$self, $it) { $self['name']= $it->next(); }
+        '@author' => function(&$self) { $self['author']= yield; },
+        'name'    => function(&$self) { $self['name']= yield; }
       ]))
     );
   }
@@ -58,8 +71,8 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
       $address->next(new ValueOf(['authors' => []], [
-        '.'     => function(&$self, $it) { $self['name']= $it->next(); },
-        '@asin' => function(&$self, $it) { $self['asin']= $it->next(); },
+        '.'     => function(&$self) { $self['name']= yield; },
+        '@asin' => function(&$self) { $self['asin']= yield; },
       ]))
     );
   }
@@ -70,7 +83,7 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
-        '*' => function(&$self, $it, $name) { $self[$name]= $it->next(); }
+        '*' => function(&$self, $name) { $self[$name]= yield; }
       ]))
     );
   }
@@ -81,8 +94,8 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
       $address->next(new ValueOf([], [
-        '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
-        '.'  => function(&$self, $it) { $self['name']= $it->next(); }
+        '@*' => function(&$self, $name) { $self[$name]= yield; },
+        '.'  => function(&$self) { $self['name']= yield; }
       ]))
     );
   }
@@ -93,8 +106,8 @@ class ValueOfTest {
     Assert::equals(
       ['name' => 'Name', 'authors' => ['A', 'B']],
       $address->next(new ValueOf(['authors' => []], [
-        'name'         => function(&$self, $it) { $self['name']= $it->next(); },
-        'authors/name' => function(&$self, $it) { $self['authors'][]= $it->next(); },
+        'name'         => function(&$self) { $self['name']= yield; },
+        'authors/name' => function(&$self) { $self['authors'][]= yield; },
       ]))
     );
   }
@@ -105,7 +118,7 @@ class ValueOfTest {
     Assert::equals(
       ['Book #1', 'Book #2'],
       $address->next(new ValueOf([], [
-        'book' => function(&$self, $it) { $self[]= $it->next(); },
+        'book' => function(&$self) { $self[]= yield; },
       ]))
     );
   }
@@ -116,7 +129,7 @@ class ValueOfTest {
     Assert::equals(
       'Book #1',
       $address->next(new ValueOf(null, [
-        '.' => function(&$self, $it) { $self= $it->next(); },
+        '.' => function(&$self) { $self= yield; },
       ]))
     );
   }
@@ -127,7 +140,7 @@ class ValueOfTest {
     Assert::equals(
       ['unit:a', 'unit:b', 'integration:c'],
       $address->next(new ValueOf([], [
-        'unit|integration' => function(&$self, $it, $name) { $self[]= $name.':'.$it->next(); },
+        'unit|integration' => function(&$self, $name) { $self[]= $name.':'.yield; },
       ]))
     );
   }
@@ -139,9 +152,9 @@ class ValueOfTest {
     Assert::equals(
       ['date' => new Date('2022-10-31 16:26:53')],
       $address->next(new ValueOf([], [
-        'date' => function(&$self, $it) use(&$values) { $values[0]= $it->next(); },
-        'time' => function(&$self, $it) use(&$values) { $values[1]= $it->next(); },
-        '/'    => function(&$self, $it) use(&$values) { $self['date']= new Date(implode(' ', $values)); },
+        'date' => function(&$self) use(&$values) { $values[0]= yield; },
+        'time' => function(&$self) use(&$values) { $values[1]= yield; },
+        '/'    => function(&$self) use(&$values) { $self['date']= new Date(implode(' ', $values)); },
       ]))
     );
   }
@@ -149,8 +162,8 @@ class ValueOfTest {
   #[Test, Values([1, 2, 3])]
   public function call_value_repeatedly($times) {
     $definition= new ValueOf([], [
-      '@*' => function(&$self, $it, $name) { $self[$name]= $it->next(); },
-      '.'  => function(&$self, $it) { $self['name']= $it->next(); }
+      '@*' => function(&$self, $name) { $self[$name]= yield; },
+      '.'  => function(&$self) { $self['name']= yield; }
     ]);
 
     $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
