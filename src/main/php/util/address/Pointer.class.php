@@ -20,6 +20,6 @@ class Pointer {
    */
   public function value(Definition $definition= null) {
     $it= $this->address->getIterator(true);
-    return null === $definition ? $it->current() : $it->value($definition, $this->address, '/', true);
+    return null === $definition ? $it->current() : $it->value($definition, $this->address, true);
   }
 }
