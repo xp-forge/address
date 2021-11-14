@@ -3,6 +3,16 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.0.0 / 2021-11-14
+
+This major release deprecates the `$it->next()` syntax in favor of
+using `yield`. See #16, implemented in 4.2.0.
+
+* Merged PR #18: Version 5 cleanup, implementing #17. This means the
+  deprecated ArrayOf and Enclosing classes are gone as well as *$this*
+  being bound to the created instance in `util.address.ObjectOf`.
+  (@thekid)
+
 ## 4.2.0 / 2021-11-14
 
 * Merged PR #16: Use `yield` inside address functions. Using functions
