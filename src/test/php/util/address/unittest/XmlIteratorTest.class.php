@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
 use io\streams\{InputStream, MemoryInputStream};
-use lang\IllegalStateException;
+use lang\{IllegalStateException, FormatException};
 use unittest\Assert;
 use unittest\{Test, Values};
 use util\address\XmlIterator;
@@ -114,27 +114,46 @@ class XmlIteratorTest {
       new XmlIterator(new MemoryInputStream('
         <!DOCTYPE binford [
           <!ENTITY euro   "&#8364;">
+          <!ENTITY tools  "&prefix; Tools">
           <!ENTITY prefix "Binford &more;">
           <!ENTITY more   "6100">
           <!ENTITY copy   "Copyright">
         ]>
-        <binford power="&more;" price=".99 &euro;">&prefix; Tools - &copy; 2021</binford>
+        <binford power="&more;" price=".99 &euro;">&tools; - &copy; 2021</binford>
       '))
     );
   }
 
-  #[Test]
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity &missing; not defined')]
+  public function raises_error_for_missing_entities() {
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY js "Jo Smith &missing;">
+      ]>
+      <test>&js;</test>
+    ')));
+  }
+
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &js;')]
   public function does_not_choke_on_recursion() {
-    $this->assertIterated(
-      [['/' => 'Jo Smith user@user.com Jo Smith &email;']],
-      new XmlIterator(new MemoryInputStream('
-        <!DOCTYPE recursion [
-          <!ENTITY email "user@user.com &js;">
-          <!ENTITY js "Jo Smith &email;">
-        ]>
-        <recursion>&js;</recursion>
-      '))
-    );
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY js "Jo Smith &js;">
+      ]>
+      <test>&js;</test>
+    ')));
+  }
+
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &address; > &js;')]
+  public function does_not_choke_on_recursion_over_multiple_entities() {
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY email "user@user.com">
+        <!ENTITY address "&email; &js;">
+        <!ENTITY js "Jo Smith &address;">
+      ]>
+      <test>&js;</test>
+    ')));
   }
 
   #[Test, Values(['SYSTEM "http://www.xmlwriter.net/copyright.xml"', 'PUBLIC "-//W3C//TEXT copyright//EN" "http://www.w3.org/xmlspec/copyright.xml"'])]

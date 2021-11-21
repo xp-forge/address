@@ -2,7 +2,7 @@
 
 use Iterator, ReturnTypeWillChange;
 use io\streams\{InputStream, Seekable};
-use lang\{FunctionType, IllegalStateException};
+use lang\{FunctionType, FormatException, IllegalStateException};
 use text\{StreamTokenizer, StringTokenizer};
 
 /**
@@ -120,6 +120,7 @@ class XmlIterator implements Iterator {
   /**
    * Handle doctype, parsing its internal entities declarations.
    *
+   * @see    https://xmlwriter.net/xml_guide/entity_declaration.shtml
    * @param  string $declaration
    * @return void
    */
@@ -128,14 +129,39 @@ class XmlIterator implements Iterator {
     // No need to support parameter entities, see https://stackoverflow.com/a/39549669
     preg_match_all('/<!ENTITY\s+([^ ]+)\s+"([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
 
-    // Register all entities, then decode them. This allows referencing
-    // entities within entities without having to follow a specific order.
+    // Convert encoding and decode known entities referenced inside declarations first
+    $declarations= [];
     foreach ($matches as $match) {
-      $this->entities[$match[1]]= $match[2];
+      $declarations[$match[1]]= html_entity_decode(
+        $this->encoding === \xp::ENCODING ? $match[2] : iconv($this->encoding, \xp::ENCODING, $match[2]),
+        ENT_XML1 | ENT_SUBSTITUTE,
+        \xp::ENCODING
+      );
     }
-    foreach ($matches as $match) {
-      $this->entities[$match[1]]= $this->decode($match[2]);
+
+    // The only entities left over now are references to the one inside this DTD.
+    // Resolve them, protecting against infinite recursion!
+    $resolve= function($declaration, $stack) use(&$resolve, &$declarations) {
+      preg_match_all('/&([a-zA-Z0-9_:.-]+);/', $declaration, $matches, PREG_SET_ORDER);
+      foreach ($matches as $match) {
+        if (isset($stack[$match[0]])) {
+          throw new FormatException('Entity reference loop '.implode(' > ', array_keys($stack)).' > '.$match[0]);
+        } else if (null === ($resolved= $declarations[$match[1]] ?? null)) {
+          throw new FormatException('Entity '.$match[0].' not defined');
+        }
+
+        $stack[$match[0]]= true;
+        $declaration= str_replace($match[0], $resolve($resolved, $stack), $declaration);
+        unset($stack[$match[0]]);
+      }
+      return $declaration;
+    };
+    foreach ($declarations as $name => $declaration) {
+      $declarations[$name]= $resolve($declaration, []);
     }
+
+    // Finally, merge resolved declarations into entities without overwriting
+    $this->entities+= $declarations;
   }
 
   /**
