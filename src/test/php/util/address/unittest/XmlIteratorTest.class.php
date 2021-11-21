@@ -131,6 +131,14 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test]
+  public function cdata_section_including_end_tag() {
+    $this->assertIterated(
+      [['/' => 'End: ]]>']],
+      new XmlIterator(new MemoryInputStream('<doc><![CDATA[End: ]]]]><![CDATA[>]]></doc>'))
+    );
+  }
+
   #[Test, Values(['<doc><a></a><b>Test</b><c>Te st</c></doc>', '<doc><a> </a><b> Test </b><c> Te st </c></doc>', '<doc> <a> </a> <b> Test </b> <c> Te st </c> </doc>', '<doc> <a> </a> <b> Test </b> <c> Te&#x20;st </c> </doc>'])]
   public function surrounding_whitespace_is_irrelevant($xml) {
     $this->assertIterated(
