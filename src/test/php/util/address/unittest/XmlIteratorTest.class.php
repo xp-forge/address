@@ -123,6 +123,20 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test]
+  public function does_not_choke_on_recursion() {
+    $this->assertIterated(
+      [['/' => 'Jo Smith user@user.com Jo Smith &email;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE recursion [
+          <!ENTITY email "user@user.com &js;">
+          <!ENTITY js "Jo Smith &email;">
+        ]>
+        <recursion>&js;</recursion>
+      '))
+    );
+  }
+
   #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(
