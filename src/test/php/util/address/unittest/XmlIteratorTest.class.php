@@ -137,6 +137,19 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test, Values(['SYSTEM "http://www.xmlwriter.net/copyright.xml"', 'PUBLIC "-//W3C//TEXT copyright//EN" "http://www.w3.org/xmlspec/copyright.xml"'])]
+  public function ignores_external_entity($declaration) {
+    $this->assertIterated(
+      [['/' => '&c;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE external [
+          <!ENTITY c '.$declaration.'>
+        ]>
+        <external>&c;</external>
+      '))
+    );
+  }
+
   #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(
