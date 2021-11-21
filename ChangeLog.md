@@ -3,6 +3,12 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.1.0 / 2021-11-21
+
+* Merged PR #19: Support for inline doctype and entities. External
+  DTDs and external entities are not supported.
+  (@thekid)
+
 ## 5.0.0 / 2021-11-14
 
 This major release deprecates the `$it->next()` syntax in favor of
