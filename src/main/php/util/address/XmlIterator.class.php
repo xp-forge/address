@@ -118,13 +118,19 @@ class XmlIterator implements Iterator {
   }
 
   /**
-   * Handle doctype
+   * Handle doctype, parsing its internal entities declarations.
    *
    * @param  string $declaration
    * @return void
    */
   protected function doctype($declaration) {
     preg_match_all('/<!ENTITY ([^ ]+) "([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
+
+    // Register all entities, then decode them. This allows referencing
+    // entities within entities without having to follow a specific order.
+    foreach ($matches as $match) {
+      $this->entities[$match[1]]= $match[2];
+    }
     foreach ($matches as $match) {
       $this->entities[$match[1]]= $this->decode($match[2]);
     }
