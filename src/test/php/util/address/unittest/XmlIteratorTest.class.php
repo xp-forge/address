@@ -221,10 +221,32 @@ class XmlIteratorTest {
   }
 
   #[Test, Values([['', "<char>\303\234</char>"], ['', "<char><![CDATA[\303\234]]></char>"], ['encoding="utf-8"', "<char>\303\234</char>"], ['encoding="utf-8"', "<char><![CDATA[\303\234]]></char>"], ['encoding="iso-8859-1"', "<char>\334</char>"], ['encoding="iso-8859-1"', "<char><![CDATA[\334]]></char>"]])]
-  public function encoding_handled($encoding, $xml) {
+  public function encoding_handled_in_content($encoding, $xml) {
     $this->assertIterated(
       [['/' => 'Ü']],
       new XmlIterator(new MemoryInputStream('<?xml version="1.0" '.$encoding.'?>'.$xml))
+    );
+  }
+
+  #[Test, Values([['', "<char id='\303\234'/>"], ['encoding="utf-8"', "<char id='\303\234'/>"], ['encoding="iso-8859-1"', "<char id='\334'/>"]])]
+  public function encoding_handled_in_attributes($encoding, $xml) {
+    $this->assertIterated(
+      [['/' => null], ['//@id' => 'Ü']],
+      new XmlIterator(new MemoryInputStream('<?xml version="1.0" '.$encoding.'?>'.$xml))
+    );
+  }
+
+  #[Test, Values([['', "\303\234"], ['encoding="utf-8"', "\303\234"], ['encoding="iso-8859-1"', "\334"]])]
+  public function encoding_handled_in_doctype_entities($encoding, $cdata) {
+    $this->assertIterated(
+      [['/' => 'Ü']],
+      new XmlIterator(new MemoryInputStream('
+        <?xml version="1.0" '.$encoding.'?>
+        <!DOCTYPE test [
+          <!ENTITY Uuml "'.$cdata.'">
+        ]>
+        <test>&Uuml;</test>
+      '))
     );
   }
 

@@ -129,14 +129,10 @@ class XmlIterator implements Iterator {
     // No need to support parameter entities, see https://stackoverflow.com/a/39549669
     preg_match_all('/<!ENTITY\s+([^ ]+)\s+"([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
 
-    // Convert encoding and decode known entities referenced inside declarations first
+    // Decode known entities referenced inside declarations first
     $declarations= [];
     foreach ($matches as $match) {
-      $declarations[$match[1]]= html_entity_decode(
-        $this->encoding === \xp::ENCODING ? $match[2] : iconv($this->encoding, \xp::ENCODING, $match[2]),
-        ENT_XML1 | ENT_SUBSTITUTE,
-        \xp::ENCODING
-      );
+      $declarations[$match[1]]= html_entity_decode($match[2], ENT_XML1 | ENT_SUBSTITUTE, \xp::ENCODING);
     }
 
     // The only entities left over now are references to the one inside this DTD.
