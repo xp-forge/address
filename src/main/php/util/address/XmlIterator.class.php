@@ -124,7 +124,9 @@ class XmlIterator implements Iterator {
    * @return void
    */
   protected function doctype($declaration) {
-    preg_match_all('/<!ENTITY ([^ ]+) "([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
+
+    // No need to support parameter entities, see https://stackoverflow.com/a/39549669
+    preg_match_all('/<!ENTITY\s+([^ ]+)\s+"([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
 
     // Register all entities, then decode them. This allows referencing
     // entities within entities without having to follow a specific order.
