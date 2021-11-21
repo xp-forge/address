@@ -156,6 +156,19 @@ class XmlIteratorTest {
     ')));
   }
 
+  #[Test]
+  public function ignores_parameter_entities() {
+    $this->assertIterated(
+      [['/' => 'Jo Smith %param;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE test [
+          <!ENTITY js "Jo Smith %param;">
+        ]>
+        <test>&js;</test>
+      '))
+    );
+  }
+
   #[Test, Values(['SYSTEM "http://www.xmlwriter.net/copyright.xml"', 'PUBLIC "-//W3C//TEXT copyright//EN" "http://www.w3.org/xmlspec/copyright.xml"'])]
   public function ignores_external_entity($declaration) {
     $this->assertIterated(
