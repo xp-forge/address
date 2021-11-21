@@ -124,6 +124,20 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test]
+  public function entities_are_case_sensitive() {
+    $this->assertIterated(
+      [['/' => 'lower and upper case']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE binford [
+          <!ENTITY case "lower">
+          <!ENTITY Case "upper">
+        ]>
+        <test>&case; and &Case; case</test>
+      '))
+    );
+  }
+
   #[Test, Expect(class: FormatException::class, withMessage: 'Entity &missing; not defined')]
   public function raises_error_for_missing_entities() {
     iterator_count(new XmlIterator(new MemoryInputStream('
