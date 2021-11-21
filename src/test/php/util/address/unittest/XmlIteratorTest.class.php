@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
 use io\streams\{InputStream, MemoryInputStream};
-use lang\IllegalStateException;
+use lang\{IllegalStateException, FormatException};
 use unittest\Assert;
 use unittest\{Test, Values};
 use util\address\XmlIterator;
@@ -107,6 +107,100 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test]
+  public function entities_from_doctype() {
+    $this->assertIterated(
+      [['/' => 'Binford 6100 Tools - Copyright 2021'], ['//@power' => '6100'], ['//@price' => '.99 €']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE binford [
+          <!ENTITY euro   "&#8364;">
+          <!ENTITY tools  "&prefix; Tools">
+          <!ENTITY prefix "Binford &more;">
+          <!ENTITY more   "6100">
+          <!ENTITY copy   "Copyright">
+        ]>
+        <binford power="&more;" price=".99 &euro;">&tools; - &copy; 2021</binford>
+      '))
+    );
+  }
+
+  #[Test]
+  public function entities_are_case_sensitive() {
+    $this->assertIterated(
+      [['/' => 'lower and upper case']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE binford [
+          <!ENTITY case "lower">
+          <!ENTITY Case "upper">
+        ]>
+        <test>&case; and &Case; case</test>
+      '))
+    );
+  }
+
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity &missing; not defined')]
+  public function raises_error_for_missing_entities() {
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY js "Jo Smith &missing;">
+      ]>
+      <test>&js;</test>
+    ')));
+  }
+
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &js;')]
+  public function does_not_choke_on_recursion() {
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY js "Jo Smith &js;">
+      ]>
+      <test>&js;</test>
+    ')));
+  }
+
+  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &address; > &js;')]
+  public function does_not_choke_on_recursion_over_multiple_entities() {
+    iterator_count(new XmlIterator(new MemoryInputStream('
+      <!DOCTYPE test [
+        <!ENTITY email "user@user.com">
+        <!ENTITY address "&email; &js;">
+        <!ENTITY js "Jo Smith &address;">
+      ]>
+      <test>&js;</test>
+    ')));
+  }
+
+  #[Test]
+  public function ignores_parameter_entities() {
+    $this->assertIterated(
+      [['/' => 'Jo Smith %param;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE test [
+          <!ENTITY js "Jo Smith %param;">
+        ]>
+        <test>&js;</test>
+      '))
+    );
+  }
+
+  #[Test, Values(['SYSTEM "copyright.xml"', 'PUBLIC "-//W3C//TEXT copyright//EN" "http://www.w3.org/xmlspec/copyright.xml"'])]
+  public function ignores_external_entity($declaration) {
+    $this->assertIterated(
+      [['/' => '&c;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE external [
+          <!ENTITY c '.$declaration.'>
+        ]>
+        <external>&c;</external>
+      '))
+    );
+  }
+
+  #[Test, Expect(IllegalStateException::class), Values(['html SYSTEM "html.dtd"', 'HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" "http://www.w3.org/TR/REC-html40/loose.dtd"'])]
+  public function does_not_support_external_dtds($declaration) {
+    iterator_count(new XmlIterator(new MemoryInputStream('<!DOCTYPE '.$declaration.'><html>...</html>')));
+  }
+
   #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(
@@ -156,10 +250,32 @@ class XmlIteratorTest {
   }
 
   #[Test, Values([['', "<char>\303\234</char>"], ['', "<char><![CDATA[\303\234]]></char>"], ['encoding="utf-8"', "<char>\303\234</char>"], ['encoding="utf-8"', "<char><![CDATA[\303\234]]></char>"], ['encoding="iso-8859-1"', "<char>\334</char>"], ['encoding="iso-8859-1"', "<char><![CDATA[\334]]></char>"]])]
-  public function encoding_handled($encoding, $xml) {
+  public function encoding_handled_in_content($encoding, $xml) {
     $this->assertIterated(
       [['/' => 'Ü']],
       new XmlIterator(new MemoryInputStream('<?xml version="1.0" '.$encoding.'?>'.$xml))
+    );
+  }
+
+  #[Test, Values([['', "<char id='\303\234'/>"], ['encoding="utf-8"', "<char id='\303\234'/>"], ['encoding="iso-8859-1"', "<char id='\334'/>"]])]
+  public function encoding_handled_in_attributes($encoding, $xml) {
+    $this->assertIterated(
+      [['/' => null], ['//@id' => 'Ü']],
+      new XmlIterator(new MemoryInputStream('<?xml version="1.0" '.$encoding.'?>'.$xml))
+    );
+  }
+
+  #[Test, Values([['', "\303\234"], ['encoding="utf-8"', "\303\234"], ['encoding="iso-8859-1"', "\334"]])]
+  public function encoding_handled_in_doctype_entities($encoding, $cdata) {
+    $this->assertIterated(
+      [['/' => 'Ü']],
+      new XmlIterator(new MemoryInputStream('
+        <?xml version="1.0" '.$encoding.'?>
+        <!DOCTYPE test [
+          <!ENTITY Uuml "'.$cdata.'">
+        ]>
+        <test>&Uuml;</test>
+      '))
     );
   }
 
