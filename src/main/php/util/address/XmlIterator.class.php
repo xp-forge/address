@@ -237,7 +237,9 @@ class XmlIterator implements Iterator {
             } else if (0 === strncmp('!--', $tag, 3)) {
               $this->comment($this->tokenUntil(substr($tag, 3), '-->'));
             } else if (0 === strncmp('!DOCTYPE', $tag, 8)) {
-              $this->doctype($this->tokenUntil(substr($tag, strpos($tag, '[', 8) + 1), ']>'));
+              if (false !== ($p= strpos($tag, '[', 8))) {
+                $this->doctype($this->tokenUntil(substr($tag, $p + 1), ']>'));
+              }
             } else {
               throw new IllegalStateException('Cannot handle '.$tag);
             }

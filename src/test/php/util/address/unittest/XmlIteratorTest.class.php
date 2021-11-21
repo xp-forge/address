@@ -169,6 +169,18 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test, Values(['html SYSTEM "html.dtd"', 'HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"
+  "http://www.w3.org/TR/REC-html40/loose.dtd"'])]
+  public function ignores_external_dtd($declaration) {
+    $this->assertIterated(
+      [['/' => '&c;']],
+      new XmlIterator(new MemoryInputStream('
+        <!DOCTYPE '.$declaration.'>
+        <html>&c;</html>
+      '))
+    );
+  }
+
   #[Test, Values(['<char>&#xDC;</char>', '<char>&#xdc;</char>', '<char>&#220;</char>'])]
   public function numeric_entity_handled($xml) {
     $this->assertIterated(
