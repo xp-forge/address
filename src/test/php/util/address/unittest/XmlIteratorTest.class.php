@@ -110,13 +110,14 @@ class XmlIteratorTest {
   #[Test]
   public function entities_from_doctype() {
     $this->assertIterated(
-      [['/' => 'Copyright 2021'], ['//@power' => '6100']],
+      [['/' => 'Copyright 2021'], ['//@power' => '6100'], ['//@price' => '.99 €']],
       new XmlIterator(new MemoryInputStream('
-        <!DOCTYPE books [
+        <!DOCTYPE binford [
+          <!ENTITY euro "&#8364;">
           <!ENTITY more "6100">
           <!ENTITY copy "Copyright">
         ]>
-        <book power="&more;">&copy; 2021</book>
+        <binford power="&more;" price=".99 &euro;">&copy; 2021</binford>
       '))
     );
   }

@@ -126,7 +126,7 @@ class XmlIterator implements Iterator {
   protected function doctype($declaration) {
     preg_match_all('/<!ENTITY ([^ ]+) "([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
     foreach ($matches as $match) {
-      $this->entities[$match[1]]= $match[2];
+      $this->entities[$match[1]]= $this->decode($match[2]);
     }
   }
 
