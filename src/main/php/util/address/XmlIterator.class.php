@@ -118,16 +118,26 @@ class XmlIterator implements Iterator {
   }
 
   /**
+   * Handle external doctype. Always throws an exception.
+   *
+   * @param  string $source
+   * @return void
+   */
+  protected function doctype($source) {
+    throw new IllegalStateException('External doctypes not supported');
+  }
+
+  /**
    * Handle doctype, parsing its internal entities declarations.
    *
    * @see    https://xmlwriter.net/xml_guide/entity_declaration.shtml
-   * @param  string $declaration
+   * @param  string $doctype
    * @return void
    */
-  protected function doctype($declaration) {
+  protected function declare($doctype) {
 
     // No need to support parameter entities, see https://stackoverflow.com/a/39549669
-    preg_match_all('/<!ENTITY\s+([^ ]+)\s+"([^"]+)">/', $declaration, $matches, PREG_SET_ORDER);
+    preg_match_all('/<!ENTITY\s+([^ ]+)\s+"([^"]+)">/', $doctype, $matches, PREG_SET_ORDER);
 
     // Decode known entities referenced inside declarations first
     $declarations= [];
@@ -233,8 +243,10 @@ class XmlIterator implements Iterator {
             } else if (0 === strncmp('!--', $tag, 3)) {
               $this->comment($this->tokenUntil(substr($tag, 3), '-->'));
             } else if (0 === strncmp('!DOCTYPE', $tag, 8)) {
-              if (false !== ($p= strpos($tag, '[', 8))) {
-                $this->doctype($this->tokenUntil(substr($tag, $p + 1), ']>'));
+              if (false === ($p= strpos($tag, '[', 8))) {
+                $this->doctype(substr($tag, 8));
+              } else {
+                $this->declare($this->tokenUntil(substr($tag, $p + 1), ']>'));
               }
             } else {
               throw new IllegalStateException('Cannot handle '.$tag);
