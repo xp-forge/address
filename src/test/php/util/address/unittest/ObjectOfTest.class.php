@@ -63,6 +63,7 @@ class ObjectOfTest {
   #[Test]
   public function does_not_invoke_constructor() {
     $class= ClassLoader::defineClass('BookWithThrowingConstructor', Book::class, [], [
+      'name' => '',
       '__construct' => function() {
         throw new IllegalStateException('Constructor');
       }

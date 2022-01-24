@@ -5,6 +5,7 @@ XML streams to objects
 
 ## 5.1.1 / 2022-01-24
 
+* Fixed PHP 8.2 compatiblity - @thekid
 * Made compatible with XP reflection 2.0.0 - @thekid
 
 ## 5.1.0 / 2021-11-21
