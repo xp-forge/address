@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.1.1 / 2022-01-24
+
+* Made compatible with XP reflection 2.0.0 - @thekid
+
 ## 5.1.0 / 2021-11-21
 
 * Merged PR #19: Support for inline doctype and entities. External
