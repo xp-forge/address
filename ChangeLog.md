@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.2.0 / 2022-07-18
+
 * Made `XmlStream` and `XmlFile` implement the `lang.Closeable` interface
   (@thekid)
 * Fixed *Undefined property: util\address\XmlStream::$file* warnings
