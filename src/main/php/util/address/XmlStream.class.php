@@ -39,7 +39,7 @@ class XmlStream extends Address implements Value {
 
   /** @return string */
   public function hashCode() {
-    return 'S'.Objects::hashOf($this->file);
+    return 'S'.Objects::hashOf($this->in);
   }
 
   /**
