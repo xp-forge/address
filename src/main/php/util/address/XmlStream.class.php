@@ -1,7 +1,7 @@
 <?php namespace util\address;
 
 use io\streams\InputStream;
-use lang\Value;
+use lang\{Closeable, Value};
 use util\Objects;
 
 /**
@@ -10,7 +10,7 @@ use util\Objects;
  * @test  util.address.unittest.XmlStreamTest
  * @test  util.address.unittest.XmlInputTest
  */
-class XmlStream extends Address implements Value {
+class XmlStream extends Address implements Closeable, Value {
   private $in;
 
   /**
@@ -50,5 +50,10 @@ class XmlStream extends Address implements Value {
    */
   public function compareTo($value) {
     return $value instanceof self ? Objects::compare($this->in, $value->in) : 1;
+  }
+
+  /** @return void */
+  public function close() {
+    $this->in->close();
   }
 }

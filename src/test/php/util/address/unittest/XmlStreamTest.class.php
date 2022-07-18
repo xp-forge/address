@@ -45,4 +45,17 @@ class XmlStreamTest {
     $fixture= $this->fixture('<root><a>Test</a></root>');
     Assert::equals(['/' => null, '//a' => 'Test'], iterator_to_array($fixture));
   }
+
+  #[Test]
+  public function close() {
+    $stream= new class('') extends MemoryInputStream {
+      public $closed= false;
+      public function close() { $this->closed= true; }
+    };
+
+    $fixture= new XmlStream($stream);
+    $fixture->close();
+
+    Assert::true($stream->closed);
+  }
 }

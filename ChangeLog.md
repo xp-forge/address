@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Made `XmlStream` and `XmlFile` implement the `lang.Closeable` interface
+  (@thekid)
 * Fixed *Undefined property: util\address\XmlStream::$file* warnings
   (@thekid)
 * Changed `XmlStream::toString()` to check if InputStream implementations
