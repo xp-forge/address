@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Fixed *Undefined property: util\address\XmlStream::$file* warnings
+  (@thekid)
 * Changed `XmlStream::toString()` to check if InputStream implementations
   provide a `toString()` method even if they do not implement `lang.Value`.
   See https://github.com/xp-framework/core/issues/310
