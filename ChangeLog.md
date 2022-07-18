@@ -3,6 +3,11 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Changed `XmlStream::toString()` to check if InputStream implementations
+  provide a `toString()` method even if they do not implement `lang.Value`.
+  See https://github.com/xp-framework/core/issues/310
+  (@thekid)
+
 ## 5.1.1 / 2022-01-24
 
 * Fixed PHP 8.2 compatiblity - @thekid

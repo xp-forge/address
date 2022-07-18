@@ -7,6 +7,7 @@ use util\Objects;
 /**
  * XML stream input
  *
+ * @test  util.address.unittest.XmlStreamTest
  * @test  util.address.unittest.XmlInputTest
  */
 class XmlStream extends Address implements Value {
@@ -26,7 +27,14 @@ class XmlStream extends Address implements Value {
 
   /** @return string */
   public function toString() {
-    return nameof($this).'<'.$this->in->toString().'>';
+
+    // Most InputStream instances have a toString() method but do not implement
+    // the Value interface, see https://github.com/xp-framework/core/issues/310
+    if ($this->in instanceof Value || method_exists($this->in, 'toString')) {
+      return nameof($this).'<'.$this->in->toString().'>';
+    } else {
+      return nameof($this).'<'.Objects::stringOf($this->in).'>';
+    }
   }
 
   /** @return string */
