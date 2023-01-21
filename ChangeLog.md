@@ -3,9 +3,20 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
-## 5.1.2 / 2023-01-21
+## 5.2.1 / 2023-01-21
 
 * Fixed compatibility with XP reflection 2.8.0 - @thekid
+
+## 5.2.0 / 2022-07-18
+
+* Made `XmlStream` and `XmlFile` implement the `lang.Closeable` interface
+  (@thekid)
+* Fixed *Undefined property: util\address\XmlStream::$file* warnings
+  (@thekid)
+* Changed `XmlStream::toString()` to check if InputStream implementations
+  provide a `toString()` method even if they do not implement `lang.Value`.
+  See https://github.com/xp-framework/core/issues/310
+  (@thekid)
 
 ## 5.1.1 / 2022-01-24
 

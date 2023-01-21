@@ -1,14 +1,14 @@
 <?php namespace util\address;
 
 use io\File;
-use lang\Value;
+use lang\{Closeable, Value};
 
 /**
  * XML file input
  *
  * @test  util.address.unittest.XmlInputTest
  */
-class XmlFile extends Address implements Value {
+class XmlFile extends Address implements Closeable, Value {
   private $file;
 
   /**
@@ -41,5 +41,10 @@ class XmlFile extends Address implements Value {
    */
   public function compareTo($value) {
     return $value instanceof self ? $this->file->compareTo($value->file) : 1;
+  }
+
+  /** @return void */
+  public function close() {
+    $this->file->isOpen() && $this->file->close();
   }
 }

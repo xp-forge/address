@@ -1,7 +1,6 @@
 <?php namespace util\address\unittest;
 
-use unittest\Assert;
-use unittest\{Test, Values};
+use unittest\{Assert, Test, Values};
 use util\Date;
 use util\address\{ObjectOf, XmlFile, XmlResource, XmlStream, XmlString};
 
