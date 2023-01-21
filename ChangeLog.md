@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.1.2 / 2023-01-21
+
+* Fixed compatibility with XP reflection 2.8.0 - @thekid
+
 ## 5.1.1 / 2022-01-24
 
 * Fixed PHP 8.2 compatiblity - @thekid
