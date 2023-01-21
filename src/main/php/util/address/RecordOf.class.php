@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-use lang\reflection\InvocationFailed;
+use lang\reflection\{InvocationFailed, CannotInstantiate};
 use lang\{Reflection, IllegalArgumentException};
 use util\Objects;
 
@@ -42,6 +42,8 @@ class RecordOf extends ByAddresses {
   public function create($iteration) {
     try {
       return $this->constructor->newInstance($this->next($iteration, []));
+    } catch (CannotInstantiate $e) {
+      throw $e->getCause();
     } catch (InvocationFailed $e) {
       throw $e->getCause();
     }
