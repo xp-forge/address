@@ -1,6 +1,7 @@
 <?php namespace util\address;
 
-use IteratorAggregate, Traversable;
+use Iterator, IteratorAggregate, Traversable;
+use lang\IllegalStateException;
 use util\NoSuchElementException;
 
 /**
@@ -12,6 +13,22 @@ abstract class Address implements IteratorAggregate {
   private $iterator;
 
   /**
+   * Returns a stream
+   *
+   * @deprecated Implement iterator() instead!
+   * @return io.streams.InputStream
+   */
+  protected function stream() {
+    throw new IllegalStateException('Implement either stream() or iterator() in subclasses');
+  }
+
+  /**
+   * Creates an iterator. Default implementation is to return an
+   * `XmlIterator` instance for BC reasons.
+   */
+  protected function iterator(): Iterator { return new XmlIterator($this->stream()); }
+
+  /**
    * Gets iterator
    *
    * @param  bool $rewind Whether to initially rewind the iterator
@@ -19,7 +36,7 @@ abstract class Address implements IteratorAggregate {
    */
   public function getIterator($rewind= false): Traversable {
     if (null === $this->iterator) {
-      $this->iterator= new XmlIterator($this->stream());
+      $this->iterator= $this->iterator();
       if ($rewind) {
         $this->iterator->rewind();
       }
@@ -49,9 +66,6 @@ abstract class Address implements IteratorAggregate {
       }
     }
   }
-
-  /** @return io.streams.InputStream */
-  protected abstract function stream();
 
   /**
    * Reset this input

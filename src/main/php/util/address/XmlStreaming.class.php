@@ -1,5 +1,6 @@
 <?php namespace util\address;
 
+use Iterator;
 use io\Channel;
 use io\streams\{InputStream, MemoryInputStream};
 use lang\{Closeable, Value};
@@ -25,8 +26,8 @@ class XmlStreaming extends Address implements Closeable, Value {
     }
   }
 
-  /** @return io.streams.InputStream */
-  protected function stream() { return $this->stream; }
+  /** Iterator implementation */
+  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
 
   /** @return string */
   public function toString() {
