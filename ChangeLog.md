@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Merged PR #20: Migrate to new testing library - @thekid
+
 ## 5.2.1 / 2023-01-21
 
 * Fixed compatibility with XP reflection 2.8.0 - @thekid
