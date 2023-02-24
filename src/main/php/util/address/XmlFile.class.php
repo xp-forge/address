@@ -19,8 +19,4 @@ class XmlFile extends Address {
   public function __construct($file) {
     parent::__construct(new FileInputStream($file));
   }
-
-  /** Iterator implementation */
-  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
-
 }

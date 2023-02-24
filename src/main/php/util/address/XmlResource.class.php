@@ -1,6 +1,5 @@
 <?php namespace util\address;
 
-use Iterator;
 use lang\XPClass;
 use lang\reflect\Package;
 
@@ -28,8 +27,4 @@ class XmlResource extends Address {
     }
     parent::__construct($package->getResourceAsStream($name)->in());
   }
-
-  /** Iterator implementation */
-  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
-
 }

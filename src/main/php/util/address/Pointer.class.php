@@ -1,15 +1,15 @@
 <?php namespace util\address;
 
 class Pointer {
-  private $address;
+  private $streaming;
 
-  /** Creates a pointer to a given address */
-  public function __construct(Address $address) {
-    $this->address= $address;
+  /** Creates a pointer to a given streaming */
+  public function __construct(streaming $streaming) {
+    $this->streaming= $streaming;
   }
 
-  /** @return util.address.Address */
-  public function address() { return $this->address; }
+  /** @return util.address.Streaming */
+  public function streaming() { return $this->streaming; }
 
   /**
    * Returns the current value according to the given definition
@@ -19,7 +19,7 @@ class Pointer {
    * @throws util.NoSuchElementException if there are no more elements
    */
   public function value(Definition $definition= null) {
-    $it= $this->address->getIterator(true);
-    return null === $definition ? $it->current() : $it->value($definition, $this->address, true);
+    $it= $this->streaming->getIterator(true);
+    return null === $definition ? $it->current() : $it->value($definition, $this->streaming, true);
   }
 }

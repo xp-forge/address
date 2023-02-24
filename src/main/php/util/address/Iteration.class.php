@@ -1,27 +1,27 @@
 <?php namespace util\address;
 
 class Iteration {
-  private $address;
+  private $streaming;
   public $tokens= [];
 
   /**
    * Creates an iteration
    *
-   * @param  util.address.Address $address
+   * @param  util.address.Streaming $streaming
    * @param  string $base
    */
-  public function __construct(Address $address) {
-    $this->address= $address;
+  public function __construct(Streaming $streaming) {
+    $this->streaming= $streaming;
   }
 
-  /** @return util.address.Address */
-  public function address() { return $this->address; }
+  /** @return util.address.Streaming */
+  public function streaming() { return $this->streaming; }
 
   /** @return bool */
-  public function valid() { return $this->address->valid(); }
+  public function valid() { return $this->streaming->valid(); }
 
   /** @return string */
-  public function path() { return $this->address->path(); }
+  public function path() { return $this->streaming->path(); }
 
   /**
    * Returns the next value according to the given definition.
@@ -30,10 +30,10 @@ class Iteration {
    * @return var
    */
   public function next(Definition $definition= null) {
-    $it= $this->address->getIterator(true);
+    $it= $this->streaming->getIterator(true);
     $this->tokens[]= $it->token;
 
-    $value= null === $definition ? $it->current() : $it->value($definition, $this->address, false);
+    $value= null === $definition ? $it->current() : $it->value($definition, $this->streaming, false);
     $it->next();
     return $value;
   }

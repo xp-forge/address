@@ -5,7 +5,7 @@ use test\{Assert, Expect, Ignore, Test};
 use util\NoSuchElementException;
 use util\address\{ArrayOf, CreationOf, Definition, XmlStreaming};
 
-class AddressTest {
+class StreamingTest {
 
   /** @return util.address.Definition */
   private function asMap() {

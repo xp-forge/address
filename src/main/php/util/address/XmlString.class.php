@@ -1,6 +1,5 @@
 <?php namespace util\address;
 
-use Iterator;
 use io\streams\MemoryInputStream;
 
 /**
@@ -19,7 +18,4 @@ class XmlString extends Address {
   public function __construct($input) {
     parent::__construct(new MemoryInputStream($input));
   }
-
-  /** Iterator implementation */
-  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
 }

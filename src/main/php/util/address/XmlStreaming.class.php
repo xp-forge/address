@@ -8,7 +8,7 @@ use Iterator;
  * @test  util.address.unittest.XmlStreamingTest
  * @test  util.address.unittest.XmlInputTest
  */
-class XmlStreaming extends Address {
+class XmlStreaming extends Streaming {
 
   /** Iterator implementation */
   protected function iterator(): Iterator { return new XmlIterator($this->stream); }
