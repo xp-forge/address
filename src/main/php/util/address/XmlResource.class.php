@@ -1,7 +1,8 @@
 <?php namespace util\address;
 
+use Iterator;
+use lang\XPClass;
 use lang\reflect\Package;
-use lang\{XPClass, Value};
 
 /**
  * XML class loader resource input
@@ -9,8 +10,7 @@ use lang\{XPClass, Value};
  * @deprecated by XmlStreaming
  * @test  util.address.unittest.XmlInputTest
  */
-class XmlResource extends Address implements Value {
-  private $package, $name;
+class XmlResource extends Address {
 
   /**
    * Creates a new resource-based XML input
@@ -20,39 +20,16 @@ class XmlResource extends Address implements Value {
    */
   public function __construct($arg, $name) {
     if ($arg instanceof XPClass) {
-      $this->package= $arg->getPackage();
+      $package= $arg->getPackage();
     } else if ($arg instanceof Package) {
-      $this->package= $arg;
+      $package= $arg;
     } else {
-      $this->package= Package::forName(strtr($arg, '\\', '.'));
+      $package= Package::forName(strtr($arg, '\\', '.'));
     }
-    $this->name= $name;
+    parent::__construct($package->getResourceAsStream($name)->in());
   }
 
-  /** @return io.streams.InputStream */
-  protected function stream() { return $this->package->getResourceAsStream($this->name)->in(); }
+  /** Iterator implementation */
+  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
 
-  /** @return string */
-  public function toString() {
-    return nameof($this).'<'.$this->name.'@'.$this->package->toString().'>';
-  }
-
-  /** @return string */
-  public function hashCode() {
-    return 'R'.md5($this->name.'@'.$this->package->getName());
-  }
-
-  /**
-   * Comparison
-   *
-   * @param  var $value
-   * @return int
-   */
-  public function compareTo($value) {
-    if ($value instanceof self) {
-      $r= $this->name <=> $value->name;
-      return 0 === $r ? $this->package->compareTo($value->package) : $r;
-    }
-    return 1;
-  }
 }

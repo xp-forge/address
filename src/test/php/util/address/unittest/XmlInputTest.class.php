@@ -2,7 +2,7 @@
 
 use test\{Assert, Test, Values};
 use util\Date;
-use util\address\{ObjectOf, XmlStreaming};
+use util\address\{ObjectOf, XmlStreaming, XmlResource};
 
 class XmlInputTest {
 
@@ -12,7 +12,8 @@ class XmlInputTest {
     return [
       [new XmlStreaming($package->getResource('releases.xml'))],
       [new XmlStreaming($package->getResourceAsStream('releases.xml')->in())],
-      [new XmlStreaming($package->getResourceAsStream('releases.xml'))]
+      [new XmlStreaming($package->getResourceAsStream('releases.xml'))],
+      [new XmlResource($package, 'releases.xml')] // deprecated!
     ];
   }
 
