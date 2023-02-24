@@ -7,6 +7,7 @@ use lang\Value;
  * XML string input
  *
  * @test  util.address.unittest.XmlInputTest
+ * @deprecated by XmlStreaming
  */
 class XmlString extends Address implements Value {
   private $input;

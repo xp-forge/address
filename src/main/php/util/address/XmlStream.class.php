@@ -9,6 +9,7 @@ use util\Objects;
  *
  * @test  util.address.unittest.XmlStreamTest
  * @test  util.address.unittest.XmlInputTest
+ * @deprecated by XmlStreaming
  */
 class XmlStream extends Address implements Closeable, Value {
   private $in;

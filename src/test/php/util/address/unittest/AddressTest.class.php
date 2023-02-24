@@ -3,7 +3,7 @@
 use lang\{IllegalStateException, Runnable};
 use test\{Assert, Expect, Ignore, Test};
 use util\NoSuchElementException;
-use util\address\{ArrayOf, CreationOf, Definition, XmlString};
+use util\address\{ArrayOf, CreationOf, Definition, XmlStreaming};
 
 class AddressTest {
 
@@ -16,53 +16,53 @@ class AddressTest {
 
   #[Test]
   public function path() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     Assert::equals('/', $address->path());
   }
 
   #[Test]
   public function path_after_end() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     $address->next();
     Assert::null($address->path());
   }
 
   #[Test]
   public function empty_node_value() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     Assert::null($address->next());
   }
 
   #[Test]
   public function value_for_node_with_content() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals('Test', $address->next());
   }
 
   #[Test, Expect(NoSuchElementException::class)]
   public function next_after_end() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     $address->next();
     $address->next();
   }
 
   #[Test, Expect(NoSuchElementException::class)]
   public function value_after_end() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     $address->next();
     $address->value();
   }
 
   #[Test]
   public function next_after_resetting() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->reset();
     Assert::equals('Test', $address->next());
   }
 
   #[Test]
   public function next_after_next_and_resetting() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->next();
     $address->reset();
     Assert::equals('Test', $address->next());
@@ -70,40 +70,40 @@ class AddressTest {
 
   #[Test]
   public function value() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals('Test', $address->value());
   }
 
   #[Test]
   public function valid() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::true($address->valid());
   }
 
   #[Test]
   public function valid_after_end() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->next();
     Assert::false($address->valid());
   }
 
   #[Test]
   public function valid_after_resetting() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->reset();
     Assert::true($address->valid());
   }
 
   #[Test]
   public function valid_after_value() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->value();
     Assert::true($address->valid());
   }
 
   #[Test]
   public function valid_after_next_and_resetting() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     $address->next();
     $address->reset();
     Assert::true($address->valid());
@@ -111,7 +111,7 @@ class AddressTest {
 
   #[Test]
   public function iteration() {
-    $address= new XmlString('<doc><nested>Test</nested></doc>');
+    $address= new XmlStreaming('<doc><nested>Test</nested></doc>');
     $actual= [];
     while ($address->valid()) {
       $actual[]= [$address->path() => $address->next()];
@@ -121,13 +121,13 @@ class AddressTest {
 
   #[Test]
   public function next_with_definition() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->next($this->asMap()));
   }
 
   #[Test]
   public function value_with_definition() {
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->value($this->asMap()));
   }
 
@@ -135,7 +135,7 @@ class AddressTest {
   public function repeated_value_with_definition() {
     $definition= $this->asMap();
 
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->value($definition), '#1');
     Assert::equals(['/' => 'Test'], $address->value($definition), '#2');
   }
@@ -144,7 +144,7 @@ class AddressTest {
   public function next_after_value_with_definition() {
     $definition= $this->asMap();
 
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->value($definition), '#1');
     Assert::equals(['/' => 'Test'], $address->next($definition), '#2');
   }
@@ -155,27 +155,27 @@ class AddressTest {
       public function create($it) { return $it->next(); }
     };
 
-    $address= new XmlString('<doc>Test</doc>');
+    $address= new XmlStreaming('<doc>Test</doc>');
     Assert::equals(['/' => 'Test'], $address->value($this->asMap()), '#1');
     Assert::equals('Test', $address->value($asValue), '#2');
   }
 
   #[Test]
   public function iteration_support() {
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     Assert::equals(['/' => null, '//a' => 'A', '//b' => 'B'], iterator_to_array($address));
   }
 
   #[Test]
   public function iteration_support_for_empty_document() {
-    $address= new XmlString('<doc/>');
+    $address= new XmlStreaming('<doc/>');
     Assert::equals(['/' => null], iterator_to_array($address));
   }
 
   #[Test]
   public function iteration_valid_with_value() {
     $actual= [];
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     foreach ($address as $path => $value) {
       $actual[$path]= [$address->value(), $address->valid()];
     }
@@ -189,7 +189,7 @@ class AddressTest {
     };
 
     $actual= [];
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     foreach ($address as $path => $value) {
       $actual[$path]= [$address->value($definition), $address->valid()];
     }
@@ -200,7 +200,7 @@ class AddressTest {
   public function pointers() {
     $actual= [];
 
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     foreach ($address->pointers() as $path => $pointer) {
       $actual[$path]= $pointer->value();
     }
@@ -211,7 +211,7 @@ class AddressTest {
   public function filtered_pointers() {
     $actual= [];
 
-    $address= new XmlString('<tests><unit>A</unit><unit>B</unit><integration>C</integration></tests>');
+    $address= new XmlStreaming('<tests><unit>A</unit><unit>B</unit><integration>C</integration></tests>');
     foreach ($address->pointers('//unit') as $path => $pointer) {
       $actual[]= $pointer->value();
     }
@@ -223,7 +223,7 @@ class AddressTest {
     $definition= $this->asMap();
     $actual= [];
 
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     foreach ($address->pointers() as $path => $pointer) {
       $actual+= $pointer->value($definition);
     }
@@ -234,7 +234,7 @@ class AddressTest {
   public function pointers_can_resume() {
     $actual= [];
 
-    $address= new XmlString('<doc><a>A</a><b>B</b></doc>');
+    $address= new XmlStreaming('<doc><a>A</a><b>B</b></doc>');
     $address->next();
     foreach ($address->pointers() as $path => $pointer) {
       $actual[$path]= $pointer->value();

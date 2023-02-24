@@ -6,6 +6,7 @@ use lang\{Closeable, Value};
 /**
  * XML file input
  *
+ * @deprecated by XmlStreaming
  * @test  util.address.unittest.XmlInputTest
  */
 class XmlFile extends Address implements Closeable, Value {

@@ -6,6 +6,7 @@ use lang\{XPClass, Value};
 /**
  * XML class loader resource input
  *
+ * @deprecated by XmlStreaming
  * @test  util.address.unittest.XmlInputTest
  */
 class XmlResource extends Address implements Value {

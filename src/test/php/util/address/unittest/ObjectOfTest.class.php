@@ -3,12 +3,12 @@
 use lang\{ClassLoader, Error, IllegalArgumentException, IllegalStateException, Runnable, XPClass};
 use test\verify\Runtime;
 use test\{Action, Assert, Expect, Test, Values};
-use util\address\{ObjectOf, XmlString};
+use util\address\{ObjectOf, XmlStreaming};
 
 class ObjectOfTest {
 
   /** @return util.address.Address */
-  private function address() { return new XmlString('<book author="Test">Name</book>'); }
+  private function address() { return new XmlStreaming('<book author="Test">Name</book>'); }
 
   /** Fixture for can_use_public_methods_from_this() test */
   public function toUpper(string $in): string { return strtoupper($in); }

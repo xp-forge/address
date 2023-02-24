@@ -3,12 +3,12 @@
 use lang\{Error, IllegalArgumentException, Runnable, XPClass};
 use test\verify\Runtime;
 use test\{Action, Assert, Expect, Test, Values};
-use util\address\{RecordOf, XmlString};
+use util\address\{RecordOf, XmlStreaming};
 
 class RecordOfTest {
 
   /** @return util.address.Address */
-  private function address() { return new XmlString('<book author="Test">Name</book>'); }
+  private function address() { return new XmlStreaming('<book author="Test">Name</book>'); }
 
   /** @return iterable */
   private function types() {

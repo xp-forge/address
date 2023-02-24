@@ -3,13 +3,13 @@
 use test\verify\Runtime;
 use test\{Action, Assert, Test, Values};
 use util\Date;
-use util\address\{ValueOf, XmlString};
+use util\address\{ValueOf, XmlStreaming};
 
 class ValueOfTest {
 
   #[Test]
   public function compact_form() {
-    $address= new XmlString('<book>Name</book>');
+    $address= new XmlStreaming('<book>Name</book>');
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
@@ -21,7 +21,7 @@ class ValueOfTest {
   /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
   #[Test, Runtime(php: '>=7.4')]
   public function can_use_fn() {
-    $address= new XmlString('<book>Name</book>');
+    $address= new XmlStreaming('<book>Name</book>');
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
@@ -32,7 +32,7 @@ class ValueOfTest {
 
   #[Test]
   public function child_node() {
-    $address= new XmlString('<book><name>Name</name></book>');
+    $address= new XmlStreaming('<book><name>Name</name></book>');
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
@@ -43,7 +43,7 @@ class ValueOfTest {
 
   #[Test, Values(['<book><name>Name</name><author><name/></author></book>', '<book><author><name/></author><name>Name</name></book>', '<book><name>Name</name><author><name>Test</name></author></book>', '<book><author><name>Test</name></author><name>Name</name></book>'])]
   public function child_node_ordering_irrelevant($xml) {
-    $address= new XmlString($xml);
+    $address= new XmlStreaming($xml);
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
@@ -55,7 +55,7 @@ class ValueOfTest {
 
   #[Test]
   public function child_node_and_attributes() {
-    $address= new XmlString('<book author="Test"><name>Name</name></book>');
+    $address= new XmlStreaming('<book author="Test"><name>Name</name></book>');
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
@@ -67,7 +67,7 @@ class ValueOfTest {
 
   #[Test]
   public function uses_default_value() {
-    $address= new XmlString('<book asin="B01N1UPZ10">Name</book>');
+    $address= new XmlStreaming('<book asin="B01N1UPZ10">Name</book>');
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'authors' => []],
       $address->next(new ValueOf(['authors' => []], [
@@ -79,7 +79,7 @@ class ValueOfTest {
 
   #[Test]
   public function any_child() {
-    $address= new XmlString('<book><name>Name</name><author>Test</author></book>');
+    $address= new XmlStreaming('<book><name>Name</name><author>Test</author></book>');
     Assert::equals(
       ['name' => 'Name', 'author' => 'Test'],
       $address->next(new ValueOf([], [
@@ -90,7 +90,7 @@ class ValueOfTest {
 
   #[Test]
   public function any_attribute() {
-    $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
+    $address= new XmlStreaming('<book asin="B01N1UPZ10" author="Test">Name</book>');
     Assert::equals(
       ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],
       $address->next(new ValueOf([], [
@@ -102,7 +102,7 @@ class ValueOfTest {
 
   #[Test]
   public function can_use_subpaths() {
-    $address= new XmlString('<book><name>Name</name><authors><name>A</name><name>B</name></authors></book>');
+    $address= new XmlStreaming('<book><name>Name</name><authors><name>A</name><name>B</name></authors></book>');
     Assert::equals(
       ['name' => 'Name', 'authors' => ['A', 'B']],
       $address->next(new ValueOf(['authors' => []], [
@@ -114,7 +114,7 @@ class ValueOfTest {
 
   #[Test]
   public function can_produce_arrays() {
-    $address= new XmlString('<books><book>Book #1</book><book>Book #2</book></books>');
+    $address= new XmlStreaming('<books><book>Book #1</book><book>Book #2</book></books>');
     Assert::equals(
       ['Book #1', 'Book #2'],
       $address->next(new ValueOf([], [
@@ -125,7 +125,7 @@ class ValueOfTest {
 
   #[Test]
   public function can_reassing_value() {
-    $address= new XmlString('<book>Book #1</book>');
+    $address= new XmlStreaming('<book>Book #1</book>');
     Assert::equals(
       'Book #1',
       $address->next(new ValueOf(null, [
@@ -136,7 +136,7 @@ class ValueOfTest {
 
   #[Test]
   public function can_select_multiple() {
-    $address= new XmlString('<tests><unit>a</unit><unit>b</unit><integration>c</integration><system>d</system></tests>');
+    $address= new XmlStreaming('<tests><unit>a</unit><unit>b</unit><integration>c</integration><system>d</system></tests>');
     Assert::equals(
       ['unit:a', 'unit:b', 'integration:c'],
       $address->next(new ValueOf([], [
@@ -147,7 +147,7 @@ class ValueOfTest {
 
   #[Test]
   public function combine_values_during_finalization() {
-    $address= new XmlString('<created><date>2022-10-31</date><time>16:26:53</time></created>');
+    $address= new XmlStreaming('<created><date>2022-10-31</date><time>16:26:53</time></created>');
     $values= [];
     Assert::equals(
       ['date' => new Date('2022-10-31 16:26:53')],
@@ -166,7 +166,7 @@ class ValueOfTest {
       '.'  => function(&$self) { $self['name']= yield; }
     ]);
 
-    $address= new XmlString('<book asin="B01N1UPZ10" author="Test">Name</book>');
+    $address= new XmlStreaming('<book asin="B01N1UPZ10" author="Test">Name</book>');
     for ($i= 1; $i <= $times; $i++) {
       Assert::equals(
         ['name' => 'Name', 'asin' => 'B01N1UPZ10', 'author' => 'Test'],

@@ -2,19 +2,18 @@
 
 use io\streams\MemoryInputStream;
 use test\{Assert, Test};
-use util\address\XmlStream;
+use util\address\XmlStreaming;
 
-/** @deprecated by XmlStreamingTest */
-class XmlStreamTest {
+class XmlStreamingTest {
 
   /**
    * Creates a new fixture
    *
    * @param  string $bytes
-   * @return util.address.XmlStream
+   * @return util.address.XmlStreaming
    */
   private function fixture($bytes= '') {
-    return new XmlStream(new MemoryInputStream($bytes));
+    return new XmlStreaming(new MemoryInputStream($bytes));
   }
 
   #[Test]
@@ -30,7 +29,7 @@ class XmlStreamTest {
   #[Test]
   public function string_representation() {
     Assert::equals(
-      'util.address.XmlStream<io.streams.MemoryInputStream(@0 of 4 bytes)>',
+      'util.address.XmlStreaming<io.streams.MemoryInputStream(@0 of 4 bytes)>',
       $this->fixture('Test')->toString()
     );
   }
@@ -54,7 +53,7 @@ class XmlStreamTest {
       public function close() { $this->closed= true; }
     };
 
-    $fixture= new XmlStream($stream);
+    $fixture= new XmlStreaming($stream);
     $fixture->close();
 
     Assert::true($stream->closed);
