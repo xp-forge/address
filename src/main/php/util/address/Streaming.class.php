@@ -27,7 +27,7 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   }
 
   /** Returns the iterator implementation */ 
-  protected abstract function iterator(): Iterator;
+  public abstract function iterator(): Iterator;
 
   /**
    * Gets iterator

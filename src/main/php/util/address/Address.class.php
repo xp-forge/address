@@ -20,6 +20,6 @@ abstract class Address extends Streaming {
    * Creates an iterator. Default implementation is to return an
    * `XmlIterator` instance for BC reasons.
    */
-  protected function iterator(): Iterator { return new XmlIterator($this->stream()); }
+  public function iterator(): Iterator { return new XmlIterator($this->stream()); }
 
 }

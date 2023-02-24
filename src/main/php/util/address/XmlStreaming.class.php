@@ -11,6 +11,6 @@ use Iterator;
 class XmlStreaming extends Streaming {
 
   /** Iterator implementation */
-  protected function iterator(): Iterator { return new XmlIterator($this->stream); }
+  public function iterator(): Iterator { return new XmlIterator($this->stream); }
 
 }
