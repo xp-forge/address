@@ -3,6 +3,11 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* **Heads up:** Deprecated XmlStream, XmlFile, XmlString and XmlResource
+  in favor of the new entry point class `util.address.XmlStreaming`.
+  (@thekid)
+* Merged PR #21: Join various input sources into one new API: XmlStreaming
+  (@thekid)
 * Merged PR #20: Migrate to new testing library - @thekid
 
 ## 5.2.1 / 2023-01-21
