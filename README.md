@@ -48,12 +48,12 @@ class Author {
 ...the following will map the XML to an object instance while reading it from the socket.
 
 ```php
-use util\address\{XmlStream, ObjectOf};
+use util\address\{XmlStreaming, ObjectOf};
 
 $socket= /* ... */
 
-$address= new XmlStream($socket->in());
-$book= $address->next(new ObjectOf(Book::class, [
+$stream= new XmlStreaming($socket);
+$book= $stream->next(new ObjectOf(Book::class, [
   'name'   => fn($self) => $self->name= yield,
   'author' => fn($self) => $self->author= yield new ObjectOf(Author::class, [
     'name'   => fn($self) => $self->name= yield ?: '(unknown author)'; }
@@ -70,23 +70,23 @@ Definitions are used to create structured data from the XML input. Here are all 
 Simplemost version which is given a seed value, which it can modify through the given address functions.
 
 ```php
-use util\address\{XmlString, ValueOf};
+use util\address\{XmlStreaming, ValueOf};
 
 // Parse into string 'Tim Taylor'
-$xml= new XmlString('<name>Tim Taylor</name>');
-$name= $xml->next(new ValueOf(null, [
+$stream= new XmlStreaming('<name>Tim Taylor</name>');
+$name= $stream->next(new ValueOf(null, [
   '.' => fn(&$self) => $self= yield,
 ]);
 
 // Parse into array ['More', 'Power']
-$xml= new XmlString('<tools><tool>More</tool><tool>Power</tool></tools>');
-$name= $xml->next(new ValueOf([], [
+$stream= new XmlStreaming('<tools><tool>More</tool><tool>Power</tool></tools>');
+$name= $stream->next(new ValueOf([], [
   'tool' => fn(&$self) => $self[]= yield,
 ]);
 
 // Parse into map ['id' => 6100, 'name' => 'more power']
-$xml= new XmlString('<tool id="6100">more power</tool>');
-$book= $xml->next(new ValueOf([], [
+$stream= new XmlStreaming('<tool id="6100">more power</tool>');
+$book= $stream->next(new ValueOf([], [
   '@id' => fn(&$self) => $self['id']= (int)yield,
   '.'   => fn(&$self) => $self['name']= yield,
 ]);
@@ -97,15 +97,15 @@ $book= $xml->next(new ValueOf([], [
 Creates objects without invoking their constructors. Modifies the members directly, including non-public ones.
 
 ```php
-use util\address\{XmlString, ObjectOf};
+use util\address\{XmlStreaming, ObjectOf};
 
 class Book {
   public $isbn, $name;
 }
 
 // Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
-$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
-$book= $xml->next(new ObjectOf(Book::class, [
+$stream= new XmlStreaming('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $stream->next(new ObjectOf(Book::class, [
   '@isbn' => fn($self) => $self->isbn= yield,
   'name'  => fn($self) => $self->name= yield,
 ]);
@@ -116,7 +116,7 @@ $book= $xml->next(new ObjectOf(Book::class, [
 Works with *record* classes, which are defined as being immutable and having an all-arg constructor. Modifies the named constructor arguments.
 
 ```php
-use util\address\{XmlString, RecordOf};
+use util\address\{XmlStreaming, RecordOf};
 
 class Book {
   public function __construct(private string $isbn, private string $name) { }
@@ -126,8 +126,8 @@ class Book {
 }
 
 // Parse into Book(isbn: '978-0552151740', name: 'A Short History...')
-$xml= new XmlString('<book isbn="978-0552151740"><name>A Short History...</name></book>');
-$book= $xml->next(new RecordOf(Book::class, [
+$stream= new XmlStreaming('<book isbn="978-0552151740"><name>A Short History...</name></book>');
+$book= $stream->next(new RecordOf(Book::class, [
   '@isbn' => fn(&$args) => $args['isbn']= yield,
   'name'  => fn(&$args) => $args['name']= yield,
 ]);

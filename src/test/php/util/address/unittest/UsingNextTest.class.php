@@ -2,7 +2,7 @@
 
 use test\verify\Runtime;
 use test\{Action, Assert, Test};
-use util\address\{ValueOf, XmlString};
+use util\address\{ValueOf, XmlStreaming};
 
 /** @deprecated */
 class UsingNextTest {
@@ -10,7 +10,7 @@ class UsingNextTest {
 
   #[Test]
   public function next_without_definition() {
-    $address= new XmlString(self::BOOK);
+    $address= new XmlStreaming(self::BOOK);
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [
@@ -22,7 +22,7 @@ class UsingNextTest {
 
   #[Test]
   public function next_with_definition() {
-    $address= new XmlString(self::BOOK);
+    $address= new XmlStreaming(self::BOOK);
     Assert::equals(
       ['name' => 'Name', 'author' => null, 'date' => '1977-12-14'],
       $address->next(new ValueOf([], [
@@ -39,7 +39,7 @@ class UsingNextTest {
   /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
   #[Test, Runtime(php: '>=7.4')]
   public function can_use_fn() {
-    $address= new XmlString(self::BOOK);
+    $address= new XmlStreaming(self::BOOK);
     Assert::equals(
       ['name' => 'Name'],
       $address->next(new ValueOf([], [

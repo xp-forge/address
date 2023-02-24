@@ -2,18 +2,18 @@
 
 use test\{Assert, Test, Values};
 use util\Date;
-use util\address\{ObjectOf, XmlFile, XmlResource, XmlStream, XmlString};
+use util\address\{ObjectOf, XmlStreaming, XmlResource};
 
 class XmlInputTest {
 
   /** @return var[][] */
   protected function inputs() {
-    $t= typeof($this);
+    $package= typeof($this)->getPackage();
     return [
-      [new XmlString($t->getPackage()->getResource('releases.xml'))],
-      [new XmlStream($t->getPackage()->getResourceAsStream('releases.xml')->in())],
-      [new XmlFile($t->getPackage()->getResourceAsStream('releases.xml'))],
-      [new XmlResource($t, 'releases.xml')]
+      [new XmlStreaming($package->getResource('releases.xml'))],
+      [new XmlStreaming($package->getResourceAsStream('releases.xml')->in())],
+      [new XmlStreaming($package->getResourceAsStream('releases.xml'))],
+      [new XmlResource($package, 'releases.xml')] // deprecated!
     ];
   }
 
