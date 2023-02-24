@@ -140,7 +140,7 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
 
   /** @return string */
   public function hashCode() {
-    return 'XS'.Objects::hashOf($this->stream);
+    return 'S'.Objects::hashOf($this->stream);
   }
 
   /**
