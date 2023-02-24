@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
-use unittest\actions\RuntimeVersion;
-use unittest\{Assert, Action, Test};
+use test\verify\Runtime;
+use test\{Action, Assert, Test, Values};
 use util\Date;
 use util\address\{ValueOf, XmlString};
 
@@ -19,7 +19,7 @@ class ValueOfTest {
   }
 
   /** @see https://wiki.php.net/rfc/arrow_functions_v2 */
-  #[Test, Action(eval: 'new RuntimeVersion(">=7.4")')]
+  #[Test, Runtime(php: '>=7.4')]
   public function can_use_fn() {
     $address= new XmlString('<book>Name</book>');
     Assert::equals(

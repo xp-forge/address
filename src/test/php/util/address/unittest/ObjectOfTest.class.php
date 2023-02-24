@@ -1,8 +1,8 @@
 <?php namespace util\address\unittest;
 
-use lang\{XPClass, Error, Runnable, ClassLoader, IllegalStateException, IllegalArgumentException};
-use unittest\actions\RuntimeVersion;
-use unittest\{Action, Assert, Expect, Test, Values};
+use lang\{ClassLoader, Error, IllegalArgumentException, IllegalStateException, Runnable, XPClass};
+use test\verify\Runtime;
+use test\{Action, Assert, Expect, Test, Values};
 use util\address\{ObjectOf, XmlString};
 
 class ObjectOfTest {
@@ -22,12 +22,12 @@ class ObjectOfTest {
     ];
   }
 
-  #[Test, Values('types')]
+  #[Test, Values(from: 'types')]
   public function can_create($type) {
     new ObjectOf($type, []);
   }
 
-  #[Test, Expect(class: IllegalArgumentException::class, withMessage: '/Given type .+ is not instantiable/')]
+  #[Test, Expect(class: IllegalArgumentException::class, message: '/Given type .+ is not instantiable/')]
   public function cannot_pass_interfaces() {
     new ObjectOf(Runnable::class, []);
   }

@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
 use lang\{IllegalStateException, Runnable};
-use unittest\{Assert, Expect, Ignore, Test};
+use test\{Assert, Expect, Ignore, Test};
 use util\NoSuchElementException;
 use util\address\{ArrayOf, CreationOf, Definition, XmlString};
 

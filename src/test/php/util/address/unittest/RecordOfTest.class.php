@@ -1,8 +1,8 @@
 <?php namespace util\address\unittest;
 
-use lang\{XPClass, Error, Runnable, IllegalArgumentException};
-use unittest\actions\RuntimeVersion;
-use unittest\{Action, Assert, Expect, Test, Values};
+use lang\{Error, IllegalArgumentException, Runnable, XPClass};
+use test\verify\Runtime;
+use test\{Action, Assert, Expect, Test, Values};
 use util\address\{RecordOf, XmlString};
 
 class RecordOfTest {
@@ -19,17 +19,17 @@ class RecordOfTest {
     ];
   }
 
-  #[Test, Values('types')]
+  #[Test, Values(from: 'types')]
   public function can_create($type) {
     new RecordOf($type, []);
   }
 
-  #[Test, Expect(class: IllegalArgumentException::class, withMessage: '/Given type .+ does not have a constructor/')]
+  #[Test, Expect(class: IllegalArgumentException::class, message: '/Given type .+ does not have a constructor/')]
   public function cannot_pass_classes_without_constructor() {
     new RecordOf(self::class, []);
   }
 
-  #[Test, Expect(class: IllegalArgumentException::class, withMessage: '/Given type .+ is not instantiable/')]
+  #[Test, Expect(class: IllegalArgumentException::class, message: '/Given type .+ is not instantiable/')]
   public function cannot_pass_interfaces() {
     new RecordOf(Runnable::class, []);
   }
@@ -53,7 +53,7 @@ class RecordOfTest {
     Assert::equals(new Book('Name'), $this->address()->next($definition));
   }
 
-  #[Test, Expect(class: Error::class, withMessage: '/Unknown named parameter .+/')]
+  #[Test, Expect(class: Error::class, message: '/Unknown named parameter .+/')]
   public function excess_args_raise_an_error() {
     $this->address()->next(new RecordOf(Book::class, [
       '.' => function(&$args) { $args['name']= yield; },
@@ -61,7 +61,7 @@ class RecordOfTest {
     ]));
   }
 
-  #[Test, Expect(class: Error::class, withMessage: '/Argument .+ must be (of type|an instance of)/')]
+  #[Test, Expect(class: Error::class, message: '/Argument .+ must be (of type|an instance of)/')]
   public function raises_error_if_required_argument_is_mistyped() {
     $this->address()->next(new RecordOf(Book::class, [
       '@author' => function(&$args) { $args['author']= yield; }, // Missing `new Author(...)`
@@ -70,12 +70,12 @@ class RecordOfTest {
   }
 
   /** @see https://wiki.php.net/rfc/too_few_args, implemented in PHP 7.1 */
-  #[Test, Action(eval: 'new RuntimeVersion(">=7.1")'), Expect(class: Error::class, withMessage: '/Too few arguments .+/')]
+  #[Test, Runtime(php: '>=7.1'), Expect(class: Error::class, message: '/Too few arguments .+/')]
   public function raises_error_if_required_argument_is_missing() {
     $this->address()->next(new RecordOf(Book::class, []));
   }
 
-  #[Test, Action(eval: 'new RuntimeVersion("<7.1")'), Expect(IllegalArgumentException::class)]
+  #[Test, Runtime(php: '<7.1'), Expect(IllegalArgumentException::class)]
   public function php70_raises_iae_if_required_argument_is_missing() {
     $this->address()->next(new RecordOf(Book::class, []));
   }
