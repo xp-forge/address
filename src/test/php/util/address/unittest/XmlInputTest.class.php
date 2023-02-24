@@ -1,6 +1,6 @@
 <?php namespace util\address\unittest;
 
-use unittest\{Assert, Test, Values};
+use test\{Assert, Test, Values};
 use util\Date;
 use util\address\{ObjectOf, XmlFile, XmlResource, XmlStream, XmlString};
 
@@ -17,7 +17,7 @@ class XmlInputTest {
     ];
   }
 
-  #[Test, Values('inputs')]
+  #[Test, Values(from: 'inputs')]
   public function feed($input) {
     $feed= $input->next(new ObjectOf(Channel::class, [
       'channel/title'       => function($self) { $self->title= yield; },

@@ -1,9 +1,8 @@
 <?php namespace util\address\unittest;
 
 use io\streams\{InputStream, MemoryInputStream};
-use lang\{IllegalStateException, FormatException};
-use unittest\Assert;
-use unittest\{Test, Values};
+use lang\{FormatException, IllegalStateException};
+use test\{Assert, Expect, Test, Values};
 use util\address\XmlIterator;
 
 class XmlIteratorTest {
@@ -138,7 +137,7 @@ class XmlIteratorTest {
     );
   }
 
-  #[Test, Expect(class: FormatException::class, withMessage: 'Entity &missing; not defined')]
+  #[Test, Expect(class: FormatException::class, message: 'Entity &missing; not defined')]
   public function raises_error_for_missing_entities() {
     iterator_count(new XmlIterator(new MemoryInputStream('
       <!DOCTYPE test [
@@ -148,7 +147,7 @@ class XmlIteratorTest {
     ')));
   }
 
-  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &js;')]
+  #[Test, Expect(class: FormatException::class, message: 'Entity reference loop &js; > &js;')]
   public function does_not_choke_on_recursion() {
     iterator_count(new XmlIterator(new MemoryInputStream('
       <!DOCTYPE test [
@@ -158,7 +157,7 @@ class XmlIteratorTest {
     ')));
   }
 
-  #[Test, Expect(class: FormatException::class, withMessage: 'Entity reference loop &js; > &address; > &js;')]
+  #[Test, Expect(class: FormatException::class, message: 'Entity reference loop &js; > &address; > &js;')]
   public function does_not_choke_on_recursion_over_multiple_entities() {
     iterator_count(new XmlIterator(new MemoryInputStream('
       <!DOCTYPE test [

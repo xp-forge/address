@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
 use io\streams\MemoryInputStream;
-use unittest\{Assert, Test};
+use test\{Assert, Test};
 use util\address\XmlStream;
 
 class XmlStreamTest {
