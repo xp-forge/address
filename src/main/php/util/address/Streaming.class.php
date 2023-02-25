@@ -102,7 +102,7 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   public function value(Definition $definition= null) {
     $it= $this->getIterator(true);
     if ($it->valid()) {
-      return null === $definition ? $it->current() : $it->value($definition, $this, true);
+      return null === $definition ? $it->current() : $it->value($definition, true);
     }
 
     throw new NoSuchElementException('No more elements in iterator');    
@@ -118,7 +118,7 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   public function next(Definition $definition= null) {
     $it= $this->getIterator(true);
     if ($it->valid()) {
-      $value= null === $definition ? $it->current() : $it->value($definition, $this, false);
+      $value= null === $definition ? $it->current() : $it->value($definition, false);
       $it->next();
       return $value;
     }
