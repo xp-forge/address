@@ -222,14 +222,11 @@ class XmlIterator implements Iterator {
     return $attributes;
   }
 
-  /** @return util.collections.token */
+  /** @return util.address.Token */
   protected function token() {
     if (empty($this->tokens)) {
-
       $this->valid= false;
-      while ($this->input->hasMoreTokens()) {
-        $token= $this->input->nextToken();
-
+      while (null !== ($token= $this->input->nextToken())) {
         if ('<' === $token) {
           $tag= $this->input->nextToken('>');
           $this->input->nextToken('>');
