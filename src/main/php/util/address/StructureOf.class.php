@@ -30,7 +30,7 @@ class StructureOf implements Definition {
       $ptr= &$value;
       if (strlen($segments) > 0) {
         foreach (explode('/', $segments) as $segment) {
-          $ptr= &$ptr[$segment];
+          $ptr= &$ptr[strtr($segment, "\x1D", '/')];
         }
       }
 
