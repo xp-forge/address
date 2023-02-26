@@ -4,6 +4,7 @@
  * JSON streaming input
  *
  * @test  util.address.unittest.JsonInputTest
+ * @test  util.address.unittest.StructureOfTest
  */
 class JsonStreaming extends Streaming {
 
