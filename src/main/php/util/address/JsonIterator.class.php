@@ -19,7 +19,7 @@ class JsonIterator extends StreamIterator {
    * @param  io.streams.InputStream $input If seekable, this iterator will be rewindable.
    */
   public function __construct(InputStream $input) {
-    parent::__construct(new StreamTokenizer($input, ":{}[]\"\r\n\t ", true));
+    parent::__construct(new StreamTokenizer($input, ":{}[],\"\r\n\t ", true));
   }
 
   /**
@@ -36,25 +36,26 @@ class JsonIterator extends StreamIterator {
   }
 
   /**
-   * Reads a string, handling escape sequences
+   * Reads a string, handling escape sequences and unclosed strings
    *
    * @return string
+   * @throws lang.FormatException
    */
   protected function string() {
-    $n= $this->input->nextToken('"');
-    if ('"' === $n) return '';
-
-    $s= '';
+    $s= '"';
     do {
-      $s.= $n;
-      if ('\\' !== $n[strlen($n) - 1]) break;
+      $chunk= $this->input->nextToken('\\"');
+      if (null === $chunk) {
+        throw new FormatException('Unclosed string literal');
+      } else if ('\\' === $chunk) {
+        $s.= $chunk.$this->input->nextToken('\\"');
+      } else {
+        $s.= $chunk;
+      }
+    } while ('"' !== $chunk);
 
-      $s.= $this->input->nextToken('"');
-      $n= $this->input->nextToken('"');
-    } while ($this->input->hasMoreTokens());
-
-    $this->input->nextToken('"');
-    return json_decode('"'.$s.'"');
+    // Optimize empty string case
+    return '""' === $s ? '' : json_decode($s);
   }
 
   /**

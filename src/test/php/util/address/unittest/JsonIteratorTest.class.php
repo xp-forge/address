@@ -13,9 +13,12 @@ class JsonIteratorTest extends StreamIteratorTest {
     yield ['""', ''];
     yield ['" "', ' '];
     yield ['"\""', '"'];
+    yield ['"Escape\\\\"', 'Escape\\'];
     yield ['"A \"quote\"."', 'A "quote".'];
+    yield ['"Have \"Error: A\""', 'Have "Error: A"'];
     yield ['"A\nB"', "A\nB"];
     yield ['"1\u20ac"', '1€'];
+    yield ['"测测"', '测测'];  // Chinese for "measurement"
 
     yield ['1', 1];
     yield ['+42', +42];
@@ -64,6 +67,14 @@ class JsonIteratorTest extends StreamIteratorTest {
     $this->assertIterated(
       [['/' => null], ['//color' => 'Green'], ['//price' => 12.99]],
       new JsonIterator(new MemoryInputStream($input))
+    );
+  }
+
+  #[Test, Values(from: 'scalars')]
+  public function map_with_scalar($input, $expected) {
+    $this->assertIterated(
+      [['/' => null], ['//value' => $expected], ['//ok' => true]],
+      new JsonIterator(new MemoryInputStream('{"value":'.$input.',"ok":true}'))
     );
   }
 
