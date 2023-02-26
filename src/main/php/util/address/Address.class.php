@@ -1,7 +1,5 @@
 <?php namespace util\address;
 
-use Iterator;
-
 /**
  * Base class for all XML inputs
  *
@@ -20,6 +18,6 @@ abstract class Address extends Streaming {
    * Creates an iterator. Default implementation is to return an
    * `XmlIterator` instance for BC reasons.
    */
-  public function iterator(): Iterator { return new XmlIterator($this->stream()); }
+  public function iterator(): StreamIterator { return new XmlIterator($this->stream()); }
 
 }

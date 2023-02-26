@@ -4,7 +4,7 @@ use test\verify\Runtime;
 use test\{Action, Assert, Test};
 use util\address\{ValueOf, XmlStreaming};
 
-/** @deprecated */
+/** @deprecated Use `fn($self[, $path]) => ... yield;` instead */
 class UsingNextTest {
   const BOOK = '<book id="1"><name>Name</name><author/><date>1977-12-14</date></book>';
 
