@@ -1,7 +1,7 @@
 <?php namespace util\address\unittest;
 
 use test\{Assert, Test, Values};
-use util\address\{JsonStreaming, ObjectOf, ValueOf};
+use util\address\{JsonStreaming, ObjectOf, StructureOf};
 
 class JsonInputTest {
 
@@ -21,9 +21,7 @@ class JsonInputTest {
       'name'        => function($self) { $self->name= yield; },
       'type'        => function($self) { $self->type= yield; },
       'keywords/[]' => function($self) { $self->keywords[]= yield; },
-      'require'     => function($self) { $self->requirements= yield new ValueOf([], [
-        '*' => function(&$self, $path) { $self[$path]= yield; }
-      ]); }
+      'require'     => function($self) { $self->requirements= yield new StructureOf(); },
     ]));
 
     Assert::equals(
