@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.3.0 / 2023-03-03
+
 * **Heads up:** Deprecated XmlStream, XmlFile, XmlString and XmlResource
   in favor of the new entry point class `util.address.XmlStreaming`.
   (@thekid)
