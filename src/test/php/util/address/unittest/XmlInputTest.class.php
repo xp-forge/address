@@ -13,7 +13,6 @@ class XmlInputTest {
       [new XmlStreaming($package->getResource('releases.xml'))],
       [new XmlStreaming($package->getResourceAsStream('releases.xml')->in())],
       [new XmlStreaming($package->getResourceAsStream('releases.xml'))],
-      [new XmlResource($package, 'releases.xml')] // deprecated!
     ];
   }
 
