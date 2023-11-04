@@ -5,21 +5,7 @@ use lang\{FormatException, IllegalStateException};
 use test\{Assert, Expect, Test, Values};
 use util\address\XmlIterator;
 
-class XmlIteratorTest {
-
-  /**
-   * Assert iteration result
-   *
-   * @param  [:var][] $expected
-   * @param  util.data.XmlIterator $fixture
-   */
-  protected function assertIterated($expected, XmlIterator $fixture) {
-    $actual= [];
-    foreach ($fixture as $key => $value) {
-      $actual[]= [$key => $value];
-    }
-    Assert::equals($expected, $actual);
-  }
+class XmlIteratorTest extends StreamIteratorTest {
 
   #[Test]
   public function can_create() {

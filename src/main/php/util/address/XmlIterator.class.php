@@ -10,14 +10,10 @@ use text\{StreamTokenizer, StringTokenizer};
  *
  * @test  xp://util.address.unittest.XmlIteratorTest
  */
-class XmlIterator implements Iterator {
-  const SEPARATOR= '/';
-
-  private $input, $path, $valid, $node;
+class XmlIterator extends StreamIterator {
+  private $valid, $node;
   private $encoding= 'utf-8';
-  private $tokens= [];
   private $entities= ['amp' => '&', 'apos' => "'", 'quot' => '"', 'gt' => '>', 'lt' => '<'];
-  public $token;
 
   /**
    * Creates a new XML iterator on a given stream
@@ -26,7 +22,6 @@ class XmlIterator implements Iterator {
    */
   public function __construct(InputStream $input) {
     $this->input= new StreamTokenizer($input, '<>', true);
-    $this->path= null;
   }
 
   /**
@@ -228,8 +223,8 @@ class XmlIterator implements Iterator {
     return $attributes;
   }
 
-  /** @return util.address.Token */
-  protected function token() {
+  /** @return ?util.address.Token */
+  protected function nextToken() {
     if (empty($this->tokens)) {
       $this->valid= false;
       while (null !== ($token= $this->input->nextToken())) {
@@ -274,69 +269,5 @@ class XmlIterator implements Iterator {
     $token= array_shift($this->tokens);
     // echo "<<< ", $token ? "token<{$token->path}= {$token->content}>" : "(null)", "\n";
     return $token;
-  }
-
-  /**
-   * Creates value from definition.
-   *
-   * @param  util.address.Definition $definition
-   * @param  bool $source
-   * @return var
-   */
-  public function value($definition, $source) {
-    if (null === $this->token->source) {
-      $token= $this->token;
-
-      // Create value, storing tokens during the iteration
-      $iteration= new Iteration($this);
-      $value= $definition->create($iteration);
-
-      // Unless we are at the end of the stream, push back last token.
-      $this->valid= true;
-      $this->token && array_unshift($this->tokens, $this->token);
-      $this->token= $source ? $token->from($iteration->tokens) : $token;
-      return $value;
-    } else {
-
-      // Restore tokens consumed by previous iteration
-      $this->tokens= array_merge($this->token->source, [$this->token], $this->tokens);
-      $this->token= array_shift($this->tokens);
-      return $definition->create(new Iteration($this));
-    }
-  }
-
-  /** @return void */
-  #[ReturnTypeWillChange]
-  public function rewind() {
-    if (null !== $this->path) {
-      $this->input->reset();
-    }
-
-    $this->path= '';
-    $this->token= $this->token();
-  }
-
-  /** @return string */
-  #[ReturnTypeWillChange]
-  public function current() {
-    return $this->token->content;
-  }
-
-  /** @return string */
-  #[ReturnTypeWillChange]
-  public function key() {
-    return $this->token->path;
-  }
-
-  /** @return void */
-  #[ReturnTypeWillChange]
-  public function next() {
-    $this->token= $this->token();
-  }
-
-  /** @return bool */
-  #[ReturnTypeWillChange]
-  public function valid() {
-    return $this->valid;
   }
 }

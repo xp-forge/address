@@ -72,7 +72,7 @@ abstract class ByAddresses implements Definition {
 
     // Select attributes and children
     while (null !== ($path= $iteration->path()) && 0 === strncmp($path, $base, $offset)) {
-      $relative= substr($iteration->path(), $offset);
+      $relative= strtr(substr($iteration->path(), $offset), "\x1D", '/');
       if ('@' === $relative[0]) {
         $address= $this->addresses[$relative] ?? $this->addresses['@*'] ?? null;
         $relative= substr($relative, 1);

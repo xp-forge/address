@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-use Iterator, IteratorAggregate, Traversable;
+use IteratorAggregate, Traversable;
 use io\Channel;
 use io\streams\{InputStream, MemoryInputStream};
 use lang\{Closeable, Value};
@@ -27,7 +27,7 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   }
 
   /** Returns the iterator implementation */ 
-  public abstract function iterator(): Iterator;
+  public abstract function iterator(): StreamIterator;
 
   /**
    * Gets iterator

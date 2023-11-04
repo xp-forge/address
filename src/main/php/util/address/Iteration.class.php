@@ -7,14 +7,14 @@ class Iteration {
   /**
    * Creates an iteration
    *
-   * @param  util.address.XmlIterator $it
+   * @param  util.address.StreamIterator $it
    * @param  string $base
    */
   public function __construct($it) {
     $this->it= $it;
   }
 
-  /** @return util.address.XmlIterator */
+  /** @return util.address.StreamIterator */
   public function iterator() { return $this->it; }
 
   /** @return bool */

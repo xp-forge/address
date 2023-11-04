@@ -1,7 +1,5 @@
 <?php namespace util\address;
 
-use Iterator;
-
 /**
  * XML streaming input
  *
@@ -11,6 +9,6 @@ use Iterator;
 class XmlStreaming extends Streaming {
 
   /** Iterator implementation */
-  public function iterator(): Iterator { return new XmlIterator($this->stream); }
+  public function iterator(): StreamIterator { return new XmlIterator($this->stream); }
 
 }
