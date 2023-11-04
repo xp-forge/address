@@ -3,6 +3,8 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+* Added PHP 8.4 to the test matrix - @thekid
+
 ## 5.3.0 / 2023-03-03
 
 * **Heads up:** Deprecated XmlStream, XmlFile, XmlString and XmlResource
