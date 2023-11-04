@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 5.4.0 / 2023-11-04
+
+* Merged PR #24: Handle `xml:space` attribute and preserve whitespace
+  (@thekid)
 * Added PHP 8.4 to the test matrix - @thekid
 
 ## 5.3.0 / 2023-03-03
