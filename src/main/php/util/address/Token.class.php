@@ -3,6 +3,7 @@
 class Token {
   public $path, $content;
   public $source= null;
+  public $space= false;
 
   /**
    * Creates a new token
