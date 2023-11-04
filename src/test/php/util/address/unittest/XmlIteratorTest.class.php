@@ -106,6 +106,22 @@ class XmlIteratorTest {
     );
   }
 
+  #[Test, Values(['A ', ' A', ' A '])]
+  public function whitespace($content) {
+    $this->assertIterated(
+      [['/' => 'A']],
+      new XmlIterator(new MemoryInputStream("<test>{$content}</test>"))
+    );
+  }
+
+  #[Test, Values(['A ', ' A', ' A '])]
+  public function preserve_whitespace($content) {
+    $this->assertIterated(
+      [['/' => $content]],
+      new XmlIterator(new MemoryInputStream("<test xml:space=\"preserve\">{$content}</test>"))
+    );
+  }
+
   #[Test]
   public function entities_from_doctype() {
     $this->assertIterated(

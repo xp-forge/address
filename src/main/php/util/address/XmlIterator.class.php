@@ -74,10 +74,14 @@ class XmlIterator implements Iterator {
     }
 
     $this->node= sizeof($this->tokens);
-    $this->tokens[]= new Token($this->path, null);
+    $this->tokens[]= $token= new Token($this->path, null);
     if ('' !== trim($attr)) {
       foreach ($this->attributesIn($attr) as $name => $value) {
-        $this->tokens[]= new Token($this->path.'/@'.$name, $value);
+        if ('xml:space' === $name) {
+          $token->space= 'preserve' === $value;
+        } else {
+          $this->tokens[]= new Token($this->path.'/@'.$name, $value);
+        }
       }
     }
     $this->valid= true;
@@ -90,8 +94,8 @@ class XmlIterator implements Iterator {
    * @return void
    */
   protected function cdata($content) {
-    if ($this->tokens) {
-      $this->tokens[$this->node]->content.= $content;
+    if ($token= $this->tokens[$this->node] ?? null) {
+      $token->content.= $content;
     }
   }
 
@@ -102,8 +106,10 @@ class XmlIterator implements Iterator {
    * @return void
    */
   protected function pcdata($content) {
-    if ($this->tokens && '' !== ($t= trim($content))) {
-      $this->tokens[$this->node]->content.= $t;
+    if ($token= $this->tokens[$this->node] ?? null) {
+      if ('' !== ($t= $token->space ? $content : trim($content))) {
+        $token->content.= $t;
+      }
     }
   }
 
