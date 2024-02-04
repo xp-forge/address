@@ -3,6 +3,12 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 6.0.0 / 2024-02-04
+
+* Merged PR #23: Remove deprecated XmlStream, XmlFile, XmlString and
+  XmlResource classes
+  (@thekid)
+
 ## 5.4.0 / 2023-11-04
 
 * Merged PR #24: Handle `xml:space` attribute and preserve whitespace
