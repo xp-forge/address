@@ -3,6 +3,10 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 6.1.0 / 2024-03-24
+
+* Made compatible with XP 12 - @thekid
+
 ## 6.0.0 / 2024-02-04
 
 * Merged PR #23: Remove deprecated XmlStream, XmlFile, XmlString and
