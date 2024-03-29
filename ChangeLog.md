@@ -3,6 +3,12 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 6.1.1 / 2024-03-29
+
+* Fixed "Implicitly marking parameter ... as nullable is deprecated"
+  warnings
+  (@thekid)
+
 ## 6.1.0 / 2024-03-24
 
 * Made compatible with XP 12 - @thekid

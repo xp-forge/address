@@ -95,11 +95,11 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   /**
    * Returns the current value according to the given definition
    *
-   * @param  util.address.Definition $definition
+   * @param  ?util.address.Definition $definition
    * @return var
    * @throws util.NoSuchElementException if there are no more elements
    */
-  public function value(Definition $definition= null) {
+  public function value($definition= null) {
     $it= $this->getIterator(true);
     if ($it->valid()) {
       return null === $definition ? $it->current() : $it->value($definition, true);
@@ -111,11 +111,11 @@ abstract class Streaming implements Closeable, Value, IteratorAggregate {
   /**
    * Returns the next value according to the given definition
    *
-   * @param  util.address.Definition $definition
+   * @param  ?util.address.Definition $definition
    * @return var
    * @throws util.NoSuchElementException if there are no more elements
    */
-  public function next(Definition $definition= null) {
+  public function next($definition= null) {
     $it= $this->getIterator(true);
     if ($it->valid()) {
       $value= null === $definition ? $it->current() : $it->value($definition, false);

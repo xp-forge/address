@@ -26,10 +26,10 @@ class Iteration {
   /**
    * Returns the next value according to the given definition.
    *
-   * @param  util.address.Definition $definition
+   * @param  ?util.address.Definition $definition
    * @return var
    */
-  public function next(Definition $definition= null) {
+  public function next($definition= null) {
     $this->tokens[]= $this->it->token;
 
     $value= null === $definition ? $this->it->current() : $this->it->value($definition, false);

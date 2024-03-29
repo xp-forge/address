@@ -14,11 +14,11 @@ class Pointer {
   /**
    * Returns the current value according to the given definition
    *
-   * @param  util.address.Definition $definition
+   * @param  ?util.address.Definition $definition
    * @return var
    * @throws util.NoSuchElementException if there are no more elements
    */
-  public function value(Definition $definition= null) {
+  public function value($definition= null) {
     $it= $this->streaming->getIterator(true);
     return null === $definition ? $it->current() : $it->value($definition, $this->streaming, true);
   }
