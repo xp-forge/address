@@ -3,6 +3,11 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
+## 7.0.0 / ???-??-??
+
+* **Heads up**: Remove deprecated usage of calling `Iteration::next()`
+  (@thekid)
+
 ## 6.1.1 / 2024-03-29
 
 * Fixed "Implicitly marking parameter ... as nullable is deprecated"
