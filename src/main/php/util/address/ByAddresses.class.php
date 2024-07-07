@@ -1,6 +1,6 @@
 <?php namespace util\address;
 
-use ReflectionFunction;
+use Generator;
 
 /** Base class for ValueOf, ObjectOf and RecordOf */
 abstract class ByAddresses implements Definition {
@@ -9,7 +9,7 @@ abstract class ByAddresses implements Definition {
   /** @param [:function(var, ?string): Generator] */
   public function __construct($addresses) {
     foreach ($addresses as $path => $address) {
-      $this->add($path, new ReflectionFunction($address), $address);
+      $this->add($path, $address);
     }
   }
 
@@ -17,22 +17,11 @@ abstract class ByAddresses implements Definition {
    * Add a given address function for a given path or a list of paths.
    *
    * @param  string $path
-   * @param  ReflectionFunction $reflect
    * @param  function(var, ?string): Generator $address
    */
-  protected function add($path, $reflect, $address) {
-    if ($reflect->isGenerator()) {
-      $handler= $address;
-    } else {
-      '/' === $path || trigger_error('Use function(var, string) instead!', E_USER_DEPRECATED);
-      $handler= function(&$result, $path, $iteration) use($address) {
-        $address($result, $iteration, $path);
-        return [];
-      };
-    }
-
+  protected function add($path, $address) {
     foreach (explode('|', $path) as $match) {
-      $this->addresses[$match]= $handler;
+      $this->addresses[$match]= $address;
     }
   }
 
@@ -47,6 +36,8 @@ abstract class ByAddresses implements Definition {
    */
   protected function invoke($address, &$result, $iteration, $path) {
     $r= $address($result, $path, $iteration);
+    if (!($r instanceof Generator)) return;
+
     foreach ($r as $definition) {
       $r->send($iteration->next($definition));
     }

@@ -27,7 +27,7 @@ class ObjectOf extends ByAddresses {
     $class= $this->type->literal();
     foreach ($addresses as $path => $address) {
       $reflect= new ReflectionFunction($address);
-      $this->add($path, $reflect, $address->bindTo($reflect->getClosureThis(), $class));
+      $this->add($path, $address->bindTo($reflect->getClosureThis(), $class));
     }
   }
 
