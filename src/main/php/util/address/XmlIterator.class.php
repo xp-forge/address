@@ -13,7 +13,8 @@ use text\{StreamTokenizer, StringTokenizer};
 class XmlIterator implements Iterator {
   const SEPARATOR= '/';
 
-  private $input, $path, $valid, $node;
+  private $input, $path, $valid;
+  private $node= 0;
   private $encoding= 'utf-8';
   private $tokens= [];
   private $entities= ['amp' => '&', 'apos' => "'", 'quot' => '"', 'gt' => '>', 'lt' => '<'];
