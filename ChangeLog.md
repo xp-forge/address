@@ -3,7 +3,7 @@ XML streams to objects
 
 ## ?.?.? / ????-??-??
 
-## 7.0.0 / ???-??-??
+## 7.0.0 / 2025-09-06
 
 * **Heads up:** Dropped support for PHP < 7.4, see xp-framework/rfc#343,
   (@thekid)
